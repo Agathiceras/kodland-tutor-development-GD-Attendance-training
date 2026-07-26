@@ -71,9 +71,9 @@ body{background:var(--bg-gradient);color:var(--text);font-family:'Inter',sans-se
 .msec{padding:8px 32px 70px;max-width:1080px;margin:0 auto;width:100%}
 .slbl{font-family:'Baloo 2',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:16px;margin-top:4px}
 .route{position:relative;max-width:760px;margin:0 auto;padding:6px 0}
-.route::before{content:'';position:absolute;left:29px;top:4px;bottom:4px;width:5px;background:repeating-linear-gradient(180deg,var(--green) 0 16px, transparent 16px 30px);border-radius:6px;z-index:0}
+.route::before{content:'';position:absolute;left:29px;top:4px;bottom:4px;width:5px;background:repeating-linear-gradient(180deg,var(--blue) 0 16px, transparent 16px 30px);border-radius:6px;z-index:0}
 .rstep{position:relative;display:flex;align-items:flex-start;gap:22px;margin-bottom:24px}
-.rnode{width:58px;height:58px;border-radius:50%;background:var(--green);color:#262626;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:22px;flex-shrink:0;box-shadow:0 4px 14px rgba(0,0,0,.18);border:5px solid var(--bg);z-index:2}
+.rnode{width:58px;height:58px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:22px;flex-shrink:0;box-shadow:0 4px 14px rgba(0,0,0,.18);border:5px solid var(--bg);z-index:2}
 .rnode.locked{background:#C3CFE3;color:#7286AA}
 .rnode.coral{background:var(--coral);color:#fff}
 .rnode.reading{background:var(--blue);color:#fff}
@@ -3838,13 +3838,12 @@ function renderHome(){
     const prev = i===0 || prevNoQuiz ? true : isPassed(MODULES[i-1].id);
     const isDone = isPassed(m.id);
     const locked = !prev;
-    const doneColor=isDoneColor(m.id);
     const step=document.createElement('div'); step.className='rstep';
     const node=document.createElement('div');
-    node.className='rnode'+(locked?' locked':(doneColor?'':' pending'));
+    node.className='rnode'+(locked?' locked':'');
     node.textContent=m.id;
     const el=document.createElement('div');
-    el.className='mc rcard'+(locked?' locked':(doneColor?' done':' pending'));
+    el.className='mc rcard'+(locked?' locked':'');
     let badge, stag;
     if(m.noQuiz){
       badge=`<span class="badge br">${T('badgeReading')}</span>`;
@@ -3854,7 +3853,7 @@ function renderHome(){
       badge=isDone?`<span class="badge bd">${T('badgeCompleted')}</span>`:locked?`<span class="badge bl">${T('badgeLocked')}</span>`:`<span class="badge bs">${T('badgeStart')}</span>`;
       stag=isDone?`<span class="stag">${T('scoreLabel')} <b>${pct}%</b></span>`:locked?`<span class="stag">${T('completeModuleN',{n:m.id-1})}</span>`:`<span class="stag">${T('hasACheck')}</span>`;
     }
-    el.innerHTML=`<div class="mc-stripe" style="background:${doneColor?'var(--green)':'var(--blue)'}"></div>
+    el.innerHTML=`<div class="mc-stripe" style="background:var(--blue)"></div>
     <div class="mc-body">
       <div class="mc-top"><div class="mc-num">${T('moduleN',{n:m.id})}</div><div class="mc-em">${m.emoji}</div></div>
       <div class="mc-title">${m.title}</div>
@@ -3869,14 +3868,13 @@ function renderHome(){
   // Final exam step
   const allDone=MODULES.every(m=>isPassed(m.id));
   const examPassed=isPassed('final');
-  const examDoneColor=isDoneColor('final');
   const examStep=document.createElement('div'); examStep.className='rstep';
-  const examNode=document.createElement('div'); examNode.className='rnode'+(allDone?(examDoneColor?'':' pending'):' locked'); examNode.textContent='🎓';
+  const examNode=document.createElement('div'); examNode.className='rnode'+(allDone?'':' locked'); examNode.textContent='🎓';
   const examEl=document.createElement('div');
-  examEl.className='mc rcard'+(allDone?(examDoneColor?' done':' pending'):' locked');
+  examEl.className='mc rcard'+(allDone?'':' locked');
   const examBadge=examPassed?`<span class="badge bd">${T('badgeCompleted')}</span>`:allDone?`<span class="badge bs">${T('openForm')}</span>`:`<span class="badge bl">${T('badgeLocked')}</span>`;
   const examStag=examPassed?`<span class="stag">${T('certifiedCheck')}</span>`:allDone?`<span class="stag">${T('opensInForms')}</span>`:`<span class="stag">${T('completeAllModules')}</span>`;
-  examEl.innerHTML=`<div class="mc-stripe" style="background:${examDoneColor?'var(--green)':'var(--blue)'}"></div>
+  examEl.innerHTML=`<div class="mc-stripe" style="background:var(--blue)"></div>
   <div class="mc-body">
     <div class="mc-top"><div class="mc-num">${T('finalStage')}</div><div class="mc-em">🎓</div></div>
     <div class="mc-title">${T('finalExam')}</div>
@@ -3888,12 +3886,11 @@ function renderHome(){
   g.appendChild(examStep);
 
   // Checklist step
-  const chkDoneColor=isDoneColor('checklist');
   const chkStep=document.createElement('div'); chkStep.className='rstep';
-  const chkNode=document.createElement('div'); chkNode.className='rnode'+(examPassed?(chkDoneColor?'':' pending'):' locked'); chkNode.textContent='✅';
+  const chkNode=document.createElement('div'); chkNode.className='rnode'+(examPassed?'':' locked'); chkNode.textContent='✅';
   const chkEl=document.createElement('div');
-  chkEl.className='mc rcard'+(examPassed?(chkDoneColor?' done':' pending'):' locked');
-  chkEl.innerHTML=`<div class="mc-stripe" style="background:${chkDoneColor?'var(--green)':'var(--blue)'}"></div>
+  chkEl.className='mc rcard'+(examPassed?'':' locked');
+  chkEl.innerHTML=`<div class="mc-stripe" style="background:var(--blue)"></div>
   <div class="mc-body">
     <div class="mc-top"><div class="mc-num">${T('bonus')}</div><div class="mc-em">✅</div></div>
     <div class="mc-title">${T('attendanceChecklist')}</div>
