@@ -7,13 +7,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --blue:#1D4FD8;--blue-d:#123B9A;--blue-l:#5B8DF6;
-  --coral:#FF6B54;--coral-d:#E8503C;
-  --green:#7BC142;--green-d:#5A9C2C;--green-l:#A9DE7C;
-  --ink:#0B1F45;--ink2:#33456E;--muted:#7286AA;
-  --bg:#EEF4FF;--surface:#FFFFFF;--surface2:#F2F7FF;--border:#D7E6FC;
+  --blue:#498BFF;--blue-d:#2E6FDB;--blue-l:#8FB8FF;
+  --coral:#FF6B54;--coral-d:#E8503C;--pink-hover:#FB89C3;--pink-hover-d:#E871AE;
+  --green:#D3FF5F;--green-d:#6B9A1E;--green-l:#E9FFB0;
+  --ink:#262626;--ink2:#4A4A4A;--muted:#8A8A8A;
+  --bg:#FFFFFF;--bg-gradient:linear-gradient(180deg,#d3e4ff 0%,#e2edff 45%,#eaf2ff 72%,#ffffff 100%);--surface:#FFFFFF;--surface2:#FDF3F7;--border:#F7D9E6;
   --text:var(--ink);--text2:var(--ink2);--text-muted:var(--muted);
-  --nav-bg:rgba(255,255,255,0.94);--nav-b:#D7E6FC;
+  --nav-bg:rgba(255,255,255,0.94);--nav-b:#F7D9E6;
   --shadow:0 2px 14px rgba(11,31,69,.08);--shadow-h:0 10px 30px rgba(18,59,132,.16);
   --hi-bg:#EEF5FF;--hi-b:#AECBF7;--hi-t:#123B9A;
   --opt-h:#EEF5FF;
@@ -24,7 +24,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+body{background:var(--bg-gradient);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
 .screen{display:none;min-height:100vh;flex-direction:column}
 .screen.active{display:flex}
 /* NAV */
@@ -54,14 +54,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .hero-inner{position:relative;max-width:640px;margin:0 auto}
 .eyebrow{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:2px solid var(--border);border-radius:var(--rpill);padding:6px 16px;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:800;color:var(--blue);margin-bottom:22px;text-transform:uppercase;letter-spacing:.5px}
 .hero h1{font-family:'Baloo 2',sans-serif;font-size:clamp(32px,5.2vw,52px);font-weight:800;line-height:1.08;letter-spacing:-1px;color:var(--text);margin-bottom:16px}
-.h-pill{display:inline-block;background:var(--coral);color:#fff;border-radius:var(--rpill);padding:2px 20px;margin:0 2px;font-size:.92em}
+.h-pill{display:inline-block;background:#FB89C3;color:#fff;border-radius:var(--rpill);padding:2px 20px;margin:0 2px;font-size:.92em}
 .hero p{color:var(--text2);font-size:16px;line-height:1.65;margin-bottom:22px;max-width:520px;margin-left:auto;margin-right:auto}
 .hero-reasons{max-width:540px;margin:0 auto 24px;text-align:left;display:flex;flex-direction:column;gap:10px}
 .hr-item{display:flex;gap:11px;align-items:flex-start;background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:13px 17px;font-size:14.5px;color:var(--text2);line-height:1.55;box-shadow:var(--shadow)}
 .hr-item .hr-ic{flex-shrink:0;font-size:18px;line-height:1.4}
 .hr-item .hr-txt{flex:1;min-width:0}
 .start-btn{display:inline-block;padding:16px 38px;background:var(--blue);color:#fff;border:none;border-radius:var(--rpill);font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:700;cursor:pointer;transition:all .15s;box-shadow:0 6px 20px rgba(29,79,216,.3);margin-top:4px}
-.start-btn:hover{background:var(--coral);transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,84,.35)}
+.start-btn:hover{background:var(--pink-hover-d);transform:translateY(-2px);box-shadow:0 8px 24px rgba(251,137,195,.4)}
 .prog-strip{display:inline-flex;align-items:center;gap:14px;background:var(--surface);border:2px solid var(--border);border-radius:var(--rpill);padding:12px 22px;box-shadow:var(--shadow);max-width:380px;width:100%}
 .pnum{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:24px;color:var(--blue);line-height:1;flex-shrink:0}
 .ptrack{flex:1;height:9px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rpill);overflow:hidden}
@@ -73,11 +73,13 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .route{position:relative;max-width:760px;margin:0 auto;padding:6px 0}
 .route::before{content:'';position:absolute;left:29px;top:4px;bottom:4px;width:5px;background:repeating-linear-gradient(180deg,var(--green) 0 16px, transparent 16px 30px);border-radius:6px;z-index:0}
 .rstep{position:relative;display:flex;align-items:flex-start;gap:22px;margin-bottom:24px}
-.rnode{width:58px;height:58px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:22px;flex-shrink:0;box-shadow:0 4px 14px rgba(0,0,0,.18);border:5px solid var(--bg);z-index:2}
+.rnode{width:58px;height:58px;border-radius:50%;background:var(--green);color:#262626;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:22px;flex-shrink:0;box-shadow:0 4px 14px rgba(0,0,0,.18);border:5px solid var(--bg);z-index:2}
 .rnode.locked{background:#C3CFE3;color:#7286AA}
-.rnode.coral{background:var(--coral)}
-.rnode.reading{background:var(--blue)}
+.rnode.coral{background:var(--coral);color:#fff}
+.rnode.reading{background:var(--blue);color:#fff}
+.rnode.pending{background:var(--blue);color:#fff}
 .rcard{flex:1;min-width:0}
+.mc.pending{border-color:var(--blue)}
 @media(max-width:600px){.route::before{left:23px}.rnode{width:46px;height:46px;font-size:17px}.rstep{gap:14px}}
 .mc{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s;box-shadow:var(--shadow)}
 .mc:hover:not(.locked){transform:translateY(-4px);box-shadow:var(--shadow-h)}
@@ -102,10 +104,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .cbody{padding:38px 40px 60px;max-width:820px;margin:0 auto;width:100%;flex:1}
 .meyebrow{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:9px}
 .mh1{font-family:'Baloo 2',sans-serif;font-size:clamp(26px,4vw,38px);font-weight:800;letter-spacing:-.6px;line-height:1.12;color:var(--text);margin-bottom:16px}
-.mobj{background:var(--surface);border:2px solid var(--border);border-left:5px solid var(--blue);border-radius:0 var(--rsm) var(--rsm) 0;padding:14px 18px;font-size:14.5px;color:var(--text2);line-height:1.6;margin-bottom:34px}
+.mobj{background:var(--surface);border:2px solid var(--border);border-left:5px solid #FB89C3;border-radius:0 var(--rsm) var(--rsm) 0;padding:14px 18px;font-size:14.5px;color:var(--text2);line-height:1.6;margin-bottom:34px}
 .mobj strong{color:var(--text)}
 .sch{font-family:'Baloo 2',sans-serif;font-size:25px;font-weight:800;margin:44px 0 18px;color:var(--text);display:flex;align-items:center;gap:10px;letter-spacing:-.3px}
-.sch::after{content:'';flex:1;height:3px;background:var(--border);border-radius:2px}
+.sch::after{content:'';flex:1;height:3px;background:#FB89C3;border-radius:2px}
 .card{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:19px 21px;margin-bottom:11px;box-shadow:var(--shadow)}
 .card h4{font-family:'Baloo 2',sans-serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px}
 .card p,.card li{font-size:14.5px;color:var(--text2);line-height:1.7}
@@ -183,7 +185,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 @media(max-width:560px){.two-col{grid-template-columns:1fr}}
 .divider{border:none;border-top:2px solid var(--border);margin:30px 0}
 .ctabtn{display:block;width:100%;padding:17px;background:var(--blue);color:#fff;border:none;border-radius:var(--rpill);font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:700;cursor:pointer;transition:all .15s;margin-bottom:40px;margin-top:4px;box-shadow:0 4px 16px rgba(29,79,216,.28)}
-.ctabtn:hover{background:var(--coral);transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,107,84,.35)}
+.ctabtn:hover{background:var(--pink-hover-d);transform:translateY(-2px);box-shadow:0 6px 20px rgba(251,137,195,.4)}
 @media(max-width:640px){.cbody,.msec,.hero{padding-left:18px;padding-right:18px}}
 /* QUIZ */
 .qbody{padding:38px 40px;max-width:700px;margin:0 auto;width:100%;flex:1}
@@ -203,7 +205,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .qfb.bad{background:var(--no-bg);border-color:var(--no-b);color:var(--no-t)}
 .qnxt{display:none;margin-top:19px;width:100%;padding:15px;background:var(--blue);color:#fff;border:none;border-radius:var(--rpill);font-family:'Baloo 2',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .15s}
 .qnxt.show{display:block}
-.qnxt:hover{background:var(--coral)}
+.qnxt:hover{background:var(--pink-hover-d)}
 /* RESULTS */
 .rbody{padding:64px 40px;max-width:540px;margin:0 auto;text-align:center;flex:1}
 .remi{font-size:66px;margin-bottom:15px}
@@ -213,7 +215,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .rpct.fail{color:var(--coral)}
 .rsub{color:var(--text2);font-size:15.5px;line-height:1.65;margin-bottom:32px}
 .bdark{display:block;width:100%;padding:15px 24px;margin-bottom:10px;background:var(--blue);color:#fff;border:none;border-radius:var(--rpill);font-family:'Baloo 2',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .15s}
-.bdark:hover{background:var(--coral)}
+.bdark:hover{background:var(--pink-hover-d)}
 .bline{display:block;width:100%;padding:14px 24px;margin-bottom:10px;background:transparent;color:var(--text2);border:2px solid var(--border);border-radius:var(--rpill);font-family:'Inter',sans-serif;font-size:14.5px;font-weight:700;cursor:pointer;transition:all .15s}
 .bline:hover{background:var(--surface2);color:var(--text);border-color:var(--blue-l)}
 /* CERT */
@@ -451,7 +453,7 @@ const LANG_KEY='kl-att-lang';
 let LANG=localStorage.getItem(LANG_KEY)||'en';
 
 let MODULES=[
-{id:1,emoji:'📊',title:'Understanding the Metric: Attendance',desc:'How attendance is measured, what LPR/HPR mean for you, and the two types of causes behind a missed class.',obj:'Understand how attendance is measured and separate the causes you can influence from the ones you can\'t.',color:'#1D4FD8',noQuiz:true,
+{id:1,emoji:'📊',title:'Understanding the Metric: Attendance',desc:'How attendance is measured, what LPR/HPR mean for you, and the two types of causes behind a missed class.',obj:'Understand how attendance is measured and separate the causes you can influence from the ones you can\'t.',color:'#D3FF5F',noQuiz:true,
  sections:[
   {t:'📐 How Is It Measured?',cards:[
     {type:'text',b:'We classify students (SS) into three levels based on their attendance percentage.'},
@@ -467,7 +469,7 @@ let MODULES=[
   ]},
  ]},
 
-{id:2,emoji:'🤝',title:'Building a Bond With Your Students',desc:'Small talk, feedback that actually lands, and how to make every student feel like part of the group.',obj:'Learn how to build a valuable bond with your students that makes them want to come back.',color:'#1D4FD8',
+{id:2,emoji:'🤝',title:'Building a Bond With Your Students',desc:'Small talk, feedback that actually lands, and how to make every student feel like part of the group.',obj:'Learn how to build a valuable bond with your students that makes them want to come back.',color:'#D3FF5F',
  sections:[
   {t:'💙 Why This Matters',cards:[
     {type:'text',b:'At Kodland, our students take an extracurricular course — it\'s not mandatory. Unlike school, nothing forces them to come back. That\'s why the bond with the tutor and the group isn\'t a nice extra: it\'s the reason they return. Here are the keys and everyday opportunities you have in class to build it.'},
@@ -519,7 +521,7 @@ let MODULES=[
   ]},
  ]},
 
-{id:3,emoji:'✨',title:'Creating Unforgettable Classes',desc:'Visual material, modeling before practice, checking for understanding, and closing with anticipation.',obj:'Learn the four habits that turn an ordinary class into one students don\'t want to miss.',color:'#1D4FD8',sortGame:true,
+{id:3,emoji:'✨',title:'Creating Unforgettable Classes',desc:'Visual material, modeling before practice, checking for understanding, and closing with anticipation.',obj:'Learn the four habits that turn an ordinary class into one students don\'t want to miss.',color:'#D3FF5F',sortGame:true,
  sections:[
   {t:'🌟 What Makes a Class Unforgettable',cards:[
     {type:'text',b:'An unforgettable class comes from an experience outside the ordinary: a tutor who listens, a practice where the student\'s opinion matters, challenges for those moving faster and support for those who need more help, and a class where mistakes aren\'t judged — they\'re learned from.'},
@@ -548,7 +550,7 @@ let MODULES=[
   ]},
  ]},
 
-{id:4,emoji:'📝',title:'Homework and Attendance',desc:'Explain, remind, highlight, and review — the four homework habits that reinforce attendance.',obj:'Turn homework from a metric into another way to strengthen your bond with students and their families.',color:'#1D4FD8',
+{id:4,emoji:'📝',title:'Homework and Attendance',desc:'Explain, remind, highlight, and review — the four homework habits that reinforce attendance.',obj:'Turn homework from a metric into another way to strengthen your bond with students and their families.',color:'#D3FF5F',
  sections:[
   {t:'🎯 Homework Is More Than a Metric',cards:[
     {type:'text',b:'Handled well, homework reinforces the bond, gives you a second chance at feedback, and shows students — and their parents — that their progress matters outside the live class.'},
@@ -571,7 +573,7 @@ let MODULES=[
   ]},
  ]},
 
-{id:5,emoji:'📞',title:'What to Do When a Student Misses Class',desc:'How to follow up with the student and how to talk to parents with empathy.',obj:'Know exactly what steps to take — with the student and with their family — when an absence happens.',color:'#1D4FD8',
+{id:5,emoji:'📞',title:'What to Do When a Student Misses Class',desc:'How to follow up with the student and how to talk to parents with empathy.',obj:'Know exactly what steps to take — with the student and with their family — when an absence happens.',color:'#D3FF5F',
  sections:[
   {t:'🔁 Follow Up',cards:[
     {type:'list',items:[
@@ -872,7 +874,7 @@ const I18N={
       "title": "Entendiendo la Métrica: Asistencia",
       "desc": "Cómo se mide la asistencia, qué significan LPR/HPR para ti, y los dos tipos de causas detrás de una clase perdida.",
       "obj": "Entender cómo se mide la asistencia y separar las causas que puedes influir de las que no.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "noQuiz": true,
       "sections": [
         {
@@ -904,7 +906,7 @@ const I18N={
       "title": "Creando un Vínculo con tus Estudiantes",
       "desc": "Charla informal, retroalimentación que realmente llega, y cómo hacer que cada estudiante se sienta parte del grupo.",
       "obj": "Aprender a construir un vínculo valioso con tus estudiantes que los haga querer volver.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "💙 Por Qué Esto Importa",
@@ -977,7 +979,7 @@ const I18N={
       "title": "Creando Clases Inolvidables",
       "desc": "Material visual, modelar antes de practicar, verificar la comprensión, y cerrar con anticipación.",
       "obj": "Aprender los cuatro hábitos que convierten una clase común en una que los estudiantes no quieren perderse.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sortGame": true,
       "sections": [
         {
@@ -1028,7 +1030,7 @@ const I18N={
       "title": "Tareas y Asistencia",
       "desc": "Explicar, recordar, destacar y revisar — los cuatro hábitos de tareas que refuerzan la asistencia.",
       "obj": "Convertir la tarea de una simple métrica en otra forma de fortalecer tu vínculo con los estudiantes y sus familias.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "🎯 La Tarea Es Más que una Métrica",
@@ -1072,7 +1074,7 @@ const I18N={
       "title": "Qué Hacer Cuando un Estudiante Falta a Clase",
       "desc": "Cómo dar seguimiento al estudiante y cómo hablar con los padres con empatía.",
       "obj": "Saber exactamente qué pasos seguir — con el estudiante y con su familia — cuando ocurre una ausencia.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "🔁 Da Seguimiento",
@@ -1260,7 +1262,7 @@ const I18N={
       "title": "Capire la Metrica: la Frequenza",
       "desc": "Come si misura la frequenza, cosa significano LPR/HPR per te e i due tipi di cause dietro una lezione persa.",
       "obj": "Capire come si misura la frequenza e distinguere le cause che puoi influenzare da quelle che non puoi controllare.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "noQuiz": true,
       "sections": [
         {
@@ -1292,7 +1294,7 @@ const I18N={
       "title": "Costruire un Legame con i Tuoi Studenti",
       "desc": "Chiacchiere informali, feedback che colpisce davvero, e come far sentire ogni studente parte del gruppo.",
       "obj": "Imparare a costruire un legame prezioso con i tuoi studenti che li faccia venire voglia di tornare.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "💙 Perché È Importante",
@@ -1365,7 +1367,7 @@ const I18N={
       "title": "Creare Lezioni Indimenticabili",
       "desc": "Materiale visivo, dimostrazione prima della pratica, verifica della comprensione e chiusura con anticipazione.",
       "obj": "Imparare le quattro abitudini che trasformano una lezione ordinaria in una che gli studenti non vogliono perdere.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sortGame": true,
       "sections": [
         {
@@ -1416,7 +1418,7 @@ const I18N={
       "title": "Compiti a Casa e Frequenza",
       "desc": "Spiega, ricorda, evidenzia e rivedi — le quattro abitudini sui compiti che rafforzano la frequenza.",
       "obj": "Trasformare i compiti da una semplice metrica a un altro modo per rafforzare il legame con gli studenti e le loro famiglie.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "🎯 I Compiti Sono Più di una Metrica",
@@ -1460,7 +1462,7 @@ const I18N={
       "title": "Cosa Fare Quando uno Studente Perde una Lezione",
       "desc": "Come seguire lo studente e come parlare con i genitori con empatia.",
       "obj": "Sapere esattamente quali passi seguire — con lo studente e con la sua famiglia — quando si verifica un'assenza.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "🔁 Fare Follow-Up",
@@ -1648,7 +1650,7 @@ const I18N={
       "title": "Entendendo a Métrica: Frequência",
       "desc": "Como a frequência é medida, o que significam LPR/HPR para você, e os dois tipos de causas por trás de uma aula perdida.",
       "obj": "Entenda como a frequência é medida e separe as causas que você pode influenciar das que não pode.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "noQuiz": true,
       "sections": [
         {
@@ -1680,7 +1682,7 @@ const I18N={
       "title": "Construindo um Vínculo com Seus Alunos",
       "desc": "Bate-papo informal, feedback que realmente funciona, e como fazer cada aluno se sentir parte do grupo.",
       "obj": "Aprenda a construir um vínculo valioso com seus alunos que os faça querer voltar.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "💙 Por Que Isso Importa",
@@ -1753,7 +1755,7 @@ const I18N={
       "title": "Criando Aulas Inesquecíveis",
       "desc": "Material visual, demonstração antes da prática, verificação de compreensão, e um encerramento com expectativa.",
       "obj": "Aprenda os quatro hábitos que transformam uma aula comum em uma que os alunos não querem perder.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sortGame": true,
       "sections": [
         {
@@ -1804,7 +1806,7 @@ const I18N={
       "title": "Tarefas de Casa e Frequência",
       "desc": "Explicar, lembrar, destacar e revisar — os quatro hábitos de tarefas de casa que reforçam a frequência.",
       "obj": "Transforme a tarefa de casa de uma métrica em outra forma de fortalecer seu vínculo com os alunos e suas famílias.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "🎯 A Tarefa de Casa É Mais Que Uma Métrica",
@@ -1848,7 +1850,7 @@ const I18N={
       "title": "O Que Fazer Quando um Aluno Falta à Aula",
       "desc": "Como acompanhar o aluno e como falar com os pais com empatia.",
       "obj": "Saiba exatamente quais passos seguir — com o aluno e com a família dele — quando uma falta acontecer.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "🔁 Acompanhamento",
@@ -2036,7 +2038,7 @@ const I18N={
       "title": "Разбираемся в метрике: посещаемость",
       "desc": "Как измеряется посещаемость, что для тебя значат LPR/HPR и два типа причин пропуска занятия.",
       "obj": "Понять, как измеряется посещаемость, и отделить причины, на которые ты можешь повлиять, от тех, на которые не можешь.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "noQuiz": true,
       "sections": [
         {
@@ -2068,7 +2070,7 @@ const I18N={
       "title": "Выстраиваем контакт со своими учениками",
       "desc": "Непринуждённое общение, обратная связь, которая действительно работает, и как сделать так, чтобы каждый ученик чувствовал себя частью группы.",
       "obj": "Научиться выстраивать ценную связь с учениками, из-за которой им хочется возвращаться.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "💙 Почему это важно",
@@ -2141,7 +2143,7 @@ const I18N={
       "title": "Создаём незабываемые занятия",
       "desc": "Визуальные материалы, показ примера перед практикой, проверка понимания и завершение с интригой.",
       "obj": "Освоить четыре привычки, которые превращают обычное занятие в то, которое ученики не хотят пропускать.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sortGame": true,
       "sections": [
         {
@@ -2192,7 +2194,7 @@ const I18N={
       "title": "Домашние задания и посещаемость",
       "desc": "Объясняй, напоминай, отмечай и проверяй — четыре привычки с домашними заданиями, которые укрепляют посещаемость.",
       "obj": "Превратить домашнее задание из метрики в ещё один способ укрепить связь с учениками и их семьями.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "🎯 Домашнее задание — это больше, чем метрика",
@@ -2236,7 +2238,7 @@ const I18N={
       "title": "Что делать, когда ученик пропускает занятие",
       "desc": "Как связаться с учеником и как с эмпатией разговаривать с родителями.",
       "obj": "Точно знать, какие шаги предпринять — с учеником и с его семьёй — когда происходит пропуск.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "🔁 Следующие шаги",
@@ -2418,7 +2420,7 @@ const I18N={
     "chkDownload": "⬇️ PDF Olarak İndir"
   },
   "modules": [
-    {"id":1,"emoji":"📊","title":"Metriği Anlamak: Katılım","desc":"Katılım nasıl ölçülür, LPR/HPR senin için ne anlama gelir ve devamsızlığın arkasındaki iki neden türü.","obj":"Katılımın nasıl ölçüldüğünü anla ve etkileyebildiğin nedenleri etkileyemediklerinden ayır.","color":"#1D4FD8","noQuiz":true,
+    {"id":1,"emoji":"📊","title":"Metriği Anlamak: Katılım","desc":"Katılım nasıl ölçülür, LPR/HPR senin için ne anlama gelir ve devamsızlığın arkasındaki iki neden türü.","obj":"Katılımın nasıl ölçüldüğünü anla ve etkileyebildiğin nedenleri etkileyemediklerinden ayır.","color":"#D3FF5F","noQuiz":true,
      "sections":[
       {"t":"📐 Nasıl Ölçülüyor?","cards":[
         {"type":"text","b":"Öğrencileri (SS) katılım yüzdelerine göre üç seviyeye ayırıyoruz."},
@@ -2434,7 +2436,7 @@ const I18N={
       ]}
      ]},
 
-    {"id":2,"emoji":"🤝","title":"Öğrencilerinle Bağ Kurmak","desc":"Sohbet, gerçekten işe yarayan geri bildirim ve her öğrenciyi grubun bir parçası gibi hissettirmenin yolları.","obj":"Öğrencilerinin geri gelmek istemesini sağlayacak değerli bir bağ kurmayı öğren.","color":"#1D4FD8",
+    {"id":2,"emoji":"🤝","title":"Öğrencilerinle Bağ Kurmak","desc":"Sohbet, gerçekten işe yarayan geri bildirim ve her öğrenciyi grubun bir parçası gibi hissettirmenin yolları.","obj":"Öğrencilerinin geri gelmek istemesini sağlayacak değerli bir bağ kurmayı öğren.","color":"#D3FF5F",
      "sections":[
       {"t":"💙 Bu Neden Önemli","cards":[
         {"type":"text","b":"Kodland'de öğrencilerimiz zorunlu olmayan, müfredat dışı bir kurs alıyor. Okuldan farklı olarak, onları geri gelmeye zorlayan hiçbir şey yok. Bu yüzden eğitmenle ve grupla kurulan bağ hoş bir ekstra değil: geri gelme nedenleri budur. İşte bunu inşa etmek için sınıfta sahip olduğun anahtarlar ve gündelik fırsatlar."}
@@ -2486,7 +2488,7 @@ const I18N={
       ]}
      ]},
 
-    {"id":3,"emoji":"✨","title":"Unutulmaz Dersler Yaratmak","desc":"Görsel materyal, uygulamadan önce modelleme, anlaşılırlığı kontrol etme ve merak uyandırarak kapanış.","obj":"Sıradan bir dersi öğrencilerin kaçırmak istemediği bir derse dönüştüren dört alışkanlığı öğren.","color":"#1D4FD8","sortGame":true,
+    {"id":3,"emoji":"✨","title":"Unutulmaz Dersler Yaratmak","desc":"Görsel materyal, uygulamadan önce modelleme, anlaşılırlığı kontrol etme ve merak uyandırarak kapanış.","obj":"Sıradan bir dersi öğrencilerin kaçırmak istemediği bir derse dönüştüren dört alışkanlığı öğren.","color":"#D3FF5F","sortGame":true,
      "sections":[
       {"t":"🌟 Bir Dersi Unutulmaz Yapan Nedir","cards":[
         {"type":"text","b":"Unutulmaz bir ders, sıra dışı bir deneyimden gelir: dinleyen bir eğitmen, öğrencinin fikrinin önem taşıdığı bir uygulama, daha hızlı ilerleyenler için zorluklar ve daha fazla yardıma ihtiyaç duyanlar için destek, ve hataların yargılanmadığı — onlardan öğrenildiği bir ders."},
@@ -2515,7 +2517,7 @@ const I18N={
       ]}
      ]},
 
-    {"id":4,"emoji":"📝","title":"Ödev ve Katılım","desc":"Açıkla, hatırlat, öne çıkar ve gözden geçir — katılımı pekiştiren dört ödev alışkanlığı.","obj":"Ödevi bir metrikten öğrencilerle ve aileleriyle olan bağını güçlendirmenin bir yoluna dönüştür.","color":"#1D4FD8",
+    {"id":4,"emoji":"📝","title":"Ödev ve Katılım","desc":"Açıkla, hatırlat, öne çıkar ve gözden geçir — katılımı pekiştiren dört ödev alışkanlığı.","obj":"Ödevi bir metrikten öğrencilerle ve aileleriyle olan bağını güçlendirmenin bir yoluna dönüştür.","color":"#D3FF5F",
      "sections":[
       {"t":"🎯 Ödev Bir Metrikten Fazlasıdır","cards":[
         {"type":"text","b":"İyi ele alındığında ödev, bağı pekiştirir, sana geri bildirim için ikinci bir şans verir ve öğrencilere — ve ailelerine — ilerlemelerinin canlı ders dışında da önemli olduğunu gösterir."},
@@ -2538,7 +2540,7 @@ const I18N={
       ]}
      ]},
 
-    {"id":5,"emoji":"📞","title":"Bir Öğrenci Dersi Kaçırdığında Ne Yapmalı","desc":"Öğrenciyle nasıl takip edileceği ve ebeveynlerle empatiyle nasıl konuşulacağı.","obj":"Bir devamsızlık olduğunda — öğrenciyle ve aileleriyle — hangi adımları atacağını tam olarak bil.","color":"#1D4FD8",
+    {"id":5,"emoji":"📞","title":"Bir Öğrenci Dersi Kaçırdığında Ne Yapmalı","desc":"Öğrenciyle nasıl takip edileceği ve ebeveynlerle empatiyle nasıl konuşulacağı.","obj":"Bir devamsızlık olduğunda — öğrenciyle ve aileleriyle — hangi adımları atacağını tam olarak bil.","color":"#D3FF5F",
      "sections":[
       {"t":"🔁 Takip Et","cards":[
         {"type":"list","items":[
@@ -2719,7 +2721,7 @@ const I18N={
       "title": "Zrozumienie wskaźnika: frekwencja",
       "desc": "Jak mierzy się frekwencję, co oznaczają dla Ciebie LPR/HPR i dwa rodzaje przyczyn nieobecności na lekcji.",
       "obj": "Zrozum, jak mierzona jest frekwencja, i oddziel przyczyny, na które masz wpływ, od tych, na które nie masz.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "noQuiz": true,
       "sections": [
         {
@@ -2751,7 +2753,7 @@ const I18N={
       "title": "Budowanie więzi z uczniami",
       "desc": "Rozmowa towarzyska, informacja zwrotna, która naprawdę trafia, i jak sprawić, by każdy uczeń czuł się częścią grupy.",
       "obj": "Naucz się budować wartościową więź z uczniami, która sprawia, że chcą wracać.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "💙 Dlaczego to ważne",
@@ -2804,7 +2806,7 @@ const I18N={
               "Wykorzystuj pracę w parach lub małych grupach, gdy pozwala na to ćwiczenie",
               "Pamiętaj szczegóły między lekcjami — jeśli ktoś wspomniał o czymś w zeszłym tygodniu, zapytaj, jak poszło"
             ]},
-            {"type": "video", "vkey": "m2-participation", "h": "Zobacz przykład prawdziwej lekcji", "src": "https://drive.google.com/file/d/1-L7C70hKSGYI8QhkPpb7fvrhJG1-vchf/preview"}
+            {"type": "video", "vkey": "m2-participation", "native": true, "h": "Zobacz przykład prawdziwej lekcji", "src": "https://drive.google.com/file/d/1tDbulW8OqcPBwYQunfjXJqHvUV-hIPCp/preview"}
           ]
         },
         {
@@ -2824,7 +2826,7 @@ const I18N={
       "title": "Tworzenie niezapomnianych lekcji",
       "desc": "Materiał wizualny, modelowanie przed praktyką, sprawdzanie zrozumienia i zamykanie lekcji z wyczekiwaniem.",
       "obj": "Poznaj cztery nawyki, które zamieniają zwykłą lekcję w taką, której uczniowie nie chcą opuścić.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sortGame": true,
       "sections": [
         {
@@ -2864,7 +2866,7 @@ const I18N={
               "<strong>Roblox / Minecraft:</strong> „Następna lekcja to pierwszy raz, kiedy opublikujesz coś, co inni gracze naprawdę zobaczą. Szykuj się”"
             ]},
             {"type": "cute", "h": "Wskazówka", "b": "Dobre zakończenie to nie tylko „do zobaczenia następnym razem” — to zasianie ziarna czegoś, co uczeń sam chce zobaczyć ukończone."},
-            {"type": "video", "vkey": "m3-anticipation", "h": "Zobacz przykład prawdziwej lekcji", "src": "https://drive.google.com/file/d/119ytsWF3qk_Tp6qi1md4xbouEhWLGGz9/preview"}
+            {"type": "video", "vkey": "m3-anticipation", "native": true, "h": "Zobacz przykład prawdziwej lekcji", "src": "https://drive.google.com/file/d/1NouvO4RF2M3yZgmQ5cX_rcfzLZ6uFwi9/preview"}
           ]
         }
       ]
@@ -2875,7 +2877,7 @@ const I18N={
       "title": "Praca domowa a frekwencja",
       "desc": "Wyjaśnij, przypomnij, podkreśl i sprawdź — cztery nawyki związane z pracą domową, które wzmacniają frekwencję.",
       "obj": "Zamień pracę domową ze wskaźnika w kolejny sposób na wzmocnienie więzi z uczniami i ich rodzinami.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "🎯 Praca domowa to więcej niż wskaźnik",
@@ -2888,7 +2890,7 @@ const I18N={
           "t": "📣 Wyjaśnij pracę domową",
           "cards": [
             {"type": "text", "b": "Nie wspominaj o niej mimochodem na końcu lekcji. Wyjaśnij, co trzeba zrobić, a przede wszystkim <strong>dlaczego</strong> — jak to łączy się z tym, czego właśnie się nauczyli. Praca domowa bez jasnego celu jest pierwszą rzeczą, o której się zapomina."},
-            {"type": "video", "vkey": "m4-explain", "h": "Zobacz przykład prawdziwej lekcji", "src": "https://drive.google.com/file/d/1S07EkqEKsSDLTsrH2VvbpQS6uVyTnRKd/preview"}
+            {"type": "video", "vkey": "m4-explain", "native": true, "h": "Zobacz przykład prawdziwej lekcji", "src": "https://drive.google.com/file/d/1T1uVM85sxNgWa3LBTLA-snFA2n6XODnM/preview"}
           ]
         },
         {
@@ -2919,7 +2921,7 @@ const I18N={
       "title": "Co robić, gdy uczeń opuszcza lekcję",
       "desc": "Jak śledzić sytuację ucznia i jak rozmawiać z rodzicami z empatią.",
       "obj": "Poznaj dokładnie kroki, jakie należy podjąć — wobec ucznia i jego rodziny — gdy dojdzie do nieobecności.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "🔁 Śledzenie sytuacji",
@@ -3107,7 +3109,7 @@ const I18N={
       "title": "فهم المؤشر: الحضور",
       "desc": "كيف يُقاس الحضور، وماذا يعني LPR/HPR بالنسبة لك، والنوعان من الأسباب وراء غياب الطالب عن الحصة.",
       "obj": "افهم كيف يُقاس الحضور، وميّز بين الأسباب التي يمكنك التأثير فيها وتلك التي لا يمكنك التأثير فيها.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "noQuiz": true,
       "sections": [
         {
@@ -3139,7 +3141,7 @@ const I18N={
       "title": "بناء علاقة وثيقة مع طلابك",
       "desc": "الحديث الودي، والتغذية الراجعة الفعّالة، وكيفية جعل كل طالب يشعر بأنه جزء من المجموعة.",
       "obj": "تعلّم كيف تبني علاقة ذات قيمة مع طلابك تجعلهم يرغبون في العودة.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "💙 لماذا يهم هذا الأمر",
@@ -3212,7 +3214,7 @@ const I18N={
       "title": "صنع حصص لا تُنسى",
       "desc": "المواد البصرية، والنمذجة قبل التطبيق، والتحقق من الفهم، والختام بإثارة الترقّب.",
       "obj": "تعرّف على العادات الأربع التي تحوّل الحصة العادية إلى حصة لا يريد الطلاب تفويتها.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sortGame": true,
       "sections": [
         {
@@ -3263,7 +3265,7 @@ const I18N={
       "title": "الواجبات المنزلية والحضور",
       "desc": "الشرح، والتذكير، وإبراز الإنجاز، والمراجعة — العادات الأربع للواجبات المنزلية التي تعزز الحضور.",
       "obj": "حوّل الواجب المنزلي من مجرد مؤشر إلى وسيلة أخرى لتعزيز علاقتك بطلابك وأسرهم.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "🎯 الواجب المنزلي أكثر من مجرد مؤشر",
@@ -3307,7 +3309,7 @@ const I18N={
       "title": "ما ينبغي فعله عندما يغيب الطالب عن الحصة",
       "desc": "كيفية متابعة الطالب وكيفية التحدث مع أولياء الأمور بتعاطف.",
       "obj": "اعرف بالضبط الخطوات التي يجب اتخاذها — مع الطالب ومع أسرته — عند حدوث غياب.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "🔁 المتابعة",
@@ -3495,7 +3497,7 @@ const I18N={
       "title": "Memahami Metrik: Kehadiran",
       "desc": "Bagaimana kehadiran diukur, apa arti LPR/HPR bagimu, dan dua jenis penyebab di balik kelas yang terlewat.",
       "obj": "Memahami cara kehadiran diukur dan memisahkan penyebab yang bisa kamu pengaruhi dari yang tidak bisa.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "noQuiz": true,
       "sections": [
         {
@@ -3527,7 +3529,7 @@ const I18N={
       "title": "Membangun Kedekatan dengan Siswamu",
       "desc": "Obrolan ringan, feedback yang benar-benar berdampak, dan cara membuat setiap siswa merasa jadi bagian dari kelompok.",
       "obj": "Pelajari cara membangun kedekatan berharga dengan siswamu yang membuat mereka ingin kembali.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "💙 Kenapa Ini Penting",
@@ -3600,7 +3602,7 @@ const I18N={
       "title": "Menciptakan Kelas yang Tak Terlupakan",
       "desc": "Materi visual, memberi contoh sebelum praktik, mengecek pemahaman, dan menutup kelas dengan rasa penasaran.",
       "obj": "Pelajari empat kebiasaan yang mengubah kelas biasa menjadi kelas yang tidak ingin dilewatkan siswa.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sortGame": true,
       "sections": [
         {
@@ -3651,7 +3653,7 @@ const I18N={
       "title": "Tugas Rumah dan Kehadiran",
       "desc": "Jelaskan, ingatkan, soroti, dan tinjau — empat kebiasaan tugas rumah yang memperkuat kehadiran.",
       "obj": "Ubah tugas rumah dari sekadar metrik menjadi cara lain untuk memperkuat kedekatanmu dengan siswa dan keluarganya.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "🎯 Tugas Rumah Lebih dari Sekadar Metrik",
@@ -3695,7 +3697,7 @@ const I18N={
       "title": "Apa yang Harus Dilakukan Saat Siswa Melewatkan Kelas",
       "desc": "Cara menindaklanjuti siswa dan cara berbicara dengan orang tua dengan penuh empati.",
       "obj": "Ketahui dengan tepat langkah-langkah yang harus diambil — dengan siswa dan dengan keluarganya — saat ketidakhadiran terjadi.",
-      "color": "#1D4FD8",
+      "color": "#D3FF5F",
       "sections": [
         {
           "t": "🔁 Tindak Lanjut",
@@ -3816,6 +3818,7 @@ function setLang(lang){
 function getProgress(){ try{ return JSON.parse(localStorage.getItem(PROG_KEY)||'{}'); }catch(e){ return {}; } }
 function saveProgress(p){ localStorage.setItem(PROG_KEY, JSON.stringify(p)); }
 function isPassed(id){ if(id===1) return true; const p=getProgress(); return p[id]?.passed===true; }
+function isDoneColor(id){ const p=getProgress(); return p[id]?.passed===true; }
 function getScore(id){ const p=getProgress(); return p[id]?.score||0; }
 function setResult(id, pct, passed){
   const p=getProgress(); const prev=p[id]||{};
@@ -3835,12 +3838,13 @@ function renderHome(){
     const prev = i===0 || prevNoQuiz ? true : isPassed(MODULES[i-1].id);
     const isDone = isPassed(m.id);
     const locked = !prev;
+    const doneColor=isDoneColor(m.id);
     const step=document.createElement('div'); step.className='rstep';
     const node=document.createElement('div');
-    node.className='rnode'+(locked?' locked':(m.noQuiz?' reading':''));
+    node.className='rnode'+(locked?' locked':(doneColor?'':' pending'));
     node.textContent=m.id;
     const el=document.createElement('div');
-    el.className='mc rcard'+(locked?' locked':'')+(isDone?' done':'');
+    el.className='mc rcard'+(locked?' locked':(doneColor?' done':' pending'));
     let badge, stag;
     if(m.noQuiz){
       badge=`<span class="badge br">${T('badgeReading')}</span>`;
@@ -3850,7 +3854,7 @@ function renderHome(){
       badge=isDone?`<span class="badge bd">${T('badgeCompleted')}</span>`:locked?`<span class="badge bl">${T('badgeLocked')}</span>`:`<span class="badge bs">${T('badgeStart')}</span>`;
       stag=isDone?`<span class="stag">${T('scoreLabel')} <b>${pct}%</b></span>`:locked?`<span class="stag">${T('completeModuleN',{n:m.id-1})}</span>`:`<span class="stag">${T('hasACheck')}</span>`;
     }
-    el.innerHTML=`<div class="mc-stripe" style="background:${m.color}"></div>
+    el.innerHTML=`<div class="mc-stripe" style="background:${doneColor?'var(--green)':'var(--blue)'}"></div>
     <div class="mc-body">
       <div class="mc-top"><div class="mc-num">${T('moduleN',{n:m.id})}</div><div class="mc-em">${m.emoji}</div></div>
       <div class="mc-title">${m.title}</div>
@@ -3865,13 +3869,14 @@ function renderHome(){
   // Final exam step
   const allDone=MODULES.every(m=>isPassed(m.id));
   const examPassed=isPassed('final');
+  const examDoneColor=isDoneColor('final');
   const examStep=document.createElement('div'); examStep.className='rstep';
-  const examNode=document.createElement('div'); examNode.className='rnode'+(allDone?' coral':' locked'); examNode.textContent='🎓';
+  const examNode=document.createElement('div'); examNode.className='rnode'+(allDone?(examDoneColor?'':' pending'):' locked'); examNode.textContent='🎓';
   const examEl=document.createElement('div');
-  examEl.className='mc rcard'+(allDone?(examPassed?' done':''):' locked');
+  examEl.className='mc rcard'+(allDone?(examDoneColor?' done':' pending'):' locked');
   const examBadge=examPassed?`<span class="badge bd">${T('badgeCompleted')}</span>`:allDone?`<span class="badge bs">${T('openForm')}</span>`:`<span class="badge bl">${T('badgeLocked')}</span>`;
   const examStag=examPassed?`<span class="stag">${T('certifiedCheck')}</span>`:allDone?`<span class="stag">${T('opensInForms')}</span>`:`<span class="stag">${T('completeAllModules')}</span>`;
-  examEl.innerHTML=`<div class="mc-stripe" style="background:linear-gradient(90deg,var(--blue),var(--coral))"></div>
+  examEl.innerHTML=`<div class="mc-stripe" style="background:${examDoneColor?'var(--green)':'var(--blue)'}"></div>
   <div class="mc-body">
     <div class="mc-top"><div class="mc-num">${T('finalStage')}</div><div class="mc-em">🎓</div></div>
     <div class="mc-title">${T('finalExam')}</div>
@@ -3883,11 +3888,12 @@ function renderHome(){
   g.appendChild(examStep);
 
   // Checklist step
+  const chkDoneColor=isDoneColor('checklist');
   const chkStep=document.createElement('div'); chkStep.className='rstep';
-  const chkNode=document.createElement('div'); chkNode.className='rnode'+(examPassed?'':' locked'); chkNode.textContent='✅';
+  const chkNode=document.createElement('div'); chkNode.className='rnode'+(examPassed?(chkDoneColor?'':' pending'):' locked'); chkNode.textContent='✅';
   const chkEl=document.createElement('div');
-  chkEl.className='mc rcard'+(examPassed?' done':' locked');
-  chkEl.innerHTML=`<div class="mc-stripe" style="background:var(--coral)"></div>
+  chkEl.className='mc rcard'+(examPassed?(chkDoneColor?' done':' pending'):' locked');
+  chkEl.innerHTML=`<div class="mc-stripe" style="background:${chkDoneColor?'var(--green)':'var(--blue)'}"></div>
   <div class="mc-body">
     <div class="mc-top"><div class="mc-num">${T('bonus')}</div><div class="mc-em">✅</div></div>
     <div class="mc-title">${T('attendanceChecklist')}</div>
@@ -3986,9 +3992,19 @@ function startQuiz(id){
   renderQ(); showScreen('screen-quiz');
   window.scrollTo(0,0);
 }
-const FINAL_EXAM_FORM_URL='https://forms.gle/mbyMGKXgzcm9FygK6';
+const FINAL_EXAM_FORM_URLS={
+  en:'https://forms.gle/8Zha9jj2y7oqbdFT6',
+  es:'https://forms.gle/s3no1qQvzgyVwyU57',
+  id:'https://forms.gle/wFNBfwVhod3FjUV9A',
+  pt:'https://forms.gle/G2wCCZkbdomYKNR79',
+  ru:'https://forms.gle/sLwH7Y8SVjn93EUs8',
+  ar:'https://forms.gle/QPaoRtxgqz4px9sb7',
+  it:'https://forms.gle/Y9TGUzUoQKYVwrbZ6',
+  tr:'https://forms.gle/5eK9udPZaCtZujkX7',
+  pl:'https://forms.gle/TuhkJCfZg89ATtBP7',
+};
 function startExam(){
-  window.open(FINAL_EXAM_FORM_URL,'_blank');
+  window.open(FINAL_EXAM_FORM_URLS[LANG]||FINAL_EXAM_FORM_URLS.en,'_blank');
   setResult('final',100,true);
   showComplete();
 }
@@ -4133,6 +4149,7 @@ function showComplete(){
 
 // ─── CHECKLIST ─────────────────────────────────────────────────────────────
 function showChecklist(){
+  setResult('checklist',100,true);
   const el=document.getElementById('chkList'); el.innerHTML='';
   CHECKLIST.forEach((txt,i)=>{
     const d=document.createElement('div'); d.className='chk-item';
