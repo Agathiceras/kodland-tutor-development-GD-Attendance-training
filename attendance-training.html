@@ -80,6 +80,7 @@ body{background:var(--bg-gradient);color:var(--text);font-family:'Inter',sans-se
 .rnode.pending{background:var(--blue);color:#fff}
 .rcard{flex:1;min-width:0}
 .mc.pending{border-color:var(--blue)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
 @media(max-width:600px){.route::before{left:23px}.rnode{width:46px;height:46px;font-size:17px}.rstep{gap:14px}}
 .mc{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s;box-shadow:var(--shadow)}
 .mc:hover:not(.locked){transform:translateY(-4px);box-shadow:var(--shadow-h)}
@@ -162,6 +163,23 @@ body{background:var(--bg-gradient);color:var(--text);font-family:'Inter',sans-se
 .sort-zone.correct-choice{background:var(--ok-bg)!important;border-color:var(--ok-b)!important;color:var(--ok-t)!important}
 .sort-zone.wrong-choice{background:var(--no-bg)!important;border-color:var(--no-b)!important;color:var(--no-t)!important;opacity:.7}
 @media(max-width:560px){.sort-zones{grid-template-columns:1fr}}
+/* LESSON MIRROR DIAGRAM */
+.lmv2-wrap,.lmv2-wrap *{box-sizing:border-box}
+.lmv2-wrap{position:relative;background:#cfe3ff;border-radius:18px;padding:26px 18px 32px;font-family:'Baloo 2','Segoe UI',system-ui,sans-serif;overflow:hidden;margin-bottom:11px}
+.lmv2-bg{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.lmv2-row{position:relative;z-index:1;display:flex;align-items:stretch;justify-content:center;gap:12px;flex-wrap:nowrap}
+.lmv2-card{background:#ffffff;border-radius:18px;box-shadow:0 14px 28px rgba(20,40,100,.14);padding:16px 14px;width:0;flex:1 1 0;min-width:0}
+.lmv2-title{font-size:15px;font-weight:700;color:#0a0a1a;text-align:center;margin-bottom:12px;white-space:nowrap}
+.lmv2-item{display:flex;gap:7px;align-items:baseline}
+.lmv2-num{font-size:14px;font-weight:800;color:#0a0a1a;min-width:14px;flex-shrink:0}
+.lmv2-text{font-size:11.5px;font-weight:600;color:#1c2531;line-height:1.3}
+.lmv2-arrow{width:14px;margin:2px 0 2px 1px}
+.lmv2-arrow svg{width:14px;height:16px;display:block}
+.lmv2-center{flex:0 0 auto;align-self:center;width:70px;height:70px;background:#0a0530;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 14px 28px rgba(10,10,50,.22)}
+.lmv2-center svg{width:30px;height:30px}
+.lmv2-label{margin-top:5px;font-size:8px;font-weight:800;letter-spacing:1.5px;color:#90c2ff}
+.lmv2-caption{position:relative;z-index:1;text-align:center;font-size:13px;font-style:italic;color:#12141f;margin-top:18px;padding:0 6px;line-height:1.5}
+@media(max-width:480px){.lmv2-row{flex-direction:column;align-items:stretch;flex-wrap:wrap}.lmv2-card{width:100%}.lmv2-center{order:2;width:64px;height:64px}}
 /* FEEDBACK FLOW DIAGRAM */
 .flow{display:flex;align-items:stretch;gap:8px;margin-bottom:14px;flex-wrap:wrap}
 .flow-step{flex:1;min-width:190px;border-radius:var(--r);padding:18px 19px;box-shadow:var(--shadow);border:2px solid}
@@ -314,7 +332,7 @@ html[dir="rtl"] .mc-foot,html[dir="rtl"] .nav-r{flex-direction:row-reverse}
   </nav>
   <div class="msec">
     <div class="slbl" data-i18n="learningPath">Your learning path</div>
-    <div class="route" id="mgrid"></div>
+    <div class="grid" id="mgrid"></div>
   </div>
 </div>
 
@@ -446,7 +464,7 @@ html[dir="rtl"] .mc-foot,html[dir="rtl"] .nav-r{flex-direction:row-reverse}
 
 <script>
 // ─── DATA ──────────────────────────────────────────────────────────────────
-const TOTAL=5;
+const TOTAL=6;
 let currentModule=null, quizData=[], qi=0, score=0;
 const PROG_KEY='kl-att-progress';
 const LANG_KEY='kl-att-lang';
@@ -459,6 +477,7 @@ let MODULES=[
     {type:'text',b:'We classify students (SS) into three levels based on their attendance percentage.'},
     {type:'table',h:'Attendance levels',head:['Level','Range'],rows:[['🟢 High Presence','≥ 75%'],['🟠 Medium Presence (Risk)','50% – 74.99%'],['❗ Low Presence (Alert)','&lt; 50%']]},
     {type:'text',h:'From the tutor\'s perspective',b:'Two indicators sum up your performance on this metric:<br><br><strong>LPR (Low Presence Rate):</strong> % of your student cases with attendance below 50%.<br><strong>HPR (High Presence Rate):</strong> % of your student cases with attendance at or above 75%.'},
+    {type:'text',b:'Attendance data is calculated based on the attendance record automatically captured by the classroom when a student joins the class. Attendance is confirmed once the student attends more than 50% of the lesson. It is not based on the attendance records entered in BO.'},
   ]},
   {t:'🔍 What Causes a Student to Miss Class?',cards:[
     {type:'twocol',left:{h:'🌦️ External (outside your control)',items:['Vacations','Illness','Family issues','National holidays']},right:{h:'🎯 Internal (you can influence these)',items:['They\'re bored in class','They don\'t feel heard','They feel they\'re “not good” at this','They\'re confused and lost']}},
@@ -469,7 +488,32 @@ let MODULES=[
   ]},
  ]},
 
-{id:2,emoji:'🤝',title:'Building a Bond With Your Students',desc:'Small talk, feedback that actually lands, and how to make every student feel like part of the group.',obj:'Learn how to build a valuable bond with your students that makes them want to come back.',color:'#D3FF5F',
+{id:2,emoji:'🧭',title:'Lesson Structure & Attendance',desc:'Why a consistent lesson routine is one of the strongest attendance levers, and the nine phases that make up every Kodland lesson.',obj:'Understand why a consistent lesson structure drives attendance, and learn the nine phases that make up a Kodland lesson.',color:'#D3FF5F',
+ sections:[
+  {t:'💡 Why This Matters',cards:[
+    {type:'text',b:'Something correlates strongly with attendance: keeping a consistent routine and structure in your lessons. Consistency is the point. Once a student learns your rhythm, they stop spending energy figuring out “what happens now?” and spend it on learning instead. Run the same structure every time until it\'s second nature — for you and for them. A predictable lesson feels like a safe lesson, and a safe lesson is one a student wants to come back to.'},
+    {type:'text',b:'Here\'s how a Kodland lesson is structured, phase by phase, and how keeping that order intact protects your attendance numbers.'},
+  ]},
+  {t:'🌅 The Beginning: Four Phases',cards:[
+    {type:'text',h:'1 · Warm-Up — activate energy & focus',b:'Open with something light that switches the student\'s brain into “lesson mode”: a quick question, a tiny challenge, a cool design spotted during the week. The goal is energy and attention, not assessment. It signals “we\'re starting now” and pulls a distracted kid into the session. A weak opening is often the first moment a student mentally checks out — and a student who checks out today is more likely to skip next time.'},
+    {type:'text',h:'2 · Previous Lesson Revision — recall & consolidate',b:'Briefly revisit what was learned last time. Retrieval — making the student recall rather than re-hearing — is one of the strongest memory tools there is. A two-minute “what makes a strong focal point?” does more than re-explaining ever could. When students feel they\'re keeping up and actually remembering, they feel competent — and competence is one of the biggest reasons a student wants to return.'},
+    {type:'text',h:'3 · HW Check — review homework together',b:'Go through the homework with the student — in this course, that means looking at a design they made. This is where you catch misunderstandings, praise effort, and show that homework actually matters. It\'s also one of the two key feedback moments of the lesson: don\'t settle for “nice poster!” — say specifically what works and what to push further. Skipping the check teaches kids that homework is optional, and it undercuts everything the Homework module already covers about why that check matters for attendance.'},
+    {type:'text',h:'4 · Lesson Goal — set clear objectives',b:'State plainly what today is about: “today we\'ll design a poster with one clear focal point.” A clear goal gives the lesson direction and gives the student something concrete to aim for. A student who doesn\'t know what today is “for” disengages quickly — and disengagement is one of the internal causes behind a missed class.'},
+  ]},
+  {t:'🎨 The Middle: Theory & Practice',cards:[
+    {type:'text',h:'5 · Theory & Practice — the heart of the lesson',b:'Between the lesson goal and the closing phases sits the longest stage, where new material is taught and immediately used. Keep theory in small chunks — one concept, then hands-on work with it — and model first: demonstrate the technique on your screen before students try it on theirs. In a design course, the practice stage is where students actually create, so protect that time fiercely; a lesson where kids only watched you design/coding is a lesson where nobody designed/coding. This is also the part of the lesson students look forward to most — protect it, and you protect the reason they show up.'},
+  ]},
+  {t:'🏁 The End: The Mirror',cards:[
+    {type:'text',b:'The closing four phases echo the opening ones in reverse — the lesson ends the way it began, giving students a satisfying sense of closure and rhythm. This “circular” shape is what makes a lesson feel complete rather than just stopping when time runs out, and a lesson that feels complete is one a student leaves without loose ends pulling them away.'},
+    {type:'text',h:'6 · Lesson Summary — tutor + student based',b:'Recap what was covered — but don\'t just tell them. Have the student summarize in their own words too. Their summary reveals what actually landed and doubles as a second retrieval moment.'},
+    {type:'text',h:'7 · HW Assignment — clear instructions',b:'Assign homework with crystal-clear instructions on what to do and how. Vague homework is homework that won\'t get done. This pairs with the HW Check that opened the lesson — together they form the full loop the Homework module is built on.'},
+    {type:'text',h:'8 · Next Lesson Preview — build curiosity',b:'Tease what\'s coming next: “Next time, we\'ll make our character move just like in real life!” This is the same anticipation hook already covered in the Unforgettable Classes module — closing without one throws away a free attendance win every single class.'},
+    {type:'text',h:'9 · Wrap-Up — close with energy',b:'End on a high: celebrate what the student created today, acknowledge their effort, and send them off feeling good. The last 30 seconds shape how they remember the whole lesson — and that memory is what they\'re weighing, consciously or not, when deciding whether to show up next time.'},
+    {type:'mirror',beginTitle:'The Beginning',endTitle:'The End',mirrorLabel:'MIRROR',beginItems:[{n:1,label:'Warm-Up'},{n:2,label:'Previous Lesson Revision'},{n:3,label:'Homework Check'},{n:4,label:'Lesson Goal'}],endItems:[{n:9,label:'Wrap-Up'},{n:8,label:'Next Lesson Preview'},{n:7,label:'Homework Assignment'},{n:6,label:'Lesson Summary'}],caption:'The lesson ends exactly as it began — giving students a sense of closure, continuity, and rhythm.'},
+  ]},
+ ]},
+
+{id:3,emoji:'🤝',title:'Building a Bond With Your Students',desc:'Small talk, feedback that actually lands, and how to make every student feel like part of the group.',obj:'Learn how to build a valuable bond with your students that makes them want to come back.',color:'#D3FF5F',
  sections:[
   {t:'💙 Why This Matters',cards:[
     {type:'text',b:'At Kodland, our students take an extracurricular course — it\'s not mandatory. Unlike school, nothing forces them to come back. That\'s why the bond with the tutor and the group isn\'t a nice extra: it\'s the reason they return. Here are the keys and everyday opportunities you have in class to build it.'},
@@ -521,7 +565,7 @@ let MODULES=[
   ]},
  ]},
 
-{id:3,emoji:'✨',title:'Creating Unforgettable Classes',desc:'Visual material, modeling before practice, checking for understanding, and closing with anticipation.',obj:'Learn the four habits that turn an ordinary class into one students don\'t want to miss.',color:'#D3FF5F',sortGame:true,
+{id:4,emoji:'✨',title:'Creating Unforgettable Classes',desc:'Visual material, modeling before practice, checking for understanding, and closing with anticipation.',obj:'Learn the four habits that turn an ordinary class into one students don\'t want to miss.',color:'#D3FF5F',sortGame:true,
  sections:[
   {t:'🌟 What Makes a Class Unforgettable',cards:[
     {type:'text',b:'An unforgettable class comes from an experience outside the ordinary: a tutor who listens, a practice where the student\'s opinion matters, challenges for those moving faster and support for those who need more help, and a class where mistakes aren\'t judged — they\'re learned from.'},
@@ -550,7 +594,7 @@ let MODULES=[
   ]},
  ]},
 
-{id:4,emoji:'📝',title:'Homework and Attendance',desc:'Explain, remind, highlight, and review — the four homework habits that reinforce attendance.',obj:'Turn homework from a metric into another way to strengthen your bond with students and their families.',color:'#D3FF5F',
+{id:5,emoji:'📝',title:'Homework and Attendance',desc:'Explain, remind, highlight, and review — the four homework habits that reinforce attendance.',obj:'Turn homework from a metric into another way to strengthen your bond with students and their families.',color:'#D3FF5F',
  sections:[
   {t:'🎯 Homework Is More Than a Metric',cards:[
     {type:'text',b:'Handled well, homework reinforces the bond, gives you a second chance at feedback, and shows students — and their parents — that their progress matters outside the live class.'},
@@ -573,7 +617,7 @@ let MODULES=[
   ]},
  ]},
 
-{id:5,emoji:'📞',title:'What to Do When a Student Misses Class',desc:'How to follow up with the student and how to talk to parents with empathy.',obj:'Know exactly what steps to take — with the student and with their family — when an absence happens.',color:'#D3FF5F',
+{id:6,emoji:'📞',title:'What to Do When a Student Misses Class',desc:'How to follow up with the student and how to talk to parents with empathy.',obj:'Know exactly what steps to take — with the student and with their family — when an absence happens.',color:'#D3FF5F',
  sections:[
   {t:'🔁 Follow Up',cards:[
     {type:'list',items:[
@@ -625,21 +669,23 @@ let QUIZ={
  {q:'What does LPR measure, from a tutor\'s perspective?',opts:['The % of your student cases with attendance below 50%','Your students\' average grade','How many classes you taught this month'],c:0,fb:'LPR (Low Presence Rate) is the share of your student cases falling below 50% attendance.'},
 ],
 2:[
+ {q:'You start class immediately with "open your file from last week" — no greeting, no warm-up. A student who was distracted before joining barely engages for the first ten minutes. What would have helped?',opts:['Nothing — warm-ups aren\'t necessary once students are past a certain age.','A short Warm-Up — a light question or tiny challenge that switches their brain into "lesson mode" before diving into content.','Skipping straight to the Lesson Goal so they know what\'s expected right away.'],c:1,fb:'A weak opening is often the first moment a student mentally checks out — a warm-up pulls a distracted kid into the session before content starts.'},
+ {q:'Instead of asking students to recall what they learned last class, a tutor just re-explains everything from scratch every time. What\'s the risk?',opts:['Nothing — repetition never hurts.','Students never practice retrieval — one of the strongest memory tools — so material takes longer to stick and they feel less competent.','It saves time in the long run, so it\'s worth doing.'],c:1,fb:'Retrieval — making the student recall rather than re-hearing — does more for memory than re-explaining ever could, and it builds the competence that makes a student want to return.'},
+ {q:'A student submitted a design for homework. The tutor says "nice poster!" and moves on. What\'s missing?',opts:['Nothing — quick positive feedback keeps momentum going.','Specific feedback naming what worked and what to push further — vague praise doesn\'t show the student homework actually matters.','The tutor should have given a numeric grade instead of a comment.'],c:1,fb:'Specific feedback is one of the two key feedback moments of the lesson — skipping it teaches kids that homework is optional.'},
+ {q:'Class ends right when time runs out — no recap, no hint of what\'s coming, no acknowledgment of the student\'s effort. What\'s most likely lost?',opts:['Nothing — as long as the content was covered, the ending doesn\'t matter.','The chance to build anticipation and end on a high note — the last impression is what a student weighs when deciding whether to show up next time.','Only the homework assignment, which can be sent later by message.'],c:1,fb:'The end mirrors the beginning — closing without anticipation and a strong wrap-up throws away a free attendance win every single class.'},
+],
+3:[
  {q:'You join the call and a student\'s camera is on, but they\'re just staring at their desk, not typing anything in chat. How do you start the class?',opts:['Hey! I see you\'re here — before we dive in, how was your week? Anything fun happen?','Let\'s get started — open your project file from last week.','OMG hi!! You look sooo excited today, I can just tell you\'re going to make something AMAZING!!'],c:0,fb:'A brief, genuine check-in helps a quiet student feel safe before diving into content — without over-the-top energy or skipping the moment entirely.'},
  {q:'A student drew their first character but you noticed they didn\'t follow your instructions. How do you give feedback?',opts:['You didn\'t follow the instructions — you were supposed to add a background and you didn\'t. Let\'s fix that first.','I love how you gave your character such an expressive face — that took real thought. I noticed the background wasn\'t added yet; was that a choice, or did you want to add it later?','Wow, this is amazing! You\'re such a talented artist!'],c:1,fb:'Highlighting something specific and asking with curiosity keeps the student\'s agency intact — better than empty praise or a correction with no acknowledgment.'},
  {q:'During a group activity, one student hasn\'t spoken or reacted at all, while two others are actively chatting back and forth. What do you do?',opts:['Nothing — if they wanted to participate, they would unmute or type.','Call them out publicly: “Why aren\'t you participating like everyone else?”','Quietly invite them in a low-pressure way: “I\'d love to hear your idea too, whenever you\'re ready — chat works if that\'s easier.”'],c:2,fb:'A low-pressure, private invitation respects different comfort levels without ignoring the student or putting them on the spot.'},
  {q:'Two students finish the independent challenge in half the time, while three others are still stuck on step one. What\'s your move?',opts:['Move on to the next activity since most students are close to done.','Offer the fast students an extension task, then rotate your attention to check in with each struggling student individually.','Give the fast students a much harder bonus challenge and spend the rest of class solely with them since they\'re “more advanced”.'],c:1,fb:'Rotating your attention keeps both groups engaged — nobody gets ignored, and nobody becomes the "permanent helper."'},
 ],
-3:[
- {q:'What should happen right before students practice something new?',opts:['Nothing — they figure it out on their own','The tutor models the process step by step','A written test'],c:1,fb:'Modeling first gives students a clear map before they try it themselves.'},
- {q:'Why build anticipation for the next class?',opts:['It gives students a reason to come back','It fills time at the end of class','It\'s required by the platform'],c:0,fb:'A strong hook at the end is often the real reason a student shows up next time.'},
-],
-4:[
+5:[
  {q:'It\'s the last two minutes of class and you remember you need to assign homework. What do you do?',opts:['Quickly type the homework link in chat and say “okay do this for next class, bye!”','Take 30 seconds to explain what to do and why it connects to what we just learned today.','Explain in detail every single technical rule of the assignment, reading each requirement aloud.'],c:1,fb:'A clear purpose is what makes homework worth remembering — not a rushed mention or a wall of rules.'},
  {q:'You have a large group and only time to look at homework quickly before starting the new lesson. Most submitted, a few didn\'t. What do you do?',opts:['Highlight something collective for everyone who submitted: “90% of you brought your homework — that shows real commitment.”','Call out the names of the students who didn\'t submit so they feel motivated to do it next time.','Only showcase the single best project as the example everyone should aim for.'],c:0,fb:'The goal is motivation, not comparison or shame — a collective shout-out includes everyone who showed up.'},
  {q:'You\'re reviewing submitted homework and one student\'s project is technically correct but nothing special. What do you write?',opts:['Just mark it “done” with no comment — it met the requirements, that\'s enough.','Leave a long list of everything that could be improved, no positives mentioned.','Leave a short, specific comment noting one thing they did well and one gentle suggestion — something the parent could also read.'],c:2,fb:'Reviewing homework is a feedback opportunity, not just a checkbox — it\'s also a chance to reinforce the bond with students and parents.'},
 ],
-5:[
+6:[
  {q:'You\'ve called and texted a parent twice this week about their child missing two classes in a row, and haven\'t heard back yet. What\'s the best next step?',opts:['Stop reaching out — you\'ve already tried twice, it\'s now up to the parent.','Escalate immediately by asking your TL to remove the student from your group since they\'re clearly not interested.','Send one more warm, low-pressure message and share the recording/homework recap so the student doesn\'t fall further behind while you wait to hear back.'],c:2,fb:'A caring check-in is always the first step — persistent but warm, keeping the door open instead of giving up or escalating too soon.'},
  {q:'A student who missed last class finally joins today. How do you start the class with them?',opts:['Privately or gently acknowledge you noticed they were away, ask how they\'re doing, and remind them where to find the recording and homework.','Don\'t mention the absence at all, just move on with today\'s lesson as if nothing happened.','Point out in front of the group that they missed class and ask why.'],c:0,fb:'Showing a student you noticed their absence — without putting them on the spot — helps them feel seen instead of behind.'},
  {q:'A parent messages you directly asking if their child can get a free extra class to catch up after missing several sessions. What do you do?',opts:['Agree right away and schedule it yourself since it\'s a nice gesture for the family.','First, contact your TL about the situation and get approval for an extra class. Then, thank the parent for reaching out and let them know that you’re happy to hear that the student is interested in catching up. If the extra class is approved, offer to schedule it with the student.','Tell the parent it\'s not possible and there\'s nothing that can be done.'],c:1,fb:'TL approval always comes first — but that doesn\'t mean the parent gets a cold or delayed response; you can be warm while still following the right process.'},
@@ -698,7 +744,7 @@ const UI_EN={
   moduleN:'Module {n}',
   finalStage:'Final Stage',
   finalExam:'Final Exam',
-  finalExamDesc:'Complete the official 12-question exam (Google Form) covering Modules 2–5 to get certified.',
+  finalExamDesc:'Complete the official 12-question exam (Google Form) covering Modules 2–6 to get certified.',
   openForm:'Open Form',
   certifiedCheck:'Certified ✓',
   opensInForms:'Opens in Google Forms',
@@ -798,7 +844,7 @@ const I18N={
     "moduleN": "Módulo {n}",
     "finalStage": "Etapa Final",
     "finalExam": "Examen Final",
-    "finalExamDesc": "Completa el examen oficial de 12 preguntas (Formulario de Google) que cubre los Módulos 2 al 5 para certificarte.",
+    "finalExamDesc": "Completa el examen oficial de 12 preguntas (Formulario de Google) que cubre los Módulos 2 a 6 para certificarte.",
     "openForm": "Abrir Formulario",
     "certifiedCheck": "Certificado ✓",
     "opensInForms": "Se abre en Google Forms",
@@ -882,7 +928,8 @@ const I18N={
           "cards": [
             {"type": "text", "b": "Clasificamos a los estudiantes (SS) en tres niveles según su porcentaje de asistencia."},
             {"type": "table", "h": "Niveles de asistencia", "head": ["Nivel", "Rango"], "rows": [["🟢 Presencia Alta", "≥ 75%"], ["🟠 Presencia Media (Riesgo)", "50% – 74.99%"], ["❗ Presencia Baja (Alerta)", "&lt; 50%"]]},
-            {"type": "text", "h": "Desde la perspectiva del tutor", "b": "Dos indicadores resumen tu desempeño en esta métrica:<br><br><strong>LPR (Low Presence Rate):</strong> % de tus casos de estudiantes con asistencia por debajo de 50%.<br><strong>HPR (High Presence Rate):</strong> % de tus casos de estudiantes con asistencia igual o superior a 75%."}
+            {"type": "text", "h": "Desde la perspectiva del tutor", "b": "Dos indicadores resumen tu desempeño en esta métrica:<br><br><strong>LPR (Low Presence Rate):</strong> % de tus casos de estudiantes con asistencia por debajo de 50%.<br><strong>HPR (High Presence Rate):</strong> % de tus casos de estudiantes con asistencia igual o superior a 75%."},
+            {"type": "text", "b": "Los datos de asistencia se calculan con base en el registro de asistencia que la plataforma de clases capta automáticamente cuando un estudiante se une a la clase. La asistencia se confirma una vez que el estudiante participa en más del 50% de la lección. No se basa en los registros de asistencia ingresados en BO."}
           ]
         },
         {
@@ -902,6 +949,49 @@ const I18N={
     },
     {
       "id": 2,
+      "emoji": "🧭",
+      "title": "Estructura de la Lección y Asistencia",
+      "desc": "Por qué una rutina de lección consistente es una de las palancas más fuertes para la asistencia, y las nueve fases que conforman cada lección de Kodland.",
+      "obj": "Comprender por qué una estructura de lección consistente impulsa la asistencia, y aprender las nueve fases que conforman una lección de Kodland.",
+      "color": "#D3FF5F",
+      "sections": [
+        {
+          "t": "💡 Por Qué Esto Importa",
+          "cards": [
+            {"type":"text","b":"Algo se correlaciona fuertemente con la asistencia: mantener una rutina y estructura consistente en tus lecciones. La consistencia es el punto clave. Una vez que un estudiante aprende tu ritmo, deja de gastar energía en descifrar “¿qué sigue ahora?” y la invierte en aprender. Aplica la misma estructura cada vez hasta que se vuelva algo natural, tanto para ti como para ellos. Una lección predecible se siente como una lección segura, y una lección segura es una a la que un estudiante quiere volver."},
+            {"type":"text","b":"Así es como se estructura una lección de Kodland, fase por fase, y cómo mantener ese orden intacto protege tus números de asistencia."}
+          ]
+        },
+        {
+          "t": "🌅 El Inicio: Cuatro Fases",
+          "cards": [
+            {"type":"text","h":"1 · Warm-Up — activa energía y enfoque","b":"Abre con algo ligero que cambie el cerebro del estudiante hacia el “modo lección”: una pregunta rápida, un pequeño reto, un diseño genial que viste durante la semana. El objetivo es energía y atención, no evaluación. Le indica al estudiante “ahora sí empezamos” y engancha a un niño distraído desde el inicio de la sesión. Un inicio débil suele ser el primer momento en que un estudiante se desconecta mentalmente, y un estudiante que se desconecta hoy es más propenso a faltar la próxima vez."},
+            {"type":"text","h":"2 · Revisión de la Lección Anterior — recordar y consolidar","b":"Repasa brevemente lo que se aprendió la vez anterior. La recuperación de información —hacer que el estudiante recuerde en lugar de volver a escucharlo— es una de las herramientas de memoria más poderosas que existen. Dos minutos con un “¿qué hace fuerte a un punto focal?” logran más que cualquier nueva explicación. Cuando los estudiantes sienten que van al día y que realmente recuerdan lo aprendido, se sienten competentes, y la competencia es una de las razones más grandes por las que un estudiante quiere volver."},
+            {"type":"text","h":"3 · Revisión de la Tarea — repasar la tarea juntos","b":"Revisa la tarea junto con el estudiante; en este curso, eso significa mirar un diseño que hizo. Aquí es donde detectas malentendidos, reconoces el esfuerzo y demuestras que la tarea sí importa. Es también uno de los dos momentos clave de retroalimentación de la lección: no te conformes con un “¡lindo póster!”, di específicamente qué funciona y qué se puede mejorar. Saltarte la revisión le enseña a los niños que la tarea es opcional, y socava todo lo que el módulo de Tareas ya explica sobre por qué esa revisión importa para la asistencia."},
+            {"type":"text","h":"4 · Objetivo de la Lección — establece metas claras","b":"Explica claramente de qué se trata el día de hoy: “hoy vamos a diseñar un póster con un punto focal claro”. Una meta clara le da dirección a la lección y le da al estudiante algo concreto hacia dónde apuntar. Un estudiante que no sabe “para qué” es el día de hoy se desconecta rápido, y la desconexión es una de las causas internas detrás de una clase perdida."}
+          ]
+        },
+        {
+          "t": "🎨 La Parte Media: Teoría y Práctica",
+          "cards": [
+            {"type":"text","h":"5 · Teoría y Práctica — el corazón de la lección","b":"Entre el objetivo de la lección y las fases de cierre está la etapa más larga, donde se enseña material nuevo y se usa de inmediato. Mantén la teoría en partes pequeñas —un concepto, y luego trabajo práctico con él— y modela primero: demuestra la técnica en tu pantalla antes de que los estudiantes la intenten en la suya. En un curso de diseño, la etapa de práctica es donde los estudiantes realmente crean, así que protege ese tiempo con firmeza; una lección en la que los niños solo vieron cómo tú diseñabas o programabas es una lección en la que nadie diseñó ni programó. Esta es también la parte de la lección que más esperan los estudiantes: protégela, y proteges la razón por la que asisten."}
+          ]
+        },
+        {
+          "t": "🏁 El Final: El Espejo",
+          "cards": [
+            {"type":"text","b":"Las cuatro fases de cierre reflejan las de apertura en orden inverso: la lección termina de la misma forma en que empezó, dándoles a los estudiantes una sensación satisfactoria de cierre y ritmo. Esta forma “circular” es lo que hace que una lección se sienta completa en lugar de simplemente detenerse cuando se acaba el tiempo, y una lección que se siente completa es una de la que el estudiante se va sin cabos sueltos que lo alejen."},
+            {"type":"text","h":"6 · Resumen de la Lección — a cargo del tutor y del estudiante","b":"Repasa lo que se cubrió, pero no te limites a contárselo. Haz que el estudiante también lo resuma con sus propias palabras. Su resumen revela qué fue lo que realmente quedó claro, y funciona además como un segundo momento de recuperación de información."},
+            {"type":"text","h":"7 · Asignación de Tarea — instrucciones claras","b":"Asigna la tarea con instrucciones cristalinas sobre qué hacer y cómo hacerlo. Una tarea confusa es una tarea que no se hará. Esto se conecta con la Revisión de la Tarea que abrió la lección; juntas forman el ciclo completo sobre el que está construido el módulo de Tareas."},
+            {"type":"text","h":"8 · Adelanto de la Próxima Lección — genera curiosidad","b":"Da un adelanto de lo que viene: “¡La próxima vez, haremos que nuestro personaje se mueva como en la vida real!”. Es el mismo gancho de anticipación que ya se cubrió en el módulo de Clases Inolvidables: cerrar sin él desperdicia una oportunidad gratuita de asistencia en cada clase."},
+            {"type":"text","h":"9 · Cierre — termina con energía","b":"Termina en un punto alto: celebra lo que el estudiante creó hoy, reconoce su esfuerzo y despídelo sintiéndose bien. Los últimos 30 segundos moldean cómo recordará toda la lección, y ese recuerdo es lo que está pesando, consciente o inconscientemente, al decidir si va a asistir la próxima vez."},
+            {"type":"mirror","beginTitle":"El Inicio","endTitle":"El Final","mirrorLabel":"ESPEJO","beginItems":[{"n":1,"label":"Warm-Up"},{"n":2,"label":"Revisión de la Lección Anterior"},{"n":3,"label":"Revisión de la Tarea"},{"n":4,"label":"Objetivo de la Lección"}],"endItems":[{"n":9,"label":"Cierre"},{"n":8,"label":"Adelanto de la Próxima Lección"},{"n":7,"label":"Asignación de Tarea"},{"n":6,"label":"Resumen de la Lección"}],"caption":"La lección termina exactamente como empezó, dándoles a los estudiantes una sensación de cierre, continuidad y ritmo."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
       "emoji": "🤝",
       "title": "Creando un Vínculo con tus Estudiantes",
       "desc": "Charla informal, retroalimentación que realmente llega, y cómo hacer que cada estudiante se sienta parte del grupo.",
@@ -974,7 +1064,7 @@ const I18N={
       ]
     },
     {
-      "id": 3,
+      "id": 4,
       "emoji": "✨",
       "title": "Creando Clases Inolvidables",
       "desc": "Material visual, modelar antes de practicar, verificar la comprensión, y cerrar con anticipación.",
@@ -1025,7 +1115,7 @@ const I18N={
       ]
     },
     {
-      "id": 4,
+      "id": 5,
       "emoji": "📝",
       "title": "Tareas y Asistencia",
       "desc": "Explicar, recordar, destacar y revisar — los cuatro hábitos de tareas que refuerzan la asistencia.",
@@ -1069,7 +1159,7 @@ const I18N={
       ]
     },
     {
-      "id": 5,
+      "id": 6,
       "emoji": "📞",
       "title": "Qué Hacer Cuando un Estudiante Falta a Clase",
       "desc": "Cómo dar seguimiento al estudiante y cómo hablar con los padres con empatía.",
@@ -1129,21 +1219,23 @@ const I18N={
       {"q": "¿Qué mide el LPR, desde la perspectiva de un tutor?", "opts": ["El % de tus casos de estudiantes con asistencia por debajo de 50%", "El promedio de calificaciones de tus estudiantes", "Cuántas clases diste este mes"], "c": 0, "fb": "El LPR (Low Presence Rate) es la proporción de tus casos de estudiantes con una asistencia menor al 50%."}
     ],
     "2": [
+    {"q":"Empiezas la clase directamente con “abre tu archivo de la semana pasada”, sin saludo ni warm-up. Un estudiante que estaba distraído antes de conectarse apenas participa durante los primeros diez minutos. ¿Qué habría ayudado?","opts":["Nada; los warm-ups ya no son necesarios pasada cierta edad.","Un Warm-Up breve: una pregunta ligera o un pequeño reto que cambie su cerebro hacia el “modo lección” antes de entrar al contenido.","Pasar directo al Objetivo de la Lección para que sepan de inmediato qué se espera de ellos."],"c":1,"fb":"Un inicio débil suele ser el primer momento en que un estudiante se desconecta mentalmente; un warm-up engancha a un niño distraído antes de que empiece el contenido."},
+    {"q":"En lugar de pedirles a los estudiantes que recuerden lo que aprendieron en la clase anterior, un tutor simplemente vuelve a explicar todo desde cero cada vez. ¿Cuál es el riesgo?","opts":["Ninguno; la repetición nunca hace daño.","Los estudiantes nunca practican la recuperación de información —una de las herramientas de memoria más poderosas—, así que el material tarda más en quedar claro y se sienten menos competentes.","A la larga ahorra tiempo, así que vale la pena hacerlo."],"c":1,"fb":"La recuperación de información —hacer que el estudiante recuerde en lugar de volver a escucharlo— logra más para la memoria que cualquier nueva explicación, y construye la competencia que hace que un estudiante quiera volver."},
+    {"q":"Un estudiante entregó un diseño como tarea. El tutor dice “¡lindo póster!” y continúa. ¿Qué falta?","opts":["Nada; una retroalimentación positiva rápida mantiene el impulso.","Retroalimentación específica que nombre qué funcionó y qué se puede mejorar; un elogio vago no demuestra que la tarea realmente importa.","El tutor debió haber dado una calificación numérica en lugar de un comentario."],"c":1,"fb":"La retroalimentación específica es uno de los dos momentos clave de retroalimentación de la lección; saltársela le enseña a los niños que la tarea es opcional."},
+    {"q":"La clase termina justo cuando se acaba el tiempo: sin resumen, sin pista de lo que viene, sin reconocer el esfuerzo del estudiante. ¿Qué es lo que más probablemente se pierde?","opts":["Nada; mientras se haya cubierto el contenido, el cierre no importa.","La oportunidad de generar anticipación y terminar en un punto alto; la última impresión es lo que un estudiante sopesa al decidir si asistir la próxima vez.","Solo la asignación de la tarea, que se puede enviar después por mensaje."],"c":1,"fb":"El final refleja el inicio; cerrar sin anticipación y sin un buen cierre desperdicia una oportunidad gratuita de asistencia en cada clase."}
+    ],
+    "3": [
       {"q": "Te conectas a la llamada y la cámara de un estudiante está encendida, pero solo mira su escritorio, sin escribir nada en el chat. ¿Cómo empiezas la clase?", "opts": ["¡Hola! Veo que ya estás aquí — antes de empezar, ¿cómo estuvo tu semana? ¿Pasó algo interesante?", "Empecemos — abre el archivo de tu proyecto de la semana pasada.", "¡¡Hooola!! Se te ve súper emocionado hoy, ¡se nota que vas a hacer algo INCREÍBLE!!"], "c": 0, "fb": "Un saludo breve y genuino ayuda a que un estudiante callado se sienta seguro antes de entrar al contenido — sin una energía exagerada ni saltarte el momento por completo."},
       {"q": "Un estudiante dibujó su primer personaje pero notaste que no siguió tus instrucciones. ¿Cómo le das retroalimentación?", "opts": ["No seguiste las instrucciones — debías agregar un fondo y no lo hiciste. Vamos a corregir eso primero.", "Me encanta la expresión que le diste a la cara de tu personaje — se nota que lo pensaste bien. Noté que aún no agregaste el fondo; ¿fue una decisión, o querías agregarlo después?", "¡Wow, esto es increíble! ¡Eres un artista con mucho talento!"], "c": 1, "fb": "Destacar algo específico y preguntar con curiosidad mantiene la autonomía del estudiante — es mejor que un elogio vacío o una corrección sin reconocimiento."},
       {"q": "Durante una actividad grupal, un estudiante no ha hablado ni reaccionado en absoluto, mientras otros dos conversan activamente. ¿Qué haces?", "opts": ["Nada — si quisiera participar, se activaría el micrófono o escribiría.", "Lo señalas públicamente: \"¿Por qué no participas como los demás?\"", "Lo invitas discretamente, sin presión: \"Me encantaría escuchar tu idea también, cuando quieras — el chat funciona si te resulta más fácil.\""], "c": 2, "fb": "Una invitación discreta y sin presión respeta los distintos niveles de comodidad, sin ignorar al estudiante ni ponerlo en evidencia."},
       {"q": "Dos estudiantes terminan el reto independiente en la mitad de tiempo, mientras otros tres siguen atorados en el paso uno. ¿Qué haces?", "opts": ["Avanzas a la siguiente actividad ya que la mayoría está por terminar.", "Les ofreces a los estudiantes rápidos una tarea de extensión, y luego rotas tu atención para revisar individualmente a cada estudiante que tiene dificultades.", "Les das a los estudiantes rápidos un reto bonus mucho más difícil y pasas el resto de la clase solo con ellos porque son \"más avanzados\"."], "c": 1, "fb": "Rotar tu atención mantiene a ambos grupos comprometidos — nadie queda ignorado, y nadie se convierte en el \"ayudante permanente\"."}
     ],
-    "3": [
-      {"q": "¿Qué debería pasar justo antes de que los estudiantes practiquen algo nuevo?", "opts": ["Nada — lo resuelven por su cuenta", "El tutor modela el proceso paso a paso", "Un examen escrito"], "c": 1, "fb": "Modelar primero les da a los estudiantes un mapa claro antes de intentarlo ellos mismos."},
-      {"q": "¿Por qué generar anticipación para la próxima clase?", "opts": ["Les da a los estudiantes una razón para volver", "Llena tiempo al final de la clase", "Lo exige la plataforma"], "c": 0, "fb": "Un buen gancho al final suele ser la verdadera razón por la que un estudiante vuelve la próxima vez."}
-    ],
-    "4": [
+    "5": [
       {"q": "Son los últimos dos minutos de clase y recuerdas que necesitas asignar la tarea. ¿Qué haces?", "opts": ["Escribes rápido el enlace de la tarea en el chat y dices \"ok hagan esto para la próxima clase, ¡bye!\"", "Te tomas 30 segundos para explicar qué hacer y por qué se conecta con lo que acaban de aprender hoy.", "Explicas en detalle cada regla técnica de la tarea, leyendo en voz alta cada requisito."], "c": 1, "fb": "Un propósito claro es lo que hace que valga la pena recordar la tarea — no una mención apresurada ni un muro de reglas."},
       {"q": "Tienes un grupo grande y solo tiempo de revisar rápidamente la tarea antes de empezar la nueva lección. La mayoría entregó, unos pocos no. ¿Qué haces?", "opts": ["Destacas algo colectivo para todos los que entregaron: \"El 90% trajo su tarea — eso muestra un compromiso real.\"", "Mencionas los nombres de los estudiantes que no entregaron para que se motiven a hacerlo la próxima vez.", "Solo muestras el mejor proyecto como el ejemplo que todos deberían seguir."], "c": 0, "fb": "El objetivo es motivar, no comparar ni avergonzar — un reconocimiento colectivo incluye a todos los que sí cumplieron."},
       {"q": "Estás revisando las tareas entregadas y el proyecto de un estudiante es técnicamente correcto pero nada especial. ¿Qué escribes?", "opts": ["Solo lo marcas como \"hecho\" sin comentario — cumplió los requisitos, eso basta.", "Dejas una lista larga de todo lo que podría mejorar, sin mencionar nada positivo.", "Dejas un comentario breve y específico, señalando algo que hizo bien y una sugerencia amable — algo que el padre o madre también pueda leer."], "c": 2, "fb": "Revisar la tarea es una oportunidad de retroalimentación, no solo una casilla que marcar — también es una oportunidad para reforzar el vínculo con estudiantes y padres."}
     ],
-    "5": [
+    "6": [
       {"q": "Has llamado y escrito a un padre dos veces esta semana porque su hijo faltó a dos clases seguidas, y aún no te responde. ¿Cuál es el mejor siguiente paso?", "opts": ["Dejar de insistir — ya lo intentaste dos veces, ahora depende del padre.", "Escalar de inmediato pidiéndole a tu TL que saque al estudiante de tu grupo porque claramente no le interesa.", "Enviar un mensaje más, cálido y sin presión, y compartir la grabación/resumen de la tarea para que el estudiante no se atrase más mientras esperas respuesta."], "c": 2, "fb": "Un seguimiento con empatía siempre es el primer paso — persistente pero cálido, dejando la puerta abierta en lugar de rendirte o escalar demasiado pronto."},
       {"q": "Un estudiante que faltó a la clase anterior finalmente se conecta hoy. ¿Cómo empiezas la clase con él?", "opts": ["De forma privada o discreta, reconoces que notaste su ausencia, le preguntas cómo está, y le recuerdas dónde encontrar la grabación y la tarea.", "No mencionas la ausencia en absoluto, solo sigues con la lección de hoy como si nada hubiera pasado.", "Señalas frente al grupo que faltó a clase y le preguntas por qué."], "c": 0, "fb": "Mostrarle a un estudiante que notaste su ausencia — sin ponerlo en evidencia — lo ayuda a sentirse visto en lugar de atrasado."},
       {"q": "Un padre te escribe directamente preguntando si su hijo puede tener una clase extra gratuita para ponerse al día después de faltar a varias sesiones. ¿Qué haces?", "opts": ["Aceptas de inmediato y la agendas tú mismo porque es un buen gesto para la familia.", "Primero contactas a tu TL sobre la situación y consigues aprobación para la clase extra. Luego, le agradeces al padre por escribir y le dices que te alegra que el estudiante quiera ponerse al día. Si se aprueba la clase extra, te ofreces a agendarla con el estudiante.", "Le dices al padre que no es posible y que no se puede hacer nada."], "c": 1, "fb": "La aprobación del TL siempre va primero — pero eso no significa que el padre reciba una respuesta fría o tardía; puedes ser cálido mientras sigues el proceso correcto."}
@@ -1186,7 +1278,7 @@ const I18N={
     "moduleN": "Modulo {n}",
     "finalStage": "Fase Finale",
     "finalExam": "Esame Finale",
-    "finalExamDesc": "Completa l'esame ufficiale di 12 domande (Google Form) che copre i Moduli 2–5 per ottenere la certificazione.",
+    "finalExamDesc": "Completa l'esame ufficiale di 12 domande (Google Form) che copre i Moduli 2–6 per ottenere la certificazione.",
     "openForm": "Apri il Modulo",
     "certifiedCheck": "Certificato ✓",
     "opensInForms": "Si apre in Google Forms",
@@ -1270,7 +1362,8 @@ const I18N={
           "cards": [
             {"type": "text", "b": "Classifichiamo gli studenti (SS) in tre livelli in base alla loro percentuale di frequenza."},
             {"type": "table", "h": "Livelli di frequenza", "head": ["Livello", "Intervallo"], "rows": [["🟢 Presenza Alta", "≥ 75%"], ["🟠 Presenza Media (Rischio)", "50% – 74,99%"], ["❗ Presenza Bassa (Allerta)", "&lt; 50%"]]},
-            {"type": "text", "h": "Dal punto di vista del tutor", "b": "Due indicatori riassumono la tua performance su questa metrica:<br><br><strong>LPR (Low Presence Rate):</strong> % dei tuoi studenti con frequenza sotto il 50%.<br><strong>HPR (High Presence Rate):</strong> % dei tuoi studenti con frequenza pari o superiore al 75%."}
+            {"type": "text", "h": "Dal punto di vista del tutor", "b": "Due indicatori riassumono la tua performance su questa metrica:<br><br><strong>LPR (Low Presence Rate):</strong> % dei tuoi studenti con frequenza sotto il 50%.<br><strong>HPR (High Presence Rate):</strong> % dei tuoi studenti con frequenza pari o superiore al 75%."},
+            {"type": "text", "b": "I dati di presenza vengono calcolati in base al registro presenze rilevato automaticamente dall'aula virtuale quando uno studente entra in classe. La presenza viene confermata quando lo studente partecipa per più del 50% della lezione. Non si basa sui dati di presenza inseriti nel BO."}
           ]
         },
         {
@@ -1290,6 +1383,49 @@ const I18N={
     },
     {
       "id": 2,
+      "emoji": "🧭",
+      "title": "Struttura della lezione e presenze",
+      "desc": "Perché una routine di lezione coerente è una delle leve più forti per le presenze, e le nove fasi che compongono ogni lezione Kodland.",
+      "obj": "Capire perché una struttura di lezione coerente favorisce le presenze, e conoscere le nove fasi che compongono una lezione Kodland.",
+      "color": "#D3FF5F",
+      "sections": [
+        {
+          "t": "💡 Perché è importante",
+          "cards": [
+            {"type":"text","b":"C'è qualcosa che è fortemente correlato con le presenze: mantenere una routine e una struttura coerenti nelle tue lezioni. La coerenza è il punto centrale. Quando uno studente impara il tuo ritmo, smette di spendere energie a capire “cosa succede adesso?” e la investe invece nell'imparare. Segui la stessa struttura ogni volta, finché non diventa naturale — per te e per lui. Una lezione prevedibile sembra una lezione sicura, e una lezione sicura è quella a cui uno studente vuole tornare."},
+            {"type":"text","b":"Ecco come è strutturata una lezione Kodland, fase per fase, e come mantenere intatto quest'ordine protegga i tuoi numeri di presenza."}
+          ]
+        },
+        {
+          "t": "🌅 L'inizio: quattro fasi",
+          "cards": [
+            {"type":"text","h":"1 · Riscaldamento — attiva energia e concentrazione","b":"Apri con qualcosa di leggero che faccia passare il cervello dello studente in “modalità lezione”: una domanda veloce, una piccola sfida, un design interessante notato durante la settimana. L'obiettivo è energia e attenzione, non valutazione. Segnala “stiamo iniziando adesso” e coinvolge un bambino distratto nella sessione. Un inizio debole è spesso il primo momento in cui uno studente stacca mentalmente — e uno studente che stacca oggi è più propenso a saltare la prossima volta."},
+            {"type":"text","h":"2 · Ripasso della lezione precedente — richiamo e consolidamento","b":"Ripassa brevemente ciò che è stato imparato l'ultima volta. Il recupero — far ricordare lo studente invece di riascoltare — è uno degli strumenti di memoria più potenti che esistano. Due minuti con “cosa rende forte un punto focale?” fanno più di quanto potrebbe mai fare una nuova spiegazione. Quando gli studenti sentono di stare al passo e di ricordare davvero, si sentono competenti — e la competenza è una delle ragioni più importanti per cui uno studente vuole tornare."},
+            {"type":"text","h":"3 · Controllo compiti — rivedi i compiti insieme","b":"Ripassa i compiti con lo studente — in questo corso, significa guardare un design che ha realizzato. È qui che noti eventuali fraintendimenti, elogi l'impegno e dimostri che i compiti contano davvero. È anche uno dei due momenti chiave di feedback della lezione: non accontentarti di “bel poster!” — dì in modo specifico cosa funziona e cosa spingere oltre. Saltare il controllo insegna ai bambini che i compiti sono facoltativi, e mina tutto ciò che il modulo sui Compiti spiega già sull'importanza di quel controllo per le presenze."},
+            {"type":"text","h":"4 · Obiettivo della lezione — stabilisci obiettivi chiari","b":"Dichiara chiaramente di cosa si occupa la lezione di oggi: “oggi progetteremo un poster con un punto focale ben definito.” Un obiettivo chiaro dà direzione alla lezione e offre allo studente qualcosa di concreto verso cui puntare. Uno studente che non sa a cosa serva la lezione di oggi si disimpegna rapidamente — e il disimpegno è una delle cause interne dietro un'assenza."}
+          ]
+        },
+        {
+          "t": "🎨 La parte centrale: teoria e pratica",
+          "cards": [
+            {"type":"text","h":"5 · Teoria e pratica — il cuore della lezione","b":"Tra l'obiettivo della lezione e le fasi finali si trova la fase più lunga, dove il nuovo materiale viene insegnato e subito messo in pratica. Mantieni la teoria in piccoli blocchi — un concetto, poi lavoro pratico su di esso — e mostra prima tu: dimostra la tecnica sul tuo schermo prima che gli studenti la provino sul loro. In un corso di design, la fase pratica è dove gli studenti creano davvero, quindi proteggi ferocemente quel tempo; una lezione in cui i bambini si sono solo limitati a guardarti progettare/programmare è una lezione in cui nessuno ha progettato/programmato. Questa è anche la parte della lezione che gli studenti aspettano con più entusiasmo — proteggila, e proteggerai la ragione per cui vengono."}
+          ]
+        },
+        {
+          "t": "🏁 La fine: lo specchio",
+          "cards": [
+            {"type":"text","b":"Le quattro fasi finali rispecchiano quelle iniziali in ordine inverso — la lezione finisce come è iniziata, dando agli studenti una piacevole sensazione di chiusura e ritmo. Questa forma “circolare” è ciò che fa sembrare una lezione completa invece di interrompersi semplicemente quando finisce il tempo, e una lezione che sembra completa è una lezione che uno studente lascia senza questioni in sospeso che lo tirino via."},
+            {"type":"text","h":"6 · Riepilogo della lezione — tutor + studente","b":"Ricapitola quanto trattato — ma non limitarti a dirlo tu. Fai riassumere anche allo studente con parole proprie. Il suo riassunto rivela cosa è davvero rimasto e funge da secondo momento di recupero."},
+            {"type":"text","h":"7 · Assegnazione compiti — istruzioni chiare","b":"Assegna i compiti con istruzioni cristalline su cosa fare e come. Un compito vago è un compito che non verrà svolto. Questo si abbina al Controllo compiti che ha aperto la lezione — insieme formano il ciclo completo su cui si basa il modulo sui Compiti."},
+            {"type":"text","h":"8 · Anteprima della prossima lezione — costruisci curiosità","b":"Anticipa cosa arriverà: “La prossima volta faremo muovere il nostro personaggio proprio come nella vita reale!” Questo è lo stesso gancio di anticipazione già trattato nel modulo sulle Lezioni Indimenticabili — chiudere senza di esso significa buttare via una vittoria gratuita per le presenze ogni singola lezione."},
+            {"type":"text","h":"9 · Conclusione — chiudi con energia","b":"Termina in alto: celebra ciò che lo studente ha creato oggi, riconosci il suo impegno e mandalo via con una bella sensazione. Gli ultimi 30 secondi determinano come ricorderà l'intera lezione — e quel ricordo è ciò che sta soppesando, consapevolmente o no, quando decide se venire la prossima volta."},
+            {"type":"mirror","beginTitle":"L'inizio","endTitle":"La fine","mirrorLabel":"SPECCHIO","beginItems":[{"n":1,"label":"Riscaldamento"},{"n":2,"label":"Ripasso della lezione precedente"},{"n":3,"label":"Controllo compiti"},{"n":4,"label":"Obiettivo della lezione"}],"endItems":[{"n":9,"label":"Conclusione"},{"n":8,"label":"Anteprima della prossima lezione"},{"n":7,"label":"Assegnazione compiti"},{"n":6,"label":"Riepilogo della lezione"}],"caption":"La lezione finisce esattamente come è iniziata — dando agli studenti un senso di chiusura, continuità e ritmo."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
       "emoji": "🤝",
       "title": "Costruire un Legame con i Tuoi Studenti",
       "desc": "Chiacchiere informali, feedback che colpisce davvero, e come far sentire ogni studente parte del gruppo.",
@@ -1362,7 +1498,7 @@ const I18N={
       ]
     },
     {
-      "id": 3,
+      "id": 4,
       "emoji": "✨",
       "title": "Creare Lezioni Indimenticabili",
       "desc": "Materiale visivo, dimostrazione prima della pratica, verifica della comprensione e chiusura con anticipazione.",
@@ -1413,7 +1549,7 @@ const I18N={
       ]
     },
     {
-      "id": 4,
+      "id": 5,
       "emoji": "📝",
       "title": "Compiti a Casa e Frequenza",
       "desc": "Spiega, ricorda, evidenzia e rivedi — le quattro abitudini sui compiti che rafforzano la frequenza.",
@@ -1457,7 +1593,7 @@ const I18N={
       ]
     },
     {
-      "id": 5,
+      "id": 6,
       "emoji": "📞",
       "title": "Cosa Fare Quando uno Studente Perde una Lezione",
       "desc": "Come seguire lo studente e come parlare con i genitori con empatia.",
@@ -1517,21 +1653,23 @@ const I18N={
       {"q": "Cosa misura l'LPR, dal punto di vista del tutor?", "opts": ["La % dei tuoi studenti con frequenza sotto il 50%", "Il voto medio dei tuoi studenti", "Quante lezioni hai tenuto questo mese"], "c": 0, "fb": "L'LPR (Low Presence Rate) è la percentuale dei tuoi studenti con frequenza sotto il 50%."}
     ],
     "2": [
+    {"q":"Inizi la lezione subito con \"apri il tuo file della settimana scorsa\" — nessun saluto, nessun riscaldamento. Uno studente che era distratto prima di entrare si coinvolge a malapena nei primi dieci minuti. Cosa avrebbe aiutato?","opts":["Niente — i riscaldamenti non sono necessari oltre una certa età.","Un breve Riscaldamento — una domanda leggera o una piccola sfida che porti il loro cervello in \"modalità lezione\" prima di iniziare con i contenuti.","Passare direttamente all'Obiettivo della lezione così sanno subito cosa aspettarsi."],"c":1,"fb":"Un inizio debole è spesso il primo momento in cui uno studente stacca mentalmente — un riscaldamento coinvolge un bambino distratto nella sessione prima che inizino i contenuti."},
+    {"q":"Invece di chiedere agli studenti di ricordare cosa hanno imparato nella lezione precedente, un tutor si limita a rispiegare tutto da zero ogni volta. Qual è il rischio?","opts":["Niente — la ripetizione non fa mai male.","Gli studenti non esercitano mai il recupero — uno degli strumenti di memoria più potenti — quindi il materiale impiega più tempo a consolidarsi e si sentono meno competenti.","Fa risparmiare tempo nel lungo periodo, quindi vale la pena farlo."],"c":1,"fb":"Il recupero — far ricordare lo studente invece di riascoltare — fa più per la memoria di quanto potrebbe mai fare una nuova spiegazione, e costruisce la competenza che fa venire voglia allo studente di tornare."},
+    {"q":"Uno studente ha consegnato un design come compito. Il tutor dice \"bel poster!\" e va avanti. Cosa manca?","opts":["Niente — un feedback positivo veloce mantiene lo slancio.","Un feedback specifico che indichi cosa ha funzionato e cosa spingere oltre — un elogio vago non dimostra che i compiti contano davvero.","Il tutor avrebbe dovuto dare un voto numerico invece di un commento."],"c":1,"fb":"Il feedback specifico è uno dei due momenti chiave di feedback della lezione — saltarlo insegna ai bambini che i compiti sono facoltativi."},
+    {"q":"La lezione finisce proprio quando scade il tempo — nessun riepilogo, nessun accenno a cosa verrà dopo, nessun riconoscimento dell'impegno dello studente. Cosa si perde più probabilmente?","opts":["Niente — finché i contenuti sono stati trattati, la conclusione non conta.","L'occasione di costruire anticipazione e finire in alto — l'ultima impressione è ciò che uno studente soppesa quando decide se venire la prossima volta.","Solo l'assegnazione dei compiti, che può essere inviata più tardi con un messaggio."],"c":1,"fb":"La fine rispecchia l'inizio — chiudere senza anticipazione e senza una conclusione forte butta via una vittoria gratuita per le presenze ogni singola lezione."}
+    ],
+    "3": [
       {"q": "Ti colleghi alla chiamata e la videocamera di uno studente è accesa, ma sta solo fissando la scrivania, senza scrivere nulla in chat. Come inizi la lezione?", "opts": ["Ehi! Vedo che ci sei — prima di iniziare, com'è andata la tua settimana? È successo qualcosa di divertente?", "Iniziamo — apri il tuo file del progetto della settimana scorsa.", "Ciaooo!! Sembri sooo entusiasta oggi, si vede lontano un miglio che farai qualcosa di FANTASTICO!!"], "c": 0, "fb": "Un breve e genuino check-in aiuta uno studente silenzioso a sentirsi al sicuro prima di passare al contenuto — senza energia eccessiva né saltare del tutto il momento."},
       {"q": "Uno studente ha disegnato il suo primo personaggio ma hai notato che non ha seguito le tue istruzioni. Come dai il feedback?", "opts": ["Non hai seguito le istruzioni — dovevi aggiungere uno sfondo e non l'hai fatto. Sistemiamo prima questo.", "Mi piace tantissimo come hai reso il volto del tuo personaggio così espressivo — ci hai pensato davvero. Ho notato che lo sfondo non è ancora stato aggiunto; è stata una scelta, o volevi aggiungerlo dopo?", "Wow, è fantastico! Sei davvero un/a artista di talento!"], "c": 1, "fb": "Evidenziare qualcosa di specifico e chiedere con curiosità mantiene intatta l'autonomia dello studente — meglio di un elogio vuoto o di una correzione senza riconoscimento."},
       {"q": "Durante un'attività di gruppo, uno studente non ha parlato né reagito per niente, mentre altri due chiacchierano attivamente tra loro. Cosa fai?", "opts": ["Niente — se volesse partecipare, si smuterebbe o scriverebbe.", "Lo/la richiami pubblicamente: \"Perché non partecipi come tutti gli altri?\"", "Lo/la inviti discretamente e senza pressione: \"Mi piacerebbe sentire anche la tua idea, quando sei pronto/a — va bene anche in chat se ti è più facile.\""], "c": 2, "fb": "Un invito privato e senza pressione rispetta livelli di comfort diversi senza ignorare lo studente né metterlo in imbarazzo."},
       {"q": "Due studenti finiscono la sfida individuale in metà tempo, mentre altri tre sono ancora bloccati al primo passaggio. Cosa fai?", "opts": ["Passi all'attività successiva dato che la maggior parte è quasi pronta.", "Offri agli studenti veloci un compito extra, poi ruoti la tua attenzione per seguire individualmente ogni studente in difficoltà.", "Dai agli studenti veloci una sfida bonus molto più difficile e passi il resto della lezione solo con loro perché sono \"più avanzati\"."], "c": 1, "fb": "Ruotare l'attenzione mantiene entrambi i gruppi coinvolti — nessuno viene ignorato, e nessuno diventa l'\"aiutante permanente\"."}
     ],
-    "3": [
-      {"q": "Cosa dovrebbe succedere subito prima che gli studenti pratichino qualcosa di nuovo?", "opts": ["Niente — se la cavano da soli", "Il tutor dimostra il processo passo dopo passo", "Un test scritto"], "c": 1, "fb": "Dimostrare per primi offre agli studenti una mappa chiara prima di provarci da soli."},
-      {"q": "Perché costruire anticipazione per la prossima lezione?", "opts": ["Dà agli studenti un motivo per tornare", "Riempie il tempo alla fine della lezione", "È richiesto dalla piattaforma"], "c": 0, "fb": "Un forte gancio finale è spesso il vero motivo per cui uno studente si presenta la volta successiva."}
-    ],
-    "4": [
+    "5": [
       {"q": "Sono gli ultimi due minuti di lezione e ti ricordi che devi assegnare i compiti. Cosa fai?", "opts": ["Scrivi velocemente il link dei compiti in chat e dici \"ok fate questo per la prossima lezione, ciao!\"", "Ti prendi 30 secondi per spiegare cosa fare e perché si collega a quello che abbiamo appena imparato oggi.", "Spieghi in dettaglio ogni singola regola tecnica del compito, leggendo ogni requisito ad alta voce."], "c": 1, "fb": "Uno scopo chiaro è ciò che rende un compito degno di essere ricordato — non una menzione frettolosa o un muro di regole."},
       {"q": "Hai un gruppo numeroso e solo il tempo per guardare i compiti velocemente prima di iniziare la nuova lezione. La maggior parte ha consegnato, alcuni no. Cosa fai?", "opts": ["Evidenzi qualcosa di collettivo per tutti quelli che hanno consegnato: \"Il 90% di voi ha portato i compiti — questo dimostra vero impegno.\"", "Fai i nomi degli studenti che non hanno consegnato così si sentono motivati a farlo la prossima volta.", "Mostri solo il singolo progetto migliore come esempio a cui tutti dovrebbero aspirare."], "c": 0, "fb": "L'obiettivo è la motivazione, non il confronto o la vergogna — un riconoscimento collettivo include tutti quelli che si sono fatti vedere."},
       {"q": "Stai rivedendo i compiti consegnati e il progetto di uno studente è tecnicamente corretto ma nulla di speciale. Cosa scrivi?", "opts": ["Segni solo \"fatto\" senza commenti — ha soddisfatto i requisiti, basta così.", "Lasci una lunga lista di tutto ciò che si potrebbe migliorare, senza menzionare nulla di positivo.", "Lasci un commento breve e specifico segnalando una cosa fatta bene e un suggerimento gentile — qualcosa che anche il genitore potrebbe leggere."], "c": 2, "fb": "Rivedere i compiti è un'occasione di feedback, non solo una casella da spuntare — è anche un'occasione per rafforzare il legame con studenti e genitori."}
     ],
-    "5": [
+    "6": [
       {"q": "Hai chiamato e scritto a un genitore due volte questa settimana per l'assenza del figlio a due lezioni di fila, e non hai ancora ricevuto risposta. Qual è il prossimo passo migliore?", "opts": ["Smetti di contattarlo — hai già provato due volte, ora tocca al genitore.", "Fai subito escalation chiedendo al tuo TL di rimuovere lo studente dal tuo gruppo perché chiaramente non è interessato.", "Invia un altro messaggio caloroso e senza pressione, condividendo la registrazione/il riepilogo dei compiti così lo studente non resta ulteriormente indietro mentre aspetti una risposta."], "c": 2, "fb": "Un check-in premuroso è sempre il primo passo — persistente ma caloroso, tenendo la porta aperta invece di arrendersi o fare escalation troppo presto."},
       {"q": "Uno studente che ha perso la lezione scorsa finalmente si unisce oggi. Come inizi la lezione con lui/lei?", "opts": ["Riconosci privatamente o con delicatezza che hai notato la sua assenza, chiedi come sta, e ricordagli dove trovare la registrazione e i compiti.", "Non menzioni affatto l'assenza, e vai avanti con la lezione di oggi come se nulla fosse.", "Fai notare davanti al gruppo che ha perso la lezione e chiedi perché."], "c": 0, "fb": "Mostrare a uno studente che hai notato la sua assenza — senza metterlo in imbarazzo — lo aiuta a sentirsi visto invece che indietro."},
       {"q": "Un genitore ti scrive direttamente chiedendo se suo figlio può avere una lezione extra gratuita per recuperare dopo aver perso diverse sessioni. Cosa fai?", "opts": ["Accetti subito e la programmi tu stesso/a perché è un gesto gentile per la famiglia.", "Prima contatti il tuo TL riguardo alla situazione e ottieni l'approvazione per una lezione extra. Poi ringrazi il genitore per averti scritto e gli fai sapere che sei felice che lo studente sia interessato a recuperare. Se la lezione extra viene approvata, ti offri di programmarla con lo studente.", "Dici al genitore che non è possibile e che non si può fare nulla."], "c": 1, "fb": "L'approvazione del TL viene sempre prima — ma questo non significa dare al genitore una risposta fredda o ritardata; puoi essere caloroso/a pur seguendo la procedura corretta."}
@@ -1574,7 +1712,7 @@ const I18N={
     "moduleN": "Módulo {n}",
     "finalStage": "Etapa Final",
     "finalExam": "Prova Final",
-    "finalExamDesc": "Complete a prova oficial de 12 perguntas (Google Forms) cobrindo os Módulos 2–5 para se certificar.",
+    "finalExamDesc": "Complete a prova oficial de 12 perguntas (Google Forms) cobrindo os Módulos 2–6 para se certificar.",
     "openForm": "Abrir Formulário",
     "certifiedCheck": "Certificado ✓",
     "opensInForms": "Abre no Google Forms",
@@ -1658,7 +1796,8 @@ const I18N={
           "cards": [
             {"type": "text", "b": "Classificamos os alunos (SS) em três níveis com base na porcentagem de frequência."},
             {"type": "table", "h": "Níveis de frequência", "head": ["Nível", "Faixa"], "rows": [["🟢 Alta Presença", "≥ 75%"], ["🟠 Presença Média (Risco)", "50% – 74,99%"], ["❗ Presença Baixa (Alerta)", "&lt; 50%"]]},
-            {"type": "text", "h": "Da perspectiva do tutor", "b": "Dois indicadores resumem seu desempenho nessa métrica:<br><br><strong>LPR (Low Presence Rate):</strong> % dos seus casos de alunos com frequência abaixo de 50%.<br><strong>HPR (High Presence Rate):</strong> % dos seus casos de alunos com frequência igual ou acima de 75%."}
+            {"type": "text", "h": "Da perspectiva do tutor", "b": "Dois indicadores resumem seu desempenho nessa métrica:<br><br><strong>LPR (Low Presence Rate):</strong> % dos seus casos de alunos com frequência abaixo de 50%.<br><strong>HPR (High Presence Rate):</strong> % dos seus casos de alunos com frequência igual ou acima de 75%."},
+            {"type": "text", "b": "Os dados de frequência são calculados com base no registro de presença capturado automaticamente pela sala de aula quando um aluno entra na aula. A presença é confirmada quando o aluno participa de mais de 50% da aula. Ela não é baseada nos registros de frequência inseridos no BO."}
           ]
         },
         {
@@ -1678,6 +1817,49 @@ const I18N={
     },
     {
       "id": 2,
+      "emoji": "🧭",
+      "title": "Estrutura da Aula e Frequência",
+      "desc": "Por que uma rotina consistente de aula é uma das alavancas mais fortes para a frequência, e as nove fases que compõem toda aula Kodland.",
+      "obj": "Entender por que uma estrutura de aula consistente impulsiona a frequência, e aprender as nove fases que compõem uma aula Kodland.",
+      "color": "#D3FF5F",
+      "sections": [
+        {
+          "t": "💡 Por Que Isso Importa",
+          "cards": [
+            {"type":"text","b":"Existe algo que se correlaciona fortemente com a frequência: manter uma rotina e estrutura consistentes nas suas aulas. Consistência é o ponto principal. Quando o aluno aprende o seu ritmo, ele para de gastar energia tentando descobrir “o que acontece agora?” e passa a gastá-la aprendendo. Siga a mesma estrutura todas as vezes até que ela se torne natural — para você e para ele. Uma aula previsível parece uma aula segura, e uma aula segura é uma aula para a qual o aluno quer voltar."},
+            {"type":"text","b":"Veja como uma aula Kodland é estruturada, fase por fase, e como manter essa ordem intacta protege os seus números de frequência."}
+          ]
+        },
+        {
+          "t": "🌅 O Início: Quatro Fases",
+          "cards": [
+            {"type":"text","h":"1 · Aquecimento — ativar energia e foco","b":"Comece com algo leve que faça o cérebro do aluno mudar para o “modo aula”: uma pergunta rápida, um pequeno desafio, um design legal que ele viu durante a semana. O objetivo é energia e atenção, não avaliação. Isso sinaliza “estamos começando agora” e traz de volta uma criança distraída para a sessão. Um início fraco costuma ser o primeiro momento em que o aluno se desliga mentalmente — e um aluno que se desliga hoje tem mais chances de faltar na próxima vez."},
+            {"type":"text","h":"2 · Revisão da Aula Anterior — recordar e consolidar","b":"Revise brevemente o que foi aprendido na última vez. A recuperação da memória — fazer o aluno lembrar em vez de só ouvir de novo — é uma das ferramentas de memória mais poderosas que existem. Dois minutos com “o que faz um bom ponto focal?” fazem mais do que qualquer reexplicação. Quando os alunos sentem que estão acompanhando e realmente lembrando, eles se sentem competentes — e competência é um dos maiores motivos para um aluno querer voltar."},
+            {"type":"text","h":"3 · Correção do Dever de Casa — revisar juntos","b":"Revise o dever de casa com o aluno — neste curso, isso significa olhar um design que ele criou. É aqui que você identifica mal-entendidos, elogia o esforço e mostra que o dever de casa realmente importa. É também um dos dois momentos-chave de feedback da aula: não se contente com “que pôster legal!” — diga especificamente o que funciona e o que pode melhorar. Pular essa correção ensina às crianças que o dever de casa é opcional, e enfraquece tudo o que o módulo de Dever de Casa já explica sobre por que essa correção importa para a frequência."},
+            {"type":"text","h":"4 · Objetivo da Aula — definir metas claras","b":"Diga claramente do que se trata a aula de hoje: “hoje vamos criar um pôster com um ponto focal bem definido.” Um objetivo claro dá direção à aula e dá ao aluno algo concreto para almejar. Um aluno que não sabe para que serve a aula de hoje se desengaja rapidamente — e o desengajamento é uma das causas internas por trás de uma falta."}
+          ]
+        },
+        {
+          "t": "🎨 O Meio: Teoria e Prática",
+          "cards": [
+            {"type":"text","h":"5 · Teoria e Prática — o coração da aula","b":"Entre o objetivo da aula e as fases finais está a etapa mais longa, onde o novo conteúdo é ensinado e imediatamente colocado em prática. Mantenha a teoria em partes pequenas — um conceito, seguido de prática com ele — e demonstre primeiro: mostre a técnica na sua tela antes de os alunos tentarem na deles. Em um curso de design, a etapa prática é onde os alunos realmente criam, então proteja esse tempo com unhas e dentes; uma aula em que as crianças só assistiram você desenhar/programar é uma aula em que ninguém desenhou/programou. Essa também é a parte da aula que os alunos mais aguardam — proteja-a, e você protege o motivo pelo qual eles aparecem."}
+          ]
+        },
+        {
+          "t": "🏁 O Final: O Espelho",
+          "cards": [
+            {"type":"text","b":"As quatro fases finais ecoam as fases iniciais em ordem inversa — a aula termina do mesmo jeito que começou, dando aos alunos uma sensação satisfatória de fechamento e ritmo. Esse formato “circular” é o que faz uma aula parecer completa em vez de simplesmente parar quando o tempo acaba, e uma aula que parece completa é uma aula da qual o aluno sai sem pontas soltas o puxando para longe."},
+            {"type":"text","h":"6 · Resumo da Aula — do tutor e do aluno","b":"Recapitule o que foi visto — mas não apenas conte para eles. Peça também que o aluno resuma com suas próprias palavras. O resumo dele revela o que realmente ficou claro e funciona como um segundo momento de recuperação da memória."},
+            {"type":"text","h":"7 · Passagem do Dever de Casa — instruções claras","b":"Passe o dever de casa com instruções cristalinas sobre o que fazer e como fazer. Um dever de casa vago é um dever de casa que não será feito. Isso se conecta com a Correção do Dever de Casa que abriu a aula — juntas, elas formam o ciclo completo em que o módulo de Dever de Casa se baseia."},
+            {"type":"text","h":"8 · Prévia da Próxima Aula — despertar curiosidade","b":"Dê um gostinho do que vem a seguir: “Na próxima vez, vamos fazer nosso personagem se mover como na vida real!” Esse é o mesmo gancho de expectativa já visto no módulo de Aulas Inesquecíveis — encerrar sem ele joga fora uma vitória gratuita de frequência em cada aula."},
+            {"type":"text","h":"9 · Encerramento — terminar com energia","b":"Termine em alta: celebre o que o aluno criou hoje, reconheça o esforço dele e o deixe se sentindo bem. Os últimos 30 segundos moldam como ele vai se lembrar da aula inteira — e essa lembrança é o que ele está pesando, consciente ou não, na hora de decidir se aparece na próxima vez."},
+            {"type":"mirror","beginTitle":"O Início","endTitle":"O Final","mirrorLabel":"ESPELHO","beginItems":[{"n":1,"label":"Aquecimento"},{"n":2,"label":"Revisão da Aula Anterior"},{"n":3,"label":"Correção do Dever de Casa"},{"n":4,"label":"Objetivo da Aula"}],"endItems":[{"n":9,"label":"Encerramento"},{"n":8,"label":"Prévia da Próxima Aula"},{"n":7,"label":"Passagem do Dever de Casa"},{"n":6,"label":"Resumo da Aula"}],"caption":"A aula termina exatamente como começou — dando aos alunos uma sensação de fechamento, continuidade e ritmo."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
       "emoji": "🤝",
       "title": "Construindo um Vínculo com Seus Alunos",
       "desc": "Bate-papo informal, feedback que realmente funciona, e como fazer cada aluno se sentir parte do grupo.",
@@ -1750,7 +1932,7 @@ const I18N={
       ]
     },
     {
-      "id": 3,
+      "id": 4,
       "emoji": "✨",
       "title": "Criando Aulas Inesquecíveis",
       "desc": "Material visual, demonstração antes da prática, verificação de compreensão, e um encerramento com expectativa.",
@@ -1801,7 +1983,7 @@ const I18N={
       ]
     },
     {
-      "id": 4,
+      "id": 5,
       "emoji": "📝",
       "title": "Tarefas de Casa e Frequência",
       "desc": "Explicar, lembrar, destacar e revisar — os quatro hábitos de tarefas de casa que reforçam a frequência.",
@@ -1845,7 +2027,7 @@ const I18N={
       ]
     },
     {
-      "id": 5,
+      "id": 6,
       "emoji": "📞",
       "title": "O Que Fazer Quando um Aluno Falta à Aula",
       "desc": "Como acompanhar o aluno e como falar com os pais com empatia.",
@@ -1905,21 +2087,23 @@ const I18N={
       {"q": "O que o LPR mede, da perspectiva de um tutor?", "opts": ["A % dos seus casos de alunos com frequência abaixo de 50%", "A nota média dos seus alunos", "Quantas aulas você deu neste mês"], "c": 0, "fb": "O LPR (Low Presence Rate) é a proporção dos seus casos de alunos com frequência abaixo de 50%."}
     ],
     "2": [
+    {"q":"Você começa a aula imediatamente com \"abra seu arquivo da semana passada\" — sem cumprimento, sem aquecimento. Um aluno que estava distraído antes de entrar mal se engaja nos primeiros dez minutos. O que teria ajudado?","opts":["Nada — aquecimentos não são necessários depois de certa idade.","Um breve Aquecimento — uma pergunta leve ou um pequeno desafio que muda o cérebro do aluno para o \"modo aula\" antes de mergulhar no conteúdo.","Pular direto para o Objetivo da Aula para que ele saiba imediatamente o que se espera."],"c":1,"fb":"Um início fraco costuma ser o primeiro momento em que o aluno se desliga mentalmente — um aquecimento traz de volta uma criança distraída para a sessão antes de o conteúdo começar."},
+    {"q":"Em vez de pedir que os alunos recordem o que aprenderam na aula anterior, um tutor simplesmente reexplica tudo do zero toda vez. Qual é o risco?","opts":["Nenhum — repetição nunca faz mal.","Os alunos nunca praticam a recuperação da memória — uma das ferramentas de memória mais poderosas — então o conteúdo demora mais para fixar e eles se sentem menos competentes.","Isso economiza tempo no longo prazo, então vale a pena fazer."],"c":1,"fb":"A recuperação da memória — fazer o aluno lembrar em vez de só ouvir de novo — faz mais pela memória do que qualquer reexplicação, e constrói a competência que faz um aluno querer voltar."},
+    {"q":"Um aluno entregou um design como dever de casa. O tutor diz \"que pôster legal!\" e segue em frente. O que está faltando?","opts":["Nada — um feedback positivo e rápido mantém o ritmo.","Um feedback específico apontando o que funcionou e o que pode melhorar — um elogio vago não mostra que o dever de casa realmente importa.","O tutor deveria ter dado uma nota numérica em vez de um comentário."],"c":1,"fb":"O feedback específico é um dos dois momentos-chave de feedback da aula — pulá-lo ensina às crianças que o dever de casa é opcional."},
+    {"q":"A aula termina exatamente quando o tempo acaba — sem recapitulação, sem indício do que vem a seguir, sem reconhecimento do esforço do aluno. O que provavelmente se perde?","opts":["Nada — desde que o conteúdo tenha sido coberto, o encerramento não importa.","A chance de criar expectativa e terminar em alta — a última impressão é o que o aluno pesa na hora de decidir se aparece na próxima vez.","Apenas a passagem do dever de casa, que pode ser enviada depois por mensagem."],"c":1,"fb":"O final espelha o início — encerrar sem expectativa e sem um bom fechamento joga fora uma vitória gratuita de frequência em cada aula."}
+    ],
+    "3": [
       {"q": "Você entra na chamada e a câmera de um aluno está ligada, mas ele só está olhando para a mesa, sem digitar nada no chat. Como você começa a aula?", "opts": ["Oi! Vi que você chegou — antes de começarmos, como foi sua semana? Aconteceu algo legal?", "Vamos começar — abra o arquivo do projeto da semana passada.", "Nossaaa oiii!! Você está tãããão animado hoje, já dá pra ver que vai fazer algo INCRÍVEL!!"], "c": 0, "fb": "Um check-in breve e genuíno ajuda um aluno mais quieto a se sentir seguro antes de entrar no conteúdo — sem uma energia exagerada nem pular o momento por completo."},
       {"q": "Um aluno desenhou seu primeiro personagem, mas você percebeu que ele não seguiu suas instruções. Como você dá o feedback?", "opts": ["Você não seguiu as instruções — era para adicionar um fundo e você não adicionou. Vamos corrigir isso primeiro.", "Adorei como você deu um rosto tão expressivo pro seu personagem — isso exigiu bastante cuidado. Percebi que o fundo ainda não foi adicionado; foi uma escolha, ou você queria adicionar depois?", "Nossa, isso ficou incrível! Você é um artista tão talentoso!"], "c": 1, "fb": "Destacar algo específico e perguntar com curiosidade mantém a autonomia do aluno intacta — melhor do que um elogio vazio ou uma correção sem reconhecimento."},
       {"q": "Durante uma atividade em grupo, um aluno não falou nem reagiu nenhuma vez, enquanto outros dois estão conversando ativamente. O que você faz?", "opts": ["Nada — se ele quisesse participar, ativaria o microfone ou digitaria.", "Chamar a atenção dele publicamente: \"Por que você não está participando como todo mundo?\"", "Convidá-lo discretamente, sem pressão: \"Eu adoraria ouvir sua ideia também, quando você quiser — pode ser pelo chat, se for mais fácil.\""], "c": 2, "fb": "Um convite discreto e sem pressão respeita níveis diferentes de conforto sem ignorar o aluno ou colocá-lo em evidência."},
       {"q": "Dois alunos terminam o desafio individual na metade do tempo, enquanto outros três ainda estão travados no primeiro passo. Qual é a sua atitude?", "opts": ["Seguir para a próxima atividade já que a maioria dos alunos está quase terminando.", "Oferecer aos alunos mais rápidos uma tarefa extra, e depois alternar sua atenção para acompanhar individualmente cada aluno que está com dificuldade.", "Dar aos alunos mais rápidos um desafio bônus bem mais difícil e passar o resto da aula só com eles, já que são \"mais avançados\"."], "c": 1, "fb": "Alternar sua atenção mantém os dois grupos engajados — ninguém é ignorado, e ninguém se torna o \"ajudante permanente\"."}
     ],
-    "3": [
-      {"q": "O que deve acontecer bem antes de os alunos praticarem algo novo?", "opts": ["Nada — eles descobrem sozinhos", "O tutor demonstra o processo passo a passo", "Uma prova escrita"], "c": 1, "fb": "Demonstrar primeiro dá aos alunos um mapa claro antes de tentarem sozinhos."},
-      {"q": "Por que criar expectativa para a próxima aula?", "opts": ["Dá aos alunos um motivo para voltar", "Preenche o tempo no final da aula", "É exigido pela plataforma"], "c": 0, "fb": "Um bom gancho no final costuma ser o verdadeiro motivo pelo qual um aluno aparece na próxima vez."}
-    ],
-    "4": [
+    "5": [
       {"q": "Faltam dois minutos para o fim da aula e você se lembra que precisa passar a tarefa de casa. O que você faz?", "opts": ["Digitar rapidamente o link da tarefa no chat e dizer \"ok, façam isso pra próxima aula, tchau!\"", "Levar 30 segundos para explicar o que fazer e por que isso se conecta com o que acabamos de aprender hoje.", "Explicar em detalhes cada regra técnica da tarefa, lendo cada requisito em voz alta."], "c": 1, "fb": "Um propósito claro é o que faz a tarefa de casa valer a pena lembrar — não uma menção apressada ou uma parede de regras."},
       {"q": "Você tem um grupo grande e só tem tempo de olhar a tarefa de casa rapidamente antes de começar a nova aula. A maioria entregou, alguns não. O que você faz?", "opts": ["Destacar algo coletivo para todos que entregaram: \"90% de vocês trouxe a tarefa — isso mostra um comprometimento real.\"", "Falar os nomes dos alunos que não entregaram para que se sintam motivados a fazer da próxima vez.", "Mostrar apenas o melhor projeto como o exemplo que todos deveriam seguir."], "c": 0, "fb": "O objetivo é motivar, não comparar ou envergonhar — um reconhecimento coletivo inclui todos que apareceram."},
       {"q": "Você está revisando as tarefas entregues e o projeto de um aluno está tecnicamente correto, mas nada especial. O que você escreve?", "opts": ["Só marcar como \"feito\" sem comentário — cumpriu os requisitos, já basta.", "Deixar uma lista longa de tudo que poderia melhorar, sem mencionar nenhum ponto positivo.", "Deixar um comentário curto e específico, destacando algo que ele fez bem e uma sugestão gentil — algo que os pais também possam ler."], "c": 2, "fb": "Revisar a tarefa de casa é uma oportunidade de feedback, não só uma marcação — também é uma chance de reforçar o vínculo com alunos e pais."}
     ],
-    "5": [
+    "6": [
       {"q": "Você ligou e mandou mensagem para um pai duas vezes esta semana sobre o filho ter faltado a duas aulas seguidas, e ainda não teve resposta. Qual é o melhor próximo passo?", "opts": ["Parar de tentar contato — você já tentou duas vezes, agora é com o pai.", "Escalar imediatamente pedindo ao seu TL para remover o aluno do seu grupo, já que claramente não está interessado.", "Mandar mais uma mensagem calorosa e sem pressão, e compartilhar a gravação/resumo da tarefa de casa para que o aluno não fique ainda mais para trás enquanto você espera uma resposta."], "c": 2, "fb": "Um contato atencioso é sempre o primeiro passo — persistente, mas caloroso, mantendo a porta aberta em vez de desistir ou escalar cedo demais."},
       {"q": "Um aluno que faltou à última aula finalmente participa hoje. Como você começa a aula com ele?", "opts": ["Reconhecer, de forma privada ou gentil, que você percebeu a ausência dele, perguntar como ele está, e lembrar onde encontrar a gravação e a tarefa de casa.", "Não mencionar a ausência de jeito nenhum, só seguir com a aula de hoje como se nada tivesse acontecido.", "Apontar na frente do grupo que ele faltou e perguntar por quê."], "c": 0, "fb": "Mostrar ao aluno que você percebeu a ausência dele — sem colocá-lo em evidência — ajuda ele a se sentir visto em vez de atrasado."},
       {"q": "Um pai te manda mensagem diretamente perguntando se o filho pode ter uma aula extra gratuita para se atualizar depois de faltar a várias aulas. O que você faz?", "opts": ["Concordar na hora e agendar por conta própria, já que é um gesto legal para a família.", "Primeiro, falar com seu TL sobre a situação e conseguir aprovação para a aula extra. Depois, agradecer ao pai por entrar em contato e dizer que você está feliz em saber que o aluno tem interesse em se atualizar. Se a aula extra for aprovada, oferecer para agendá-la com o aluno.", "Dizer ao pai que não é possível e que não há nada a fazer."], "c": 1, "fb": "A aprovação do TL sempre vem primeiro — mas isso não significa que o pai recebe uma resposta fria ou demorada; você pode ser caloroso(a) e ainda seguir o processo correto."}
@@ -1962,7 +2146,7 @@ const I18N={
     "moduleN": "Модуль {n}",
     "finalStage": "Финальный этап",
     "finalExam": "Итоговый экзамен",
-    "finalExamDesc": "Пройди официальный экзамен из 12 вопросов (Google Форма) по модулям 2–5, чтобы получить сертификат.",
+    "finalExamDesc": "Пройди официальный экзамен из 12 вопросов (Google Форма) по модулям 2–6, чтобы получить сертификат.",
     "openForm": "Открыть форму",
     "certifiedCheck": "Сертифицировано ✓",
     "opensInForms": "Открывается в Google Forms",
@@ -2046,7 +2230,8 @@ const I18N={
           "cards": [
             {"type": "text", "b": "Мы делим учеников (SS) на три уровня в зависимости от процента их посещаемости."},
             {"type": "table", "h": "Уровни посещаемости", "head": ["Уровень", "Диапазон"], "rows": [["🟢 Высокая посещаемость", "≥ 75%"], ["🟠 Средняя посещаемость (риск)", "50% – 74,99%"], ["❗ Низкая посещаемость (тревога)", "&lt; 50%"]]},
-            {"type": "text", "h": "С точки зрения тьютора", "b": "Два показателя отражают твою эффективность по этой метрике:<br><br><strong>LPR (Low Presence Rate):</strong> % твоих учеников с посещаемостью ниже 50%.<br><strong>HPR (High Presence Rate):</strong> % твоих учеников с посещаемостью 75% и выше."}
+            {"type": "text", "h": "С точки зрения тьютора", "b": "Два показателя отражают твою эффективность по этой метрике:<br><br><strong>LPR (Low Presence Rate):</strong> % твоих учеников с посещаемостью ниже 50%.<br><strong>HPR (High Presence Rate):</strong> % твоих учеников с посещаемостью 75% и выше."},
+            {"type": "text", "b": "Данные о посещаемости рассчитываются на основе записи посещаемости, которую автоматически фиксирует классная комната, когда ученик присоединяется к занятию. Посещение подтверждается, если ученик присутствовал более 50% урока. Это не основано на записях посещаемости, вносимых вручную в BO."}
           ]
         },
         {
@@ -2066,6 +2251,49 @@ const I18N={
     },
     {
       "id": 2,
+      "emoji": "🧭",
+      "title": "Структура урока и посещаемость",
+      "desc": "Почему стабильный распорядок урока — один из самых сильных факторов посещаемости, и девять этапов, из которых состоит каждый урок Kodland.",
+      "obj": "Понять, почему стабильная структура урока повышает посещаемость, и изучить девять этапов, из которых состоит урок Kodland.",
+      "color": "#D3FF5F",
+      "sections": [
+        {
+          "t": "💡 Почему это важно",
+          "cards": [
+            {"type":"text","b":"Есть фактор, который тесно связан с посещаемостью: сохранение стабильного распорядка и структуры на ваших уроках. Постоянство — это и есть суть. Как только ученик усваивает ваш ритм, он перестаёт тратить силы на вопрос «а что сейчас будет?» и направляет их на обучение. Используйте одну и ту же структуру каждый раз, пока она не станет второй натурой — и для вас, и для ученика. Предсказуемый урок ощущается как безопасный урок, а на безопасный урок ученику хочется возвращаться."},
+            {"type":"text","b":"Вот как устроен урок Kodland, этап за этапом, и как сохранение этого порядка защищает ваши показатели посещаемости."}
+          ]
+        },
+        {
+          "t": "🌅 Начало: четыре этапа",
+          "cards": [
+            {"type":"text","h":"1 · Разминка — активация энергии и внимания","b":"Начните с чего-то лёгкого, что переключает мозг ученика в «режим урока»: быстрый вопрос, небольшой вызов, интересный дизайн, замеченный за неделю. Цель — энергия и внимание, а не оценка. Это сигнал «мы начинаем», который вытягивает отвлечённого ребёнка в занятие. Слабое начало часто становится первым моментом, когда ученик мысленно отключается — а ученик, отключившийся сегодня, с большей вероятностью пропустит занятие в следующий раз."},
+            {"type":"text","h":"2 · Повторение прошлого урока — вспоминание и закрепление","b":"Кратко вернитесь к тому, что было пройдено в прошлый раз. Извлечение из памяти — когда ученик вспоминает, а не просто слушает повторение — один из самых мощных инструментов запоминания. Двухминутный вопрос «что делает фокальную точку сильной?» даёт больше, чем повторное объяснение когда-либо могло бы. Когда ученики чувствуют, что успевают за материалом и действительно помнят его, они ощущают себя компетентными — а ощущение компетентности является одной из главных причин, по которым ученик хочет вернуться."},
+            {"type":"text","h":"3 · Проверка домашнего задания — разбор вместе с учеником","b":"Разберите домашнее задание вместе с учеником — в этом курсе это значит посмотреть созданный им дизайн. Именно здесь вы обнаруживаете недопонимания, хвалите за старания и показываете, что домашняя работа действительно важна. Это также один из двух ключевых моментов обратной связи в уроке: не ограничивайтесь фразой «классный постер!» — скажите конкретно, что получилось хорошо, а что стоит доработать. Если пропустить проверку, дети усваивают, что домашнее задание необязательно, а это подрывает всё, что модуль о домашних заданиях уже объяснил о важности этой проверки для посещаемости."},
+            {"type":"text","h":"4 · Цель урока — постановка чётких задач","b":"Ясно сформулируйте, чему посвящён сегодняшний урок: «сегодня мы создадим постер с одной чёткой фокальной точкой». Чёткая цель придаёт уроку направление и даёт ученику конкретный ориентир. Ученик, не понимающий, «зачем» сегодняшний урок, быстро теряет вовлечённость — а потеря вовлечённости является одной из внутренних причин пропуска занятия."}
+          ]
+        },
+        {
+          "t": "🎨 Середина: теория и практика",
+          "cards": [
+            {"type":"text","h":"5 · Теория и практика — сердце урока","b":"Между целью урока и завершающими этапами располагается самый длинный этап, на котором изучается новый материал и сразу же применяется на практике. Подавайте теорию небольшими порциями — одна концепция, затем практическая работа с ней — и сначала демонстрируйте: покажите технику на своём экране, прежде чем ученики попробуют сами. На курсе по дизайну этап практики — это время, когда ученики действительно создают, поэтому берегите его как зеницу ока; урок, на котором дети только наблюдали, как вы создаёте дизайн/пишете код, — это урок, на котором никто ничего не создал. Это также та часть урока, которую ученики ждут больше всего — защитите её, и вы защитите причину, по которой они приходят на занятия."}
+          ]
+        },
+        {
+          "t": "🏁 Конец: зеркало",
+          "cards": [
+            {"type":"text","b":"Четыре завершающих этапа зеркально повторяют начальные, но в обратном порядке — урок заканчивается так же, как начался, создавая у учеников приятное ощущение завершённости и ритма. Именно эта «кольцевая» форма делает урок цельным, а не просто обрывающимся, когда заканчивается время, а урок, ощущающийся завершённым, — это урок, после которого у ученика не остаётся незакрытых вопросов, тянущих его прочь."},
+            {"type":"text","h":"6 · Итоги урока — от преподавателя и от ученика","b":"Подведите итог пройденного — но не просто расскажите сами. Попросите ученика тоже подвести итог своими словами. Его формулировка показывает, что действительно усвоилось, и одновременно становится вторым моментом извлечения из памяти."},
+            {"type":"text","h":"7 · Домашнее задание — чёткие инструкции","b":"Задавайте домашнее задание с предельно ясными инструкциями о том, что и как делать. Расплывчатое домашнее задание — это задание, которое не будет выполнено. Это перекликается с проверкой домашнего задания, с которой начался урок — вместе они образуют полный цикл, на котором построен модуль о домашних заданиях."},
+            {"type":"text","h":"8 · Анонс следующего урока — пробуждение любопытства","b":"Заинтригуйте тем, что будет дальше: «В следующий раз мы заставим нашего персонажа двигаться совсем как в жизни!» Это тот же крючок предвкушения, который уже рассматривался в модуле о незабываемых занятиях — завершение урока без него означает упущенную бесплатную возможность повысить посещаемость на каждом занятии."},
+            {"type":"text","h":"9 · Завершение — закончить на подъёме","b":"Завершите на высокой ноте: отметьте, что ученик создал сегодня, признайте его усилия и отпустите его с хорошим настроением. Последние 30 секунд формируют то, как ученик запомнит весь урок — а именно эта память, осознанно или нет, влияет на его решение прийти в следующий раз."},
+            {"type":"mirror","beginTitle":"Начало","endTitle":"Конец","mirrorLabel":"ЗЕРКАЛО","beginItems":[{"n":1,"label":"Разминка"},{"n":2,"label":"Повторение прошлого урока"},{"n":3,"label":"Проверка домашнего задания"},{"n":4,"label":"Цель урока"}],"endItems":[{"n":9,"label":"Завершение"},{"n":8,"label":"Анонс следующего урока"},{"n":7,"label":"Домашнее задание"},{"n":6,"label":"Итоги урока"}],"caption":"Урок заканчивается точно так же, как начался — создавая у учеников ощущение завершённости, непрерывности и ритма."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
       "emoji": "🤝",
       "title": "Выстраиваем контакт со своими учениками",
       "desc": "Непринуждённое общение, обратная связь, которая действительно работает, и как сделать так, чтобы каждый ученик чувствовал себя частью группы.",
@@ -2138,7 +2366,7 @@ const I18N={
       ]
     },
     {
-      "id": 3,
+      "id": 4,
       "emoji": "✨",
       "title": "Создаём незабываемые занятия",
       "desc": "Визуальные материалы, показ примера перед практикой, проверка понимания и завершение с интригой.",
@@ -2189,7 +2417,7 @@ const I18N={
       ]
     },
     {
-      "id": 4,
+      "id": 5,
       "emoji": "📝",
       "title": "Домашние задания и посещаемость",
       "desc": "Объясняй, напоминай, отмечай и проверяй — четыре привычки с домашними заданиями, которые укрепляют посещаемость.",
@@ -2233,7 +2461,7 @@ const I18N={
       ]
     },
     {
-      "id": 5,
+      "id": 6,
       "emoji": "📞",
       "title": "Что делать, когда ученик пропускает занятие",
       "desc": "Как связаться с учеником и как с эмпатией разговаривать с родителями.",
@@ -2293,21 +2521,23 @@ const I18N={
       {"q": "Что измеряет LPR с точки зрения тьютора?", "opts": ["% твоих учеников с посещаемостью ниже 50%", "Средний балл твоих учеников", "Сколько занятий ты провёл(а) в этом месяце"], "c": 0, "fb": "LPR (Low Presence Rate) — это доля твоих учеников с посещаемостью ниже 50%."}
     ],
     "2": [
+    {"q":"Вы начинаете урок сразу с фразы «открой файл с прошлой недели» — без приветствия, без разминки. Ученик, который был отвлечён ещё до подключения, едва вовлекается в первые десять минут. Что могло бы помочь?","opts":["Ничего — разминки не нужны, начиная с определённого возраста учеников.","Короткая разминка — лёгкий вопрос или небольшой вызов, который переключает мозг ученика в «режим урока» перед началом изучения материала.","Сразу перейти к цели урока, чтобы ученик сразу понимал, чего от него ждут."],"c":1,"fb":"Слабое начало часто становится первым моментом, когда ученик мысленно отключается — разминка вытягивает отвлечённого ребёнка в занятие ещё до начала содержательной части."},
+    {"q":"Вместо того чтобы попросить учеников вспомнить, что они проходили на прошлом занятии, преподаватель каждый раз заново объясняет всё с нуля. В чём риск?","opts":["Ни в чём — повторение никогда не вредит.","Ученики никогда не практикуют извлечение из памяти — один из самых мощных инструментов запоминания, — поэтому материал усваивается дольше, а ученики чувствуют себя менее компетентными.","В долгосрочной перспективе это экономит время, поэтому так делать стоит."],"c":1,"fb":"Извлечение из памяти — когда ученик вспоминает, а не просто слушает повторное объяснение, — даёт больше для запоминания, чем повторное объяснение когда-либо могло бы, и формирует ощущение компетентности, из-за которого ученику хочется вернуться."},
+    {"q":"Ученик прислал дизайн в качестве домашнего задания. Преподаватель говорит «классный постер!» и переходит дальше. Чего здесь не хватает?","opts":["Ничего — быстрая положительная обратная связь поддерживает динамику урока.","Конкретной обратной связи с указанием, что получилось хорошо, а что стоит доработать — расплывчатая похвала не показывает ученику, что домашнее задание действительно важно.","Преподавателю стоило поставить числовую оценку вместо комментария."],"c":1,"fb":"Конкретная обратная связь — один из двух ключевых моментов обратной связи в уроке; пропуская её, дети усваивают, что домашнее задание необязательно."},
+    {"q":"Урок заканчивается ровно тогда, когда истекает время — без итогов, без намёка на то, что будет дальше, без признания усилий ученика. Что, скорее всего, теряется?","opts":["Ничего — если материал был пройден, то то, как заканчивается урок, не имеет значения.","Возможность вызвать предвкушение и завершить занятие на высокой ноте — последнее впечатление влияет на решение ученика, придёт ли он в следующий раз.","Только домашнее задание, которое можно отправить позже сообщением."],"c":1,"fb":"Конец урока зеркально отражает его начало — завершение без предвкушения и сильного финала упускает бесплатную возможность повысить посещаемость на каждом занятии."}
+    ],
+    "3": [
       {"q": "Ты подключаешься к звонку, и у ученика включена камера, но он просто смотрит в стол и ничего не пишет в чате. Как ты начнёшь занятие?", "opts": ["Привет! Рад(а) тебя видеть — прежде чем начнём, как прошла неделя? Было что-то интересное?", "Начинаем — открывай файл проекта с прошлой недели.", "Ого, привет!! Ты выглядишь та-а-ак взволнованно сегодня, я прямо чувствую, что ты сделаешь что-то ПОТРЯСАЮЩЕЕ!!"], "c": 0, "fb": "Короткая, искренняя проверка помогает тихому ученику почувствовать себя в безопасности перед началом материала — без чрезмерной энергии и без пропуска этого момента вовсе."},
       {"q": "Ученик нарисовал своего первого персонажа, но ты заметил(а), что он не следовал твоим инструкциям. Как ты дашь обратную связь?", "opts": ["Ты не следовал инструкциям — нужно было добавить фон, а ты этого не сделал. Давай сначала исправим это.", "Мне очень нравится, какое выразительное лицо ты придумал персонажу — над этим явно подумал. Я заметил(а), что фон ещё не добавлен; это был осознанный выбор, или хотел добавить его позже?", "Ого, это потрясающе! Ты такой талантливый художник!"], "c": 1, "fb": "Отметить что-то конкретное и спросить с любопытством — сохраняет самостоятельность ученика, это лучше, чем пустая похвала или исправление без признания заслуг."},
       {"q": "Во время групповой активности один ученик вообще не говорит и не реагирует, пока двое других активно переписываются друг с другом. Что ты сделаешь?", "opts": ["Ничего — если бы он хотел участвовать, он бы включил микрофон или написал в чат.", "Публично обратить на него внимание: «Почему ты не участвуешь, как все остальные?»", "Тихо и без давления пригласить его: «Мне бы тоже хотелось услышать твою идею, когда будешь готов — в чате тоже можно, если так проще»."], "c": 2, "fb": "Тихое приглашение без давления учитывает разный уровень комфорта, не игнорируя ученика и не ставя его в неловкое положение."},
       {"q": "Два ученика закончили самостоятельное задание за половину времени, пока трое других всё ещё застряли на первом шаге. Что ты сделаешь?", "opts": ["Перейти к следующему заданию, раз большинство учеников почти закончили.", "Предложить быстрым ученикам дополнительное задание, а затем поочерёдно проверить каждого из отстающих учеников.", "Дать быстрым ученикам намного более сложное бонусное задание и провести остаток занятия только с ними, раз они «более продвинутые»."], "c": 1, "fb": "Чередование внимания удерживает вовлечёнными обе группы — никто не остаётся без внимания, и никто не становится «постоянным помощником»."}
     ],
-    "3": [
-      {"q": "Что должно произойти непосредственно перед тем, как ученики попробуют что-то новое на практике?", "opts": ["Ничего — они разберутся сами", "Тьютор показывает процесс шаг за шагом", "Письменный тест"], "c": 1, "fb": "Показ примера сначала даёт ученикам чёткую картину, прежде чем они попробуют сами."},
-      {"q": "Зачем создавать интригу к следующему занятию?", "opts": ["Это даёт ученикам повод вернуться", "Это заполняет время в конце занятия", "Это требуется платформой"], "c": 0, "fb": "Сильная зацепка в конце часто и есть настоящая причина, по которой ученик приходит в следующий раз."}
-    ],
-    "4": [
+    "5": [
       {"q": "Остаются последние две минуты занятия, и ты вспоминаешь, что нужно задать домашнее задание. Что ты сделаешь?", "opts": ["Быстро напишешь ссылку на домашнее задание в чате и скажешь «ладно, сделайте это к следующему разу, пока!»", "Потратишь 30 секунд, чтобы объяснить, что нужно сделать и как это связано с тем, что мы только что изучили сегодня.", "Подробно расскажешь каждое техническое правило задания, зачитывая каждое требование вслух."], "c": 1, "fb": "Именно ясная цель делает домашнее задание достойным того, чтобы его запомнили, — а не поспешное упоминание или стена правил."},
       {"q": "У тебя большая группа и есть время только быстро просмотреть домашнее задание перед началом нового урока. Большинство сдали, некоторые — нет. Что ты сделаешь?", "opts": ["Отметишь что-то общее для всех, кто сдал: «90% из вас принесли домашнее задание — это показывает настоящую ответственность».", "Назовёшь имена учеников, которые не сдали, чтобы мотивировать их в следующий раз.", "Покажешь только один лучший проект как образец, к которому все должны стремиться."], "c": 0, "fb": "Цель — мотивация, а не сравнение или стыд — коллективное признание включает всех, кто выполнил задание."},
       {"q": "Ты проверяешь сданное домашнее задание, и проект одного ученика технически верен, но ничем не примечателен. Что ты напишешь?", "opts": ["Просто отметишь «выполнено» без комментария — требования выполнены, этого достаточно.", "Оставишь длинный список всего, что можно улучшить, без единого позитивного момента.", "Оставишь короткий, конкретный комментарий, отметив одну удачную вещь и одно мягкое предложение — то, что смогут прочитать и родители."], "c": 2, "fb": "Проверка домашнего задания — это возможность дать обратную связь, а не просто галочка, — а ещё шанс укрепить связь с учениками и родителями."}
     ],
-    "5": [
+    "6": [
       {"q": "Ты уже дважды за эту неделю звонил(а) и писал(а) родителю о том, что ребёнок пропустил два занятия подряд, но ответа так и не получил(а). Какой следующий шаг лучше всего предпринять?", "opts": ["Перестать писать — ты уже дважды пытался(ась), теперь дело за родителем.", "Сразу же эскалировать ситуацию, попросив своего TL исключить ученика из группы, раз он явно не заинтересован.", "Отправить ещё одно тёплое сообщение без давления и поделиться записью/пересказом домашнего задания, чтобы ученик не отставал ещё больше, пока ты ждёшь ответа."], "c": 2, "fb": "Заботливая проверка — это всегда первый шаг: настойчиво, но тепло, оставляя дверь открытой, а не сдаваясь и не эскалируя слишком рано."},
       {"q": "Ученик, пропустивший прошлое занятие, наконец присоединяется сегодня. Как ты начнёшь занятие с ним?", "opts": ["Лично или мягко дашь понять, что заметил(а) его отсутствие, спросишь, как дела, и напомнишь, где найти запись и домашнее задание.", "Вообще не упомянешь пропуск, просто продолжишь сегодняшний урок, будто ничего не было.", "Укажешь при всей группе, что он пропустил занятие, и спросишь почему."], "c": 0, "fb": "Показать ученику, что ты заметил(а) его отсутствие, не ставя его в неловкое положение, помогает ему почувствовать себя замеченным, а не отставшим."},
       {"q": "Родитель пишет тебе напрямую и спрашивает, может ли ребёнок получить бесплатное дополнительное занятие, чтобы наверстать пропущенное после нескольких пропусков. Что ты сделаешь?", "opts": ["Сразу согласишься и сам(а) назначишь его, ведь это приятный жест для семьи.", "Сначала свяжешься со своим TL по поводу ситуации и получишь одобрение на дополнительное занятие. Затем поблагодаришь родителя за обращение и сообщишь, что рад(а) слышать заинтересованность ученика наверстать материал. Если дополнительное занятие одобрят, предложишь согласовать время с учеником.", "Скажешь родителю, что это невозможно и ничего нельзя сделать."], "c": 1, "fb": "Одобрение TL всегда идёт первым — но это не значит, что родитель получает холодный или запоздалый ответ; можно быть тёплым, следуя при этом правильному процессу."}
@@ -2350,7 +2580,7 @@ const I18N={
     "moduleN": "Modül {n}",
     "finalStage": "Son Aşama",
     "finalExam": "Final Sınavı",
-    "finalExamDesc": "Sertifika almak için Modül 2-5'i kapsayan resmi 12 soruluk sınavı (Google Formu) tamamla.",
+    "finalExamDesc": "Sertifika almak için Modül 2-6'yı kapsayan resmi 12 soruluk sınavı (Google Formu) tamamla.",
     "openForm": "Formu Aç",
     "certifiedCheck": "Sertifikalı ✓",
     "opensInForms": "Google Forms'ta açılır",
@@ -2425,7 +2655,8 @@ const I18N={
       {"t":"📐 Nasıl Ölçülüyor?","cards":[
         {"type":"text","b":"Öğrencileri (SS) katılım yüzdelerine göre üç seviyeye ayırıyoruz."},
         {"type":"table","h":"Katılım seviyeleri","head":["Seviye","Aralık"],"rows":[["🟢 Yüksek Katılım","≥ %75"],["🟠 Orta Katılım (Risk)","%50 – %74,99"],["❗ Düşük Katılım (Alarm)","&lt; %50"]]},
-        {"type":"text","h":"Eğitmen açısından","b":"İki gösterge bu metrikteki performansını özetler:<br><br><strong>LPR (Low Presence Rate):</strong> Katılımı %50'nin altında olan öğrenci vakalarının yüzdesi.<br><strong>HPR (High Presence Rate):</strong> Katılımı %75 veya üzerinde olan öğrenci vakalarının yüzdesi."}
+        {"type":"text","h":"Eğitmen açısından","b":"İki gösterge bu metrikteki performansını özetler:<br><br><strong>LPR (Low Presence Rate):</strong> Katılımı %50'nin altında olan öğrenci vakalarının yüzdesi.<br><strong>HPR (High Presence Rate):</strong> Katılımı %75 veya üzerinde olan öğrenci vakalarının yüzdesi."},
+        {"type":"text","b":"Devam durumu, öğrenci derse katıldığında sınıfın otomatik olarak kaydettiği katılım kaydına göre hesaplanır. Öğrenci dersin %50'sinden fazlasına katıldığında devam onaylanmış sayılır. BO'ya girilen katılım kayıtlarına göre değil."}
       ]},
       {"t":"🔍 Bir Öğrenci Neden Derse Gelmez?","cards":[
         {"type":"twocol","left":{"h":"🌦️ Dışsal (senin kontrolün dışında)","items":["Tatiller","Hastalık","Aile sorunları","Resmi tatiller"]},"right":{"h":"🎯 İçsel (bunları sen etkileyebilirsin)","items":["Derste sıkılıyorlar","Kendilerini duyulmuş hissetmiyorlar","Bunda \"iyi olmadıklarını\" düşünüyorlar","Kafaları karışık ve kaybolmuş hissediyorlar"]}}
@@ -2436,7 +2667,32 @@ const I18N={
       ]}
      ]},
 
-    {"id":2,"emoji":"🤝","title":"Öğrencilerinle Bağ Kurmak","desc":"Sohbet, gerçekten işe yarayan geri bildirim ve her öğrenciyi grubun bir parçası gibi hissettirmenin yolları.","obj":"Öğrencilerinin geri gelmek istemesini sağlayacak değerli bir bağ kurmayı öğren.","color":"#D3FF5F",
+    {"id":2,"emoji":"🧭","title":"Ders Yapısı ve Devam","desc":"Tutarlı bir ders rutininin neden devamı artıran en güçlü etkenlerden biri olduğu ve her Kodland dersini oluşturan dokuz aşama.","obj":"Tutarlı bir ders yapısının neden devamı artırdığını anlamak ve bir Kodland dersini oluşturan dokuz aşamayı öğrenmek.","color":"#D3FF5F",
+     "sections":[
+      {"t":"💡 Bunun Önemi Ne","cards":[
+        {"type":"text","b":"Bir şey devamla güçlü şekilde ilişkilidir: derslerinde tutarlı bir rutin ve yapı sürdürmek. Önemli olan tutarlılık. Öğrenci senin ritmini öğrendiğinde, “şimdi ne oluyor?” diye düşünmeye enerji harcamayı bırakır ve bu enerjiyi öğrenmeye ayırır. Aynı yapıyı, senin için de onlar için de ikinci doğa haline gelene kadar her seferinde uygula. Tahmin edilebilir bir ders, güvenli bir ders gibi hissettirir; güvenli bir ders ise öğrencinin tekrar gelmek isteyeceği bir derstir."},
+        {"type":"text","b":"İşte bir Kodland dersinin aşama aşama nasıl yapılandırıldığı ve bu sıranın bozulmadan korunmasının katılım rakamlarını nasıl koruduğu."}
+      ]},
+      {"t":"🌅 Başlangıç: Dört Aşama","cards":[
+        {"type":"text","h":"1 · Isınma — enerjiyi ve odağı harekete geçir","b":"Öğrencinin zihnini “ders moduna” geçiren hafif bir şeyle başla: kısa bir soru, ufak bir meydan okuma, hafta içinde görülen havalı bir tasarım. Amaç değerlendirme değil, enerji ve dikkat. Bu, “artık başlıyoruz” sinyalini verir ve dikkati dağınık bir öğrenciyi derse çeker. Zayıf bir açılış çoğu zaman öğrencinin zihnen dersten koptuğu ilk andır — ve bugün kopan bir öğrencinin bir dahaki sefere gelmeme olasılığı daha yüksektir."},
+        {"type":"text","h":"2 · Önceki Ders Tekrarı — hatırlama ve pekiştirme","b":"Geçen sefer öğrenilenleri kısaca tekrar gözden geçir. Geri çağırma — öğrenciye tekrar anlatmak yerine hatırlatmak — var olan en güçlü hafıza araçlarından biridir. İki dakikalık bir “güçlü bir odak noktasını ne yapar?” sorusu, yeniden anlatmaktan çok daha fazlasını başarır. Öğrenciler ders akışına ayak uydurduklarını ve gerçekten hatırladıklarını hissettiklerinde kendilerini yetkin hisseder — ve yetkinlik hissi, bir öğrencinin geri dönmek istemesinin en büyük nedenlerinden biridir."},
+        {"type":"text","h":"3 · Ödev Kontrolü — ödevi birlikte gözden geçir","b":"Öğrenciyle birlikte ödevi incele — bu kursta bu, öğrencinin yaptığı bir tasarıma bakmak anlamına gelir. Burada yanlış anlamaları yakalar, çabayı takdir eder ve ödevin gerçekten önemli olduğunu gösterirsin. Bu aynı zamanda dersin iki temel geri bildirim anından biridir: “güzel poster!” demekle yetinme — neyin işe yaradığını ve nerede daha ileri gidilebileceğini açıkça söyle. Kontrolü atlamak, çocuklara ödevin isteğe bağlı olduğunu öğretir ve Ödev modülünün bu kontrolün devam için neden önemli olduğuna dair anlattığı her şeyi baltalar."},
+        {"type":"text","h":"4 · Ders Hedefi — net amaçlar belirle","b":"Bugünün ne hakkında olduğunu açıkça belirt: “bugün tek bir net odak noktası olan bir poster tasarlayacağız.” Net bir hedef, derse yön verir ve öğrenciye hedefleyebileceği somut bir şey sunar. Bugünün “ne için” olduğunu bilmeyen bir öğrenci hızla ilgisini kaybeder — ve ilgisizlik, bir dersin kaçırılmasının arkasındaki içsel nedenlerden biridir."}
+      ]},
+      {"t":"🎨 Orta Kısım: Teori ve Uygulama","cards":[
+        {"type":"text","h":"5 · Teori ve Uygulama — dersin kalbi","b":"Ders hedefi ile kapanış aşamaları arasında, yeni materyalin öğretildiği ve hemen kullanıldığı en uzun aşama yer alır. Teoriyi küçük parçalar halinde tut — bir kavram, ardından onunla uygulamalı çalışma — ve önce model ol: öğrenciler kendi ekranlarında denemeden önce tekniği kendi ekranında göster. Bir tasarım kursunda uygulama aşaması, öğrencilerin gerçekten yaratım yaptığı andır, bu yüzden bu zamanı sıkı sıkıya koru; çocukların yalnızca senin tasarım/kodlama yaptığını izlediği bir ders, kimsenin tasarım/kodlama yapmadığı bir derstir. Bu aynı zamanda öğrencilerin en çok sabırsızlıkla beklediği kısımdır — onu koru, çünkü onlar bu yüzden geliyor."}
+      ]},
+      {"t":"🏁 Son: Ayna","cards":[
+        {"type":"text","b":"Kapanışın dört aşaması, açılışın aşamalarını ters sırayla yansıtır — ders, başladığı gibi biter ve öğrencilere tatmin edici bir kapanış ve ritim hissi verir. Bu “döngüsel” şekil, dersin süre bittiği için durmuş değil de tamamlanmış gibi hissettirmesini sağlar; tamamlanmış hissettiren bir ders, öğrencinin peşinden sürükleyen yarım kalmış işler olmadan ayrıldığı bir derstir."},
+        {"type":"text","h":"6 · Ders Özeti — eğitmen ve öğrenci temelli","b":"Ele alınanları özetle — ama sadece sen anlatma. Öğrencinin de kendi cümleleriyle özetlemesini sağla. Onun özeti, gerçekte neyin akılda kaldığını ortaya koyar ve ikinci bir hatırlama anı olarak işlev görür."},
+        {"type":"text","h":"7 · Ödev Görevi — net talimatlar","b":"Ne yapılacağı ve nasıl yapılacağı konusunda kristal netliğinde talimatlarla ödev ver. Belirsiz bir ödev, yapılmayacak bir ödevdir. Bu, dersi açan Ödev Kontrolü ile eşleşir — birlikte Ödev modülünün üzerine kurulduğu tam döngüyü oluştururlar."},
+        {"type":"text","h":"8 · Sonraki Ders Ön İzlemesi — merak uyandır","b":"Sırada ne olduğuna dair ipucu ver: “Gelecek sefer, karakterimizi tıpkı gerçek hayattaki gibi hareket ettireceğiz!” Bu, Unutulmaz Dersler modülünde zaten ele alınan aynı merak tuzağıdır — bunu yapmadan kapatmak her seferinde bedava bir devam kazanımını çöpe atmaktır."},
+        {"type":"text","h":"9 · Kapanış — enerjiyle bitir","b":"Yüksek bir notla bitir: öğrencinin bugün yarattığını kutla, çabasını takdir et ve onu iyi hissettirerek yolcu et. Son 30 saniye, dersin tamamını nasıl hatırlayacaklarını şekillendirir — ve bu anı, bir dahaki sefere gelip gelmeyeceklerine karar verirken bilinçli ya da değil tarttıkları şeydir."},
+        {"type":"mirror","beginTitle":"Başlangıç","endTitle":"Son","mirrorLabel":"AYNA","beginItems":[{"n":1,"label":"Isınma"},{"n":2,"label":"Önceki Ders Tekrarı"},{"n":3,"label":"Ödev Kontrolü"},{"n":4,"label":"Ders Hedefi"}],"endItems":[{"n":9,"label":"Kapanış"},{"n":8,"label":"Sonraki Ders Ön İzlemesi"},{"n":7,"label":"Ödev Görevi"},{"n":6,"label":"Ders Özeti"}],"caption":"Ders, başladığı gibi biter — öğrencilere kapanış, süreklilik ve ritim hissi vererek."}
+      ]}
+     ]},
+
+    {"id":3,"emoji":"🤝","title":"Öğrencilerinle Bağ Kurmak","desc":"Sohbet, gerçekten işe yarayan geri bildirim ve her öğrenciyi grubun bir parçası gibi hissettirmenin yolları.","obj":"Öğrencilerinin geri gelmek istemesini sağlayacak değerli bir bağ kurmayı öğren.","color":"#D3FF5F",
      "sections":[
       {"t":"💙 Bu Neden Önemli","cards":[
         {"type":"text","b":"Kodland'de öğrencilerimiz zorunlu olmayan, müfredat dışı bir kurs alıyor. Okuldan farklı olarak, onları geri gelmeye zorlayan hiçbir şey yok. Bu yüzden eğitmenle ve grupla kurulan bağ hoş bir ekstra değil: geri gelme nedenleri budur. İşte bunu inşa etmek için sınıfta sahip olduğun anahtarlar ve gündelik fırsatlar."}
@@ -2488,7 +2744,7 @@ const I18N={
       ]}
      ]},
 
-    {"id":3,"emoji":"✨","title":"Unutulmaz Dersler Yaratmak","desc":"Görsel materyal, uygulamadan önce modelleme, anlaşılırlığı kontrol etme ve merak uyandırarak kapanış.","obj":"Sıradan bir dersi öğrencilerin kaçırmak istemediği bir derse dönüştüren dört alışkanlığı öğren.","color":"#D3FF5F","sortGame":true,
+    {"id":4,"emoji":"✨","title":"Unutulmaz Dersler Yaratmak","desc":"Görsel materyal, uygulamadan önce modelleme, anlaşılırlığı kontrol etme ve merak uyandırarak kapanış.","obj":"Sıradan bir dersi öğrencilerin kaçırmak istemediği bir derse dönüştüren dört alışkanlığı öğren.","color":"#D3FF5F","sortGame":true,
      "sections":[
       {"t":"🌟 Bir Dersi Unutulmaz Yapan Nedir","cards":[
         {"type":"text","b":"Unutulmaz bir ders, sıra dışı bir deneyimden gelir: dinleyen bir eğitmen, öğrencinin fikrinin önem taşıdığı bir uygulama, daha hızlı ilerleyenler için zorluklar ve daha fazla yardıma ihtiyaç duyanlar için destek, ve hataların yargılanmadığı — onlardan öğrenildiği bir ders."},
@@ -2517,7 +2773,7 @@ const I18N={
       ]}
      ]},
 
-    {"id":4,"emoji":"📝","title":"Ödev ve Katılım","desc":"Açıkla, hatırlat, öne çıkar ve gözden geçir — katılımı pekiştiren dört ödev alışkanlığı.","obj":"Ödevi bir metrikten öğrencilerle ve aileleriyle olan bağını güçlendirmenin bir yoluna dönüştür.","color":"#D3FF5F",
+    {"id":5,"emoji":"📝","title":"Ödev ve Katılım","desc":"Açıkla, hatırlat, öne çıkar ve gözden geçir — katılımı pekiştiren dört ödev alışkanlığı.","obj":"Ödevi bir metrikten öğrencilerle ve aileleriyle olan bağını güçlendirmenin bir yoluna dönüştür.","color":"#D3FF5F",
      "sections":[
       {"t":"🎯 Ödev Bir Metrikten Fazlasıdır","cards":[
         {"type":"text","b":"İyi ele alındığında ödev, bağı pekiştirir, sana geri bildirim için ikinci bir şans verir ve öğrencilere — ve ailelerine — ilerlemelerinin canlı ders dışında da önemli olduğunu gösterir."},
@@ -2540,7 +2796,7 @@ const I18N={
       ]}
      ]},
 
-    {"id":5,"emoji":"📞","title":"Bir Öğrenci Dersi Kaçırdığında Ne Yapmalı","desc":"Öğrenciyle nasıl takip edileceği ve ebeveynlerle empatiyle nasıl konuşulacağı.","obj":"Bir devamsızlık olduğunda — öğrenciyle ve aileleriyle — hangi adımları atacağını tam olarak bil.","color":"#D3FF5F",
+    {"id":6,"emoji":"📞","title":"Bir Öğrenci Dersi Kaçırdığında Ne Yapmalı","desc":"Öğrenciyle nasıl takip edileceği ve ebeveynlerle empatiyle nasıl konuşulacağı.","obj":"Bir devamsızlık olduğunda — öğrenciyle ve aileleriyle — hangi adımları atacağını tam olarak bil.","color":"#D3FF5F",
      "sections":[
       {"t":"🔁 Takip Et","cards":[
         {"type":"list","items":[
@@ -2588,21 +2844,23 @@ const I18N={
       {"q":"LPR, eğitmen açısından neyi ölçer?","opts":["Katılımı %50'nin altında olan öğrenci vakalarının yüzdesini","Öğrencilerinin ortalama notunu","Bu ay kaç ders verdiğini"],"c":0,"fb":"LPR (Low Presence Rate), öğrenci vakalarının %50 katılımın altına düşen payıdır."}
     ],
     "2": [
+    {"q":"Derse hemen “geçen haftaki dosyanı aç” diyerek başlıyorsun — selamlama yok, ısınma yok. Derse katılmadan önce dikkati dağınık olan bir öğrenci ilk on dakika boyunca neredeyse hiç katılım göstermiyor. Ne işe yarardı?","opts":["Hiçbir şey — belirli bir yaştan sonra ısınmalar gerekli değildir.","Öğrencinin zihnini içeriğe dalmadan önce “ders moduna” geçiren kısa bir Isınma — hafif bir soru ya da ufak bir meydan okuma.","Ne beklendiğini hemen bilsinler diye doğrudan Ders Hedefine geçmek."],"c":1,"fb":"Zayıf bir açılış çoğu zaman öğrencinin zihnen dersten koptuğu ilk andır — bir ısınma, içerik başlamadan önce dikkati dağınık öğrenciyi derse çeker."},
+    {"q":"Bir eğitmen, öğrencilerden geçen derste öğrendiklerini hatırlamalarını istemek yerine her seferinde her şeyi baştan yeniden anlatıyor. Risk nedir?","opts":["Hiçbir şey — tekrar asla zarar vermez.","Öğrenciler hiçbir zaman geri çağırma pratiği yapmaz — en güçlü hafıza araçlarından biri — bu yüzden materyal akılda kalmakta daha uzun sürer ve kendilerini daha az yetkin hissederler.","Uzun vadede zaman kazandırır, bu yüzden yapmaya değer."],"c":1,"fb":"Geri çağırma — öğrenciye tekrar anlatmak yerine hatırlatmak — hafıza için yeniden anlatmaktan çok daha fazlasını başarır ve öğrencinin geri dönmek istemesini sağlayan yetkinlik hissini oluşturur."},
+    {"q":"Bir öğrenci ödev olarak bir tasarım gönderdi. Eğitmen “güzel poster!” diyor ve devam ediyor. Eksik olan ne?","opts":["Hiçbir şey — hızlı olumlu geri bildirim ivmeyi korur.","Neyin işe yaradığını ve nerede daha ileri gidilebileceğini belirten özel geri bildirim — belirsiz övgü, öğrenciye ödevin gerçekten önemli olduğunu göstermez.","Eğitmen bir yorum yerine sayısal bir not vermeliydi."],"c":1,"fb":"Özel geri bildirim, dersin iki temel geri bildirim anından biridir — bunu atlamak çocuklara ödevin isteğe bağlı olduğunu öğretir."},
+    {"q":"Ders, süre bittiği anda bitiyor — özet yok, sırada ne olduğuna dair ipucu yok, öğrencinin çabasına dair bir takdir yok. En büyük olasılıkla ne kaybediliyor?","opts":["Hiçbir şey — içerik işlendiği sürece kapanışın önemi yoktur.","Merak uyandırma ve yüksek bir notla bitirme fırsatı — son izlenim, öğrencinin bir dahaki sefere gelip gelmeyeceğine karar verirken tarttığı şeydir.","Sadece daha sonra mesajla gönderilebilecek olan ödev görevi."],"c":1,"fb":"Son, başlangıcı yansıtır — merak uyandırmadan ve güçlü bir kapanış yapmadan bitirmek, her seferinde bedava bir devam kazanımını çöpe atmaktır."}
+    ],
+    "3": [
       {"q":"Görüşmeye katılıyorsun ve bir öğrencinin kamerası açık ama sadece masasına bakıyor, sohbete hiçbir şey yazmıyor. Derse nasıl başlarsın?","opts":["Merhaba! Burada olduğunu görüyorum — başlamadan önce, haftan nasıl geçti? Eğlenceli bir şey oldu mu?","Hadi başlayalım — geçen haftaki proje dosyanı aç.","Aaa merhaba!! Bugün çook heyecanlı görünüyorsun, harika bir şey yapacağını hemen anlıyorum!!"],"c":0,"fb":"Kısa, samimi bir hâl hatır sorma, içeriğe geçmeden önce sessiz bir öğrencinin kendini güvende hissetmesine yardımcı olur — ne aşırı enerji ne de anı tamamen atlamadan."},
       {"q":"Bir öğrenci ilk karakterini çizdi ama talimatlarını takip etmediğini fark ettin. Geri bildirimi nasıl verirsin?","opts":["Talimatları takip etmedin — bir arka plan eklemen gerekiyordu ve eklemedin. Önce onu düzeltelim.","Karakterine bu kadar anlamlı bir yüz ifadesi vermeni çok sevdim — bu gerçekten düşünülmüş. Arka planın henüz eklenmediğini fark ettim; bu bir tercih miydi, yoksa sonra mı eklemek istedin?","Vay canına, bu harika! Ne yetenekli bir sanatçısın!"],"c":1,"fb":"Belirli bir şeyi vurgulamak ve merakla sormak, öğrencinin özgür iradesini korur — boş bir övgü ya da onaylama olmadan yapılan bir düzeltmeden daha iyidir."},
       {"q":"Bir grup etkinliği sırasında bir öğrenci hiç konuşmadı veya tepki vermedi, diğer ikisi ise aktif şekilde sohbet ediyor. Ne yaparsın?","opts":["Hiçbir şey — katılmak isteseydi, mikrofonu açar ya da yazardı.","Herkesin önünde onu hedef göster: \"Neden herkes gibi katılmıyorsun?\"","Düşük baskılı bir şekilde sessizce davet et: \"Senin fikrini de duymak isterim, hazır olduğunda — kolay geliyorsa sohbet de olur.\""],"c":2,"fb":"Düşük baskılı, özel bir davet, öğrenciyi görmezden gelmeden veya rahatsız etmeden farklı konfor seviyelerine saygı gösterir."},
       {"q":"İki öğrenci bağımsız zorluğu yarı sürede bitiriyor, diğer üçü ise hâlâ birinci adımda takılı. Ne yaparsın?","opts":["Çoğu öğrenci bitmeye yakın olduğu için bir sonraki etkinliğe geç.","Hızlı öğrencilere ek bir görev ver, ardından dikkatini döndürerek zorlanan her öğrenciyle tek tek ilgilen.","Hızlı öğrencilere çok daha zor bir bonus zorluk ver ve dersin geri kalanını sadece \"daha ileri seviyede\" oldukları için onlarla geçir."],"c":1,"fb":"Dikkatini döndürmek her iki grubu da meşgul tutar — kimse görmezden gelinmez, kimse \"kalıcı yardımcı\" haline gelmez."}
     ],
-    "3": [
-      {"q":"Öğrenciler yeni bir şeyi uygulamadan hemen önce ne olmalıdır?","opts":["Hiçbir şey — kendi başlarına çözerler","Eğitmen süreci adım adım modeller","Yazılı bir sınav"],"c":1,"fb":"Önce modellemek, öğrencilere kendileri denemeden önce net bir harita verir."},
-      {"q":"Bir sonraki ders için neden merak uyandırılmalı?","opts":["Öğrencilere geri gelmek için bir neden verir","Dersin sonunda zaman doldurur","Platform tarafından zorunlu kılınıyor"],"c":0,"fb":"Sonda güçlü bir kanca, genellikle bir öğrencinin bir sonraki sefer gelmesinin gerçek nedenidir."}
-    ],
-    "4": [
+    "5": [
       {"q":"Dersin son iki dakikası ve ödev vermen gerektiğini hatırlıyorsun. Ne yaparsın?","opts":["Sohbete hızlıca ödev linkini yaz ve \"tamam gelecek derse kadar bunu yapın, hoşça kalın!\" de.","Ne yapılacağını ve bugün öğrendiklerimizle nasıl bağlantılı olduğunu açıklamak için 30 saniye ayır.","Ödevin her teknik kuralını tek tek, her gereksinimi yüksek sesle okuyarak detaylıca açıkla."],"c":1,"fb":"Ödevi hatırlanmaya değer kılan net bir amaçtır — aceleyle geçilen bir söz veya kurallar duvarı değil."},
       {"q":"Kalabalık bir grubun var ve yeni derse başlamadan önce ödevlere sadece hızlıca bakacak zamanın var. Çoğu teslim etti, birkaçı etmedi. Ne yaparsın?","opts":["Teslim eden herkes için toplu bir şeyi öne çıkar: \"%90'ınız ödevini getirdi — bu gerçek bir bağlılık gösteriyor.\"","Teslim etmeyen öğrencilerin isimlerini söyle, böylece bir dahaki sefere motive olurlar.","Herkesin hedeflemesi gereken örnek olarak sadece en iyi tek projeyi göster."],"c":0,"fb":"Amaç karşılaştırma veya utandırma değil, motivasyondur — toplu bir takdir, gelen herkesi kapsar."},
       {"q":"Teslim edilen ödevleri gözden geçiriyorsun ve bir öğrencinin projesi teknik olarak doğru ama özel bir şey içermiyor. Ne yazarsın?","opts":["Yorum yapmadan sadece \"tamamlandı\" olarak işaretle — gereksinimleri karşılamış, bu yeterli.","İyileştirilebilecek her şeyin uzun bir listesini bırak, hiç olumlu bir şey belirtme.","İyi yaptığı bir şeyi ve nazik bir öneriyi belirten kısa, spesifik bir yorum bırak — ebeveynin de okuyabileceği bir şey."],"c":2,"fb":"Ödevi gözden geçirmek sadece bir kutu işaretlemek değil, bir geri bildirim fırsatıdır — öğrenciler ve ebeveynlerle bağı pekiştirmek için de bir şanstır."}
     ],
-    "5": [
+    "6": [
       {"q":"Bu hafta bir ebeveyni, çocuğunun art arda iki dersi kaçırması hakkında iki kez aradın ve mesaj attın, henüz cevap alamadın. En iyi sonraki adım nedir?","opts":["Ulaşmayı bırak — zaten iki kez denedin, artık top ebeveynde.","Öğrencinin açıkça ilgilenmediğini düşünerek TL'inden onu gruptan çıkarmasını iste.","Bir mesaj daha gönder, sıcak ve düşük baskılı bir şekilde, ve cevap beklerken öğrencinin daha fazla geride kalmaması için kayıt/ödev özetini paylaş."],"c":2,"fb":"Şefkatli bir hâl hatır sorma her zaman ilk adımdır — ısrarcı ama sıcak, pes etmek veya çok erken üst mercilere taşımak yerine kapıyı açık tutmak."},
       {"q":"Geçen dersi kaçıran bir öğrenci bugün nihayet katılıyor. Onunla derse nasıl başlarsın?","opts":["Özel olarak veya nazikçe devamsızlığını fark ettiğini belirt, nasıl olduğunu sor ve kaydı ile ödevi nerede bulacağını hatırlat.","Devamsızlıktan hiç bahsetme, sanki hiçbir şey olmamış gibi bugünkü dersle devam et.","Grubun önünde dersi kaçırdığını belirt ve nedenini sor."],"c":0,"fb":"Bir öğrenciye devamsızlığını fark ettiğini — onu köşeye sıkıştırmadan — göstermek, geride kalmış yerine görülmüş hissetmesine yardımcı olur."},
       {"q":"Bir ebeveyn sana doğrudan mesaj atarak, birkaç dersi kaçırdıktan sonra çocuğunun ücretsiz ek bir ders alıp alamayacağını soruyor. Ne yaparsın?","opts":["Hemen kabul et ve aile için güzel bir jest olduğu için kendin planla.","Önce durumu TL'ine ilet ve ekstra ders için onay al. Sonra, ebeveyne ulaştığı için teşekkür et ve öğrencinin telafi etmekle ilgilendiğini duymaktan mutlu olduğunu bildir. Ekstra ders onaylanırsa, öğrenciyle planlamayı öner.","Ebeveyne bunun mümkün olmadığını ve yapılabilecek hiçbir şey olmadığını söyle."],"c":1,"fb":"TL onayı her zaman önce gelir — ama bu, ebeveynin soğuk veya gecikmiş bir yanıt alması gerektiği anlamına gelmez; doğru süreci takip ederken sıcak da olabilirsin."}
@@ -2645,7 +2903,7 @@ const I18N={
     "moduleN": "Moduł {n}",
     "finalStage": "Etap końcowy",
     "finalExam": "Egzamin końcowy",
-    "finalExamDesc": "Wypełnij oficjalny egzamin składający się z 12 pytań (Formularz Google), obejmujący Moduły 2–5, aby uzyskać certyfikat.",
+    "finalExamDesc": "Wypełnij oficjalny egzamin składający się z 12 pytań (Formularz Google), obejmujący Moduły 2–6, aby uzyskać certyfikat.",
     "openForm": "Otwórz formularz",
     "certifiedCheck": "Certyfikat uzyskany ✓",
     "opensInForms": "Otwiera się w Formularzach Google",
@@ -2729,7 +2987,8 @@ const I18N={
           "cards": [
             {"type": "text", "b": "Klasyfikujemy uczniów (SS) do trzech poziomów na podstawie ich procentu frekwencji."},
             {"type": "table", "h": "Poziomy frekwencji", "head": ["Poziom", "Zakres"], "rows": [["🟢 Wysoka frekwencja", "≥ 75%"], ["🟠 Średnia frekwencja (Ryzyko)", "50% – 74,99%"], ["❗ Niska frekwencja (Alarm)", "&lt; 50%"]]},
-            {"type": "text", "h": "Z perspektywy korepetytora", "b": "Dwa wskaźniki podsumowują Twoje wyniki w tym zakresie:<br><br><strong>LPR (Low Presence Rate):</strong> % Twoich uczniów z frekwencją poniżej 50%.<br><strong>HPR (High Presence Rate):</strong> % Twoich uczniów z frekwencją na poziomie 75% lub wyższym."}
+            {"type": "text", "h": "Z perspektywy korepetytora", "b": "Dwa wskaźniki podsumowują Twoje wyniki w tym zakresie:<br><br><strong>LPR (Low Presence Rate):</strong> % Twoich uczniów z frekwencją poniżej 50%.<br><strong>HPR (High Presence Rate):</strong> % Twoich uczniów z frekwencją na poziomie 75% lub wyższym."},
+            {"type": "text", "b": "Dane o frekwencji są obliczane na podstawie zapisu obecności rejestrowanego automatycznie przez classroom, gdy uczeń dołącza do zajęć. Obecność jest potwierdzana, gdy uczeń weźmie udział w ponad 50% lekcji. Nie opiera się to na zapisach obecności wprowadzanych w BO."}
           ]
         },
         {
@@ -2749,6 +3008,49 @@ const I18N={
     },
     {
       "id": 2,
+      "emoji": "🧭",
+      "title": "Struktura lekcji i frekwencja",
+      "desc": "Dlaczego stała rutyna lekcji to jedna z najsilniejszych dźwigni frekwencji oraz dziewięć faz, z których składa się każda lekcja w Kodland.",
+      "obj": "Zrozum, dlaczego stała struktura lekcji napędza frekwencję, i poznaj dziewięć faz, z których składa się lekcja w Kodland.",
+      "color": "#D3FF5F",
+      "sections": [
+        {
+          "t": "💡 Dlaczego to ważne",
+          "cards": [
+            {"type":"text","b":"Coś silnie koreluje z frekwencją: utrzymywanie stałej rutyny i struktury na twoich lekcjach. Konsekwencja jest tu kluczowa. Gdy uczeń pozna twój rytm, przestaje tracić energię na zastanawianie się „co teraz się wydarzy?” i przeznacza ją na naukę. Prowadź tę samą strukturę za każdym razem, aż stanie się naturalna — zarówno dla ciebie, jak i dla niego. Przewidywalna lekcja wydaje się bezpieczna, a na bezpieczną lekcję uczeń chce wracać."},
+            {"type":"text","b":"Oto jak zbudowana jest lekcja w Kodland, faza po fazie, i jak zachowanie tej kolejności chroni twoje wyniki frekwencji."}
+          ]
+        },
+        {
+          "t": "🌅 Początek: cztery fazy",
+          "cards": [
+            {"type":"text","h":"1 · Rozgrzewka — pobudzenie energii i skupienia","b":"Zacznij od czegoś lekkiego, co przełącza umysł ucznia w „tryb lekcji”: szybkiego pytania, drobnego wyzwania, ciekawego projektu zauważonego w ciągu tygodnia. Celem jest energia i uwaga, a nie ocena. To sygnał „zaczynamy teraz”, który przyciąga rozproszone dziecko do zajęć. Słaby początek jest często pierwszym momentem, w którym uczeń mentalnie się wyłącza — a uczeń, który wyłącza się dzisiaj, częściej opuści zajęcia następnym razem."},
+            {"type":"text","h":"2 · Powtórka poprzedniej lekcji — przypomnienie i utrwalenie","b":"Krótko wróć do tego, czego nauczono się ostatnim razem. Przypominanie sobie — sprawienie, by uczeń sam sobie przypomniał, zamiast ponownie usłyszeć — to jedno z najsilniejszych narzędzi pamięci. Dwuminutowe „co sprawia, że punkt centralny jest mocny?” daje więcej niż jakiekolwiek ponowne tłumaczenie. Gdy uczniowie czują, że nadążają i faktycznie pamiętają, czują się kompetentni — a poczucie kompetencji to jeden z głównych powodów, dla których uczeń chce wracać."},
+            {"type":"text","h":"3 · Sprawdzenie pracy domowej — wspólny przegląd zadania","b":"Przejrzyj pracę domową razem z uczniem — w tym kursie oznacza to spojrzenie na stworzony przez niego projekt. To moment, w którym wychwytujesz nieporozumienia, chwalisz wysiłek i pokazujesz, że praca domowa naprawdę ma znaczenie. To także jeden z dwóch kluczowych momentów informacji zwrotnej w lekcji: nie poprzestawaj na „ładny plakat!” — powiedz konkretnie, co działa i co jeszcze rozwinąć. Pominięcie sprawdzenia uczy dzieci, że praca domowa jest opcjonalna, i podważa wszystko, co moduł o pracy domowej mówi o znaczeniu tego sprawdzenia dla frekwencji."},
+            {"type":"text","h":"4 · Cel lekcji — ustalenie jasnych celów","b":"Powiedz wprost, o czym jest dzisiejsza lekcja: „dzisiaj zaprojektujemy plakat z jednym wyraźnym punktem centralnym”. Jasny cel nadaje lekcji kierunek i daje uczniowi coś konkretnego, do czego może dążyć. Uczeń, który nie wie, „po co” jest dzisiejsza lekcja, szybko się wyłącza — a to wyłączenie jest jedną z wewnętrznych przyczyn opuszczonych zajęć."}
+          ]
+        },
+        {
+          "t": "🎨 Środek: teoria i praktyka",
+          "cards": [
+            {"type":"text","h":"5 · Teoria i praktyka — serce lekcji","b":"Między celem lekcji a fazami zamykającymi znajduje się najdłuższy etap, w którym uczony jest nowy materiał i od razu jest wykorzystywany. Dziel teorię na małe fragmenty — jedno pojęcie, a potem praca praktyczna nad nim — i zawsze najpierw pokazuj: zademonstruj technikę na swoim ekranie, zanim uczniowie spróbują na swoim. Na kursie projektowania etap praktyki to moment, w którym uczniowie faktycznie tworzą, więc zaciekle chroń ten czas; lekcja, na której dzieci tylko patrzyły, jak ty projektujesz/kodujesz, to lekcja, na której nikt nie projektował/kodował. To także część lekcji, na którą uczniowie czekają najbardziej — chroń ją, a ochronisz powód, dla którego przychodzą."}
+          ]
+        },
+        {
+          "t": "🏁 Koniec: lustro",
+          "cards": [
+            {"type":"text","b":"Cztery zamykające fazy odzwierciedlają otwierające w odwrotnej kolejności — lekcja kończy się tak, jak się zaczęła, dając uczniom satysfakcjonujące poczucie zamknięcia i rytmu. Ten „kolisty” kształt sprawia, że lekcja wydaje się kompletna, zamiast po prostu urywać się, gdy skończy się czas, a lekcja, która wydaje się kompletna, to taka, którą uczeń kończy bez luźnych wątków, które ciągnęłyby go w inną stronę."},
+            {"type":"text","h":"6 · Podsumowanie lekcji — oparte na tutorze i uczniu","b":"Podsumuj, co zostało omówione — ale nie tylko sam. Poproś ucznia, by też podsumował własnymi słowami. Jego podsumowanie pokazuje, co naprawdę zostało przyswojone, i stanowi drugi moment przypominania sobie."},
+            {"type":"text","h":"7 · Zadanie domowe — jasne instrukcje","b":"Zadaj pracę domową z absolutnie jasnymi instrukcjami, co i jak zrobić. Niejasna praca domowa to praca domowa, która nie zostanie wykonana. Łączy się to ze sprawdzeniem pracy domowej, które otworzyło lekcję — razem tworzą pełną pętlę, na której opiera się moduł o pracy domowej."},
+            {"type":"text","h":"8 · Zapowiedź kolejnej lekcji — budowanie ciekawości","b":"Zapowiedz, co będzie dalej: „następnym razem sprawimy, że nasza postać będzie poruszać się jak w prawdziwym życiu!”. To ten sam haczyk na oczekiwanie, który omówiono już w module Niezapomniane lekcje — zakończenie bez niego marnuje darmową szansę na frekwencję przy każdych zajęciach."},
+            {"type":"text","h":"9 · Zakończenie — zamknij z energią","b":"Zakończ w dobrym nastroju: uczcij to, co uczeń dziś stworzył, doceń jego wysiłek i spraw, by wyszedł z dobrym samopoczuciem. Ostatnie 30 sekund kształtuje to, jak zapamięta całą lekcję — a to wspomnienie waży, świadomie lub nie, gdy decyduje, czy przyjść następnym razem."},
+            {"type":"mirror","beginTitle":"Początek","endTitle":"Koniec","mirrorLabel":"LUSTRO","beginItems":[{"n":1,"label":"Rozgrzewka"},{"n":2,"label":"Powtórka poprzedniej lekcji"},{"n":3,"label":"Sprawdzenie pracy domowej"},{"n":4,"label":"Cel lekcji"}],"endItems":[{"n":9,"label":"Zakończenie"},{"n":8,"label":"Zapowiedź kolejnej lekcji"},{"n":7,"label":"Zadanie domowe"},{"n":6,"label":"Podsumowanie lekcji"}],"caption":"Lekcja kończy się dokładnie tak, jak się zaczęła — dając uczniom poczucie zamknięcia, ciągłości i rytmu."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
       "emoji": "🤝",
       "title": "Budowanie więzi z uczniami",
       "desc": "Rozmowa towarzyska, informacja zwrotna, która naprawdę trafia, i jak sprawić, by każdy uczeń czuł się częścią grupy.",
@@ -2821,7 +3123,7 @@ const I18N={
       ]
     },
     {
-      "id": 3,
+      "id": 4,
       "emoji": "✨",
       "title": "Tworzenie niezapomnianych lekcji",
       "desc": "Materiał wizualny, modelowanie przed praktyką, sprawdzanie zrozumienia i zamykanie lekcji z wyczekiwaniem.",
@@ -2872,7 +3174,7 @@ const I18N={
       ]
     },
     {
-      "id": 4,
+      "id": 5,
       "emoji": "📝",
       "title": "Praca domowa a frekwencja",
       "desc": "Wyjaśnij, przypomnij, podkreśl i sprawdź — cztery nawyki związane z pracą domową, które wzmacniają frekwencję.",
@@ -2916,7 +3218,7 @@ const I18N={
       ]
     },
     {
-      "id": 5,
+      "id": 6,
       "emoji": "📞",
       "title": "Co robić, gdy uczeń opuszcza lekcję",
       "desc": "Jak śledzić sytuację ucznia i jak rozmawiać z rodzicami z empatią.",
@@ -2976,21 +3278,23 @@ const I18N={
       {"q": "Co mierzy LPR z perspektywy korepetytora?", "opts": ["% Twoich uczniów z frekwencją poniżej 50%", "Średnią ocenę Twoich uczniów", "Ile lekcji przeprowadziłeś w tym miesiącu"], "c": 0, "fb": "LPR (Low Presence Rate) to udział Twoich uczniów z frekwencją poniżej 50%."}
     ],
     "2": [
+    {"q":"Zaczynasz lekcję od razu od „otwórz plik z zeszłego tygodnia” — bez powitania, bez rozgrzewki. Uczeń, który był rozproszony przed dołączeniem, przez pierwsze dziesięć minut ledwo się angażuje. Co by pomogło?","opts":["Nic — rozgrzewki nie są potrzebne po pewnym wieku uczniów.","Krótka rozgrzewka — lekkie pytanie lub drobne wyzwanie, które przełącza jego umysł w „tryb lekcji”, zanim przejdziesz do treści.","Przejście od razu do celu lekcji, by uczeń od razu wiedział, czego się oczekuje."],"c":1,"fb":"Słaby początek jest często pierwszym momentem, w którym uczeń mentalnie się wyłącza — rozgrzewka przyciąga rozproszone dziecko do zajęć, zanim zacznie się treść."},
+    {"q":"Zamiast poprosić uczniów o przypomnienie sobie, czego nauczyli się na ostatniej lekcji, tutor za każdym razem po prostu tłumaczy wszystko od nowa. Jakie jest ryzyko?","opts":["Żadne — powtarzanie nigdy nie szkodzi.","Uczniowie nigdy nie ćwiczą przypominania sobie — jednego z najsilniejszych narzędzi pamięci — więc materiał utrwala się dłużej, a oni czują się mniej kompetentni.","To oszczędza czas w dłuższej perspektywie, więc warto tak robić."],"c":1,"fb":"Przypominanie sobie — sprawienie, by uczeń sam sobie przypomniał, zamiast ponownie usłyszeć — daje więcej niż jakiekolwiek ponowne tłumaczenie i buduje poczucie kompetencji, dzięki któremu uczeń chce wracać."},
+    {"q":"Uczeń przesłał projekt jako pracę domową. Tutor mówi „ładny plakat!” i przechodzi dalej. Czego brakuje?","opts":["Niczego — szybka pozytywna informacja zwrotna podtrzymuje tempo.","Konkretnej informacji zwrotnej wskazującej, co działało i co jeszcze rozwinąć — ogólnikowa pochwała nie pokazuje uczniowi, że praca domowa naprawdę ma znaczenie.","Tutor powinien był wystawić ocenę liczbową zamiast komentarza."],"c":1,"fb":"Konkretna informacja zwrotna to jeden z dwóch kluczowych momentów informacji zwrotnej w lekcji — pominięcie jej uczy dzieci, że praca domowa jest opcjonalna."},
+    {"q":"Zajęcia kończą się dokładnie, gdy skończy się czas — bez podsumowania, bez zapowiedzi tego, co nadchodzi, bez docenienia wysiłku ucznia. Co najprawdopodobniej zostaje utracone?","opts":["Nic — jeśli materiał został omówiony, zakończenie nie ma znaczenia.","Szansa na zbudowanie oczekiwania i zakończenie w dobrym nastroju — to ostatnie wrażenie waży, gdy uczeń decyduje, czy przyjść następnym razem.","Tylko zadanie domowe, które można wysłać później w wiadomości."],"c":1,"fb":"Koniec odzwierciedla początek — zakończenie bez oczekiwania i mocnego zamknięcia marnuje darmową szansę na frekwencję przy każdych zajęciach."}
+    ],
+    "3": [
       {"q": "Dołączasz do połączenia, a kamera ucznia jest włączona, ale on po prostu wpatruje się w biurko, nic nie pisząc na czacie. Jak zaczynasz lekcję?", "opts": ["Cześć! Widzę, że tu jesteś — zanim zaczniemy, jak minął Ci tydzień? Wydarzyło się coś fajnego?", "Zaczynajmy — otwórz plik projektu z zeszłego tygodnia.", "OMG cześć!! Wyglądasz na suuuper podekscytowanego dzisiaj, już widzę, że zrobisz coś NIESAMOWITEGO!!"], "c": 0, "fb": "Krótkie, szczere zapytanie pomaga cichemu uczniowi poczuć się bezpiecznie, zanim przejdziecie do treści — bez przesadnej energii ani całkowitego pominięcia tego momentu."},
       {"q": "Uczeń narysował swoją pierwszą postać, ale zauważyłeś, że nie zastosował się do Twoich instrukcji. Jak dajesz informację zwrotną?", "opts": ["Nie zastosowałeś się do instrukcji — miałeś dodać tło i tego nie zrobiłeś. Naprawmy to najpierw.", "Bardzo podoba mi się, jak nadałeś swojej postaci tak wyrazistą twarz — to wymagało prawdziwego przemyślenia. Zauważyłem, że tło nie zostało jeszcze dodane; to była świadoma decyzja, czy chciałeś dodać je później?", "Wow, to jest niesamowite! Jesteś takim utalentowanym artystą!"], "c": 1, "fb": "Podkreślenie czegoś konkretnego i zapytanie z ciekawością zachowuje sprawczość ucznia — lepiej niż puste pochwały czy poprawka bez żadnego uznania."},
       {"q": "Podczas ćwiczenia grupowego jeden uczeń w ogóle się nie odzywa ani nie reaguje, podczas gdy dwóch innych aktywnie ze sobą rozmawia. Co robisz?", "opts": ["Nic — gdyby chciał uczestniczyć, sam włączyłby mikrofon albo napisał na czacie.", "Zwracasz mu publicznie uwagę: „Dlaczego nie uczestniczysz jak wszyscy?”", "Delikatnie i bez presji zapraszasz go do udziału: „Chętnie usłyszę też Twój pomysł, kiedy będziesz gotowy — czat też jest w porządku, jeśli tak Ci wygodniej”."], "c": 2, "fb": "Delikatne, prywatne zaproszenie szanuje różne poziomy komfortu, nie ignorując ucznia ani nie stawiając go w niezręcznej sytuacji."},
       {"q": "Dwóch uczniów kończy samodzielne zadanie w połowie czasu, podczas gdy trzech innych utknęło na pierwszym kroku. Co robisz?", "opts": ["Przechodzisz do kolejnego ćwiczenia, skoro większość jest już blisko końca.", "Proponujesz szybszym uczniom zadanie dodatkowe, a następnie rozkładasz swoją uwagę, żeby indywidualnie sprawdzić każdego z uczniów, którzy utknęli.", "Dajesz szybszym uczniom o wiele trudniejsze zadanie bonusowe i resztę lekcji spędzasz wyłącznie z nimi, bo są „bardziej zaawansowani”."], "c": 1, "fb": "Rozkładanie uwagi utrzymuje zaangażowanie obu grup — nikt nie zostaje zignorowany i nikt nie staje się „stałym pomocnikiem”."}
     ],
-    "3": [
-      {"q": "Co powinno się wydarzyć tuż przed tym, jak uczniowie zaczną ćwiczyć coś nowego?", "opts": ["Nic — sami to rozgryzą", "Korepetytor modeluje proces krok po kroku", "Pisemny test"], "c": 1, "fb": "Modelowanie jako pierwsze daje uczniom jasną mapę, zanim spróbują sami."},
-      {"q": "Dlaczego warto budować wyczekiwanie na następną lekcję?", "opts": ["Daje uczniom powód, by wrócić", "Wypełnia czas na koniec lekcji", "Jest to wymagane przez platformę"], "c": 0, "fb": "Silny haczyk na koniec jest często prawdziwym powodem, dla którego uczeń przychodzi następnym razem."}
-    ],
-    "4": [
+    "5": [
       {"q": "Zostały ostatnie dwie minuty lekcji i przypominasz sobie, że musisz zadać pracę domową. Co robisz?", "opts": ["Szybko wklejasz link do pracy domowej na czacie i mówisz „ok zróbcie to na następną lekcję, pa!”", "Poświęcasz 30 sekund, żeby wyjaśnić, co zrobić i dlaczego łączy się to z tym, czego właśnie się nauczyliście.", "Wyjaśniasz szczegółowo każdą pojedynczą techniczną zasadę zadania, czytając na głos każdy wymóg."], "c": 1, "fb": "To jasny cel sprawia, że warto pamiętać o pracy domowej — nie pośpieszna wzmianka ani ściana zasad."},
       {"q": "Masz dużą grupę i tylko chwilę, by szybko spojrzeć na pracę domową przed rozpoczęciem nowej lekcji. Większość oddała, kilka osób nie. Co robisz?", "opts": ["Podkreślasz coś zbiorowego dla wszystkich, którzy oddali: „90% z Was przyniosło pracę domową — to pokazuje prawdziwe zaangażowanie”.", "Wymieniasz z imienia uczniów, którzy nie oddali, żeby poczuli motywację następnym razem.", "Pokazujesz wyłącznie jeden najlepszy projekt jako przykład, do którego wszyscy powinni dążyć."], "c": 0, "fb": "Celem jest motywacja, a nie porównywanie czy zawstydzanie — zbiorowe wyróżnienie obejmuje wszystkich, którzy się postarali."},
       {"q": "Sprawdzasz oddaną pracę domową i projekt jednego ucznia jest technicznie poprawny, ale niczym się nie wyróżnia. Co piszesz?", "opts": ["Po prostu oznaczasz „zrobione” bez komentarza — spełnił wymagania, to wystarczy.", "Zostawiasz długą listę wszystkiego, co można poprawić, bez wspomnienia niczego pozytywnego.", "Zostawiasz krótki, konkretny komentarz wskazujący jedną rzecz, którą zrobił dobrze, i jedną łagodną sugestię — coś, co mógłby przeczytać także rodzic."], "c": 2, "fb": "Sprawdzanie pracy domowej to okazja do informacji zwrotnej, a nie tylko odhaczenie — to także szansa na wzmocnienie więzi z uczniami i rodzicami."}
     ],
-    "5": [
+    "6": [
       {"q": "W tym tygodniu dwa razy dzwoniłeś/aś i pisałeś/aś do rodzica w sprawie dwóch kolejnych nieobecności dziecka, i wciąż nie masz odpowiedzi. Jaki jest najlepszy następny krok?", "opts": ["Przestajesz się kontaktować — próbowałeś już dwa razy, teraz to zależy od rodzica.", "Natychmiast eskalujesz sprawę, prosząc swojego TL o usunięcie ucznia z grupy, bo wyraźnie nie jest zainteresowany.", "Wysyłasz jeszcze jedną ciepłą, niewymuszającą wiadomość i udostępniasz nagranie/podsumowanie pracy domowej, żeby uczeń nie zostawał jeszcze bardziej w tyle, podczas gdy czekasz na odpowiedź."], "c": 2, "fb": "Troskliwe zapytanie zawsze jest pierwszym krokiem — wytrwałe, ale ciepłe, pozostawiające otwarte drzwi zamiast rezygnacji lub zbyt szybkiej eskalacji."},
       {"q": "Uczeń, który opuścił ostatnią lekcję, w końcu dołącza dzisiaj. Jak zaczynasz z nim lekcję?", "opts": ["Prywatnie lub delikatnie dajesz mu znać, że zauważyłeś jego nieobecność, pytasz, jak się czuje, i przypominasz, gdzie znaleźć nagranie i pracę domową.", "W ogóle nie wspominasz o nieobecności, po prostu kontynuujesz dzisiejszą lekcję, jakby nic się nie stało.", "Zwracasz uwagę na forum grupy, że opuścił lekcję, i pytasz dlaczego."], "c": 0, "fb": "Pokazanie uczniowi, że zauważyłeś jego nieobecność — bez stawiania go w niezręcznej sytuacji — pomaga mu poczuć się zauważonym, a nie w tyle."},
       {"q": "Rodzic pisze do Ciebie bezpośrednio, pytając, czy dziecko może dostać darmową dodatkową lekcję, żeby nadrobić zaległości po kilku opuszczonych zajęciach. Co robisz?", "opts": ["Zgadzasz się od razu i sam/a umawiasz termin, bo to miły gest wobec rodziny.", "Najpierw kontaktujesz się ze swoim TL w tej sprawie i uzyskujesz zgodę na dodatkową lekcję. Następnie dziękujesz rodzicowi za kontakt i informujesz, że cieszysz się, iż uczeń jest zainteresowany nadrobieniem zaległości. Jeśli dodatkowa lekcja zostanie zatwierdzona, proponujesz umówienie jej z uczniem.", "Mówisz rodzicowi, że to niemożliwe i nic nie da się zrobić."], "c": 1, "fb": "Zgoda TL zawsze jest pierwsza — ale to nie znaczy, że rodzic dostaje chłodną lub opóźnioną odpowiedź; możesz być ciepły/a, przestrzegając jednocześnie właściwej procedury."}
@@ -3033,7 +3337,7 @@ const I18N={
     "moduleN": "الوحدة {n}",
     "finalStage": "المرحلة الأخيرة",
     "finalExam": "الاختبار النهائي",
-    "finalExamDesc": "أكمل الاختبار الرسمي المكوّن من 12 سؤالًا (نموذج Google Forms) الذي يغطي الوحدات 2 إلى 5 للحصول على الشهادة.",
+    "finalExamDesc": "أكمل الاختبار الرسمي المكوّن من 12 سؤالًا (نموذج Google Forms) الذي يغطي الوحدات 2 إلى 6 للحصول على الشهادة.",
     "openForm": "افتح النموذج",
     "certifiedCheck": "معتمد ✓",
     "opensInForms": "يفتح في Google Forms",
@@ -3117,7 +3421,8 @@ const I18N={
           "cards": [
             { "type": "text", "b": "نصنّف الطلاب (SS) إلى ثلاثة مستويات بناءً على نسبة حضورهم." },
             { "type": "table", "h": "مستويات الحضور", "head": ["المستوى", "النطاق"], "rows": [["🟢 حضور مرتفع", "≥ 75%"], ["🟠 حضور متوسط (خطر)", "50% – 74.99%"], ["❗ حضور منخفض (تنبيه)", "&lt; 50%"]] },
-            { "type": "text", "h": "من منظور المعلم", "b": "يلخّص مؤشران أداءك في هذا المقياس:<br><br><strong>LPR (معدل الحضور المنخفض):</strong> نسبة حالات طلابك الذين تقل نسبة حضورهم عن 50%.<br><strong>HPR (معدل الحضور المرتفع):</strong> نسبة حالات طلابك الذين تبلغ نسبة حضورهم 75% أو أكثر." }
+            { "type": "text", "h": "من منظور المعلم", "b": "يلخّص مؤشران أداءك في هذا المقياس:<br><br><strong>LPR (معدل الحضور المنخفض):</strong> نسبة حالات طلابك الذين تقل نسبة حضورهم عن 50%.<br><strong>HPR (معدل الحضور المرتفع):</strong> نسبة حالات طلابك الذين تبلغ نسبة حضورهم 75% أو أكثر." },
+            { "type": "text", "b": "تُحتسب بيانات الحضور تلقائيًا بناءً على سجل الحضور الذي تلتقطه غرفة الصف تلقائيًا عند انضمام الطالب إلى الحصة. يُثبَت حضور الطالب بمجرد حضوره أكثر من 50% من مدة الدرس. ولا يُعتمد في ذلك على سجلات الحضور المُدخلة في BO." }
           ]
         },
         {
@@ -3137,6 +3442,49 @@ const I18N={
     },
     {
       "id": 2,
+      "emoji": "🧭",
+      "title": "بنية الدرس والحضور",
+      "desc": "لماذا يُعد اتباع روتين ثابت في الدرس أحد أقوى عوامل تحسين الحضور، والمراحل التسع التي يتكون منها كل درس في Kodland.",
+      "obj": "فهم سبب تأثير بنية الدرس الثابتة في تعزيز الحضور، والتعرف على المراحل التسع التي يتكون منها درس Kodland.",
+      "color": "#D3FF5F",
+      "sections": [
+        {
+          "t": "💡 لماذا يهم هذا الأمر",
+          "cards": [
+            { "type": "text", "b": "هناك عامل يرتبط ارتباطًا قويًا بالحضور: الحفاظ على روتين وبنية ثابتة في دروسك. الثبات هو جوهر الأمر. فبمجرد أن يتعلم الطالب إيقاع درسك، يتوقف عن إنفاق طاقته في التساؤل «ماذا سيحدث الآن؟» ويوجّه تلك الطاقة نحو التعلّم بدلًا من ذلك. اتّبع البنية نفسها في كل مرة حتى تصبح أمرًا تلقائيًا بالنسبة لك وللطالب. فالدرس الذي يمكن توقّعه يُشعر الطالب بالأمان، والدرس الآمن هو الذي يرغب الطالب في العودة إليه." },
+            { "type": "text", "b": "وفيما يلي كيفية بناء درس Kodland مرحلة بمرحلة، وكيف أن الحفاظ على هذا الترتيب يحمي أرقام حضورك." }
+          ]
+        },
+        {
+          "t": "🌅 البداية: المراحل الأربع",
+          "cards": [
+            { "type": "text", "h": "1 · التحمية (Warm-Up) — تنشيط الطاقة والتركيز", "b": "ابدأ بشيء بسيط وخفيف يحوّل ذهن الطالب إلى «وضع الدرس»: سؤال سريع، تحدٍّ صغير، أو تصميم مميز لاحظه خلال الأسبوع. الهدف هنا هو إثارة الطاقة والانتباه، وليس التقييم. فهذا يرسل إشارة بأن «الدرس بدأ الآن» ويجذب الطفل المُشتت إلى الحصة. غالبًا ما تكون البداية الضعيفة أول لحظة ينفصل فيها الطالب ذهنيًا عن الدرس، والطالب الذي ينفصل اليوم يكون أكثر عرضة للتغيّب في المرة القادمة." },
+            { "type": "text", "h": "2 · مراجعة الدرس السابق — الاستذكار والترسيخ", "b": "أعد بإيجاز مراجعة ما تم تعلّمه في الحصة السابقة. الاستذكار — أي جعل الطالب يستعيد المعلومة بدلًا من سماعها مجددًا — يُعد من أقوى أدوات تثبيت الذاكرة. سؤال بسيط لمدة دقيقتين مثل «ما الذي يجعل نقطة التركيز قوية؟» يحقق أثرًا أكبر من إعادة الشرح مهما طالت. فعندما يشعر الطلاب بأنهم يواكبون الدرس ويتذكرون فعلًا ما تعلّموه، يشعرون بالكفاءة، والشعور بالكفاءة من أكبر الأسباب التي تدفع الطالب للعودة." },
+            { "type": "text", "h": "3 · مراجعة الواجب المنزلي — مراجعته معًا", "b": "راجع الواجب المنزلي مع الطالب — وفي هذه الدورة يعني ذلك النظر في تصميم قام بإنجازه. هذه هي اللحظة التي تكتشف فيها سوء الفهم، وتُثني فيها على الجهد المبذول، وتُظهر أن الواجب المنزلي أمر مهم فعلًا. وهي أيضًا إحدى لحظتَي التغذية الراجعة الأساسيتين في الدرس: لا تكتفِ بقول «ملصق جميل!»، بل حدّد بدقة ما نجح وما يمكن تطويره أكثر. إغفال هذه المراجعة يُرسّخ لدى الأطفال فكرة أن الواجب المنزلي أمر اختياري، وهو ما يقوّض كل ما تناولته وحدة الواجبات المنزلية عن أهمية هذه المراجعة بالنسبة للحضور." },
+            { "type": "text", "h": "4 · هدف الدرس — تحديد أهداف واضحة", "b": "وضّح بصراحة ما سيتناوله الدرس اليوم: «اليوم سنصمم ملصقًا بنقطة تركيز واحدة واضحة». الهدف الواضح يمنح الدرس اتجاهًا، ويمنح الطالب هدفًا محددًا يسعى لتحقيقه. الطالب الذي لا يعرف «الغرض» من درس اليوم ينفصل عنه بسرعة، والانفصال هذا يُعد أحد الأسباب الداخلية الكامنة وراء التغيّب عن الحصة." }
+          ]
+        },
+        {
+          "t": "🎨 الوسط: النظرية والتطبيق",
+          "cards": [
+            { "type": "text", "h": "5 · النظرية والتطبيق — قلب الدرس", "b": "بين هدف الدرس ومراحل الختام تقع أطول مرحلة في الدرس، حيث تُقدَّم المادة الجديدة وتُستخدم فورًا. اجعل النظرية في أجزاء صغيرة — مفهوم واحد ثم تطبيق عملي عليه — واعرض النموذج أولًا: أظهر الأسلوب على شاشتك قبل أن يجرّبه الطلاب على شاشاتهم. في دورة التصميم، مرحلة التطبيق هي حيث يبدع الطلاب فعليًا، لذا احرص على حماية هذا الوقت بشدة؛ فالدرس الذي يكتفي فيه الأطفال بمشاهدتك وأنت تصمم أو تبرمج هو درس لم يصمم أو يبرمج فيه أحد. هذه أيضًا هي الجزء الذي يترقبه الطلاب أكثر من غيره في الدرس — احمِه، فأنت بذلك تحمي السبب الذي يجعلهم يحضرون." }
+          ]
+        },
+        {
+          "t": "🏁 النهاية: المرآة",
+          "cards": [
+            { "type": "text", "b": "تعكس المراحل الأربع الختامية نظيراتها الافتتاحية بترتيب معكوس — إذ ينتهي الدرس بالطريقة نفسها التي بدأ بها، مما يمنح الطلاب إحساسًا مُرضيًا بالختام والإيقاع. هذا الشكل «الدائري» هو ما يجعل الدرس يبدو مكتملًا بدلًا من أن يتوقف فجأة عند انتهاء الوقت، والدرس الذي يبدو مكتملًا هو الذي يغادره الطالب دون أطراف مفكوكة تجذبه بعيدًا." },
+            { "type": "text", "h": "6 · ملخص الدرس — من المعلم والطالب معًا", "b": "لخّص ما تم تناوله في الدرس — لكن لا تكتفِ بإخبار الطالب فقط. اطلب منه أيضًا أن يلخّص بكلماته الخاصة. فتلخيصه يكشف ما رسخ فعلًا في ذهنه، ويُشكّل في الوقت نفسه لحظة استذكار ثانية." },
+            { "type": "text", "h": "7 · تكليف الواجب المنزلي — تعليمات واضحة", "b": "كلّف الطالب بالواجب المنزلي مع تعليمات واضحة تمامًا حول ما يجب فعله وكيفية القيام به. فالواجب الغامض هو واجب لن يُنجَز. وهذا يتكامل مع مراجعة الواجب التي افتتحت بها الدرس — إذ يشكلان معًا الحلقة الكاملة التي بُنيت عليها وحدة الواجبات المنزلية." },
+            { "type": "text", "h": "8 · لمحة عن الدرس القادم — إثارة الفضول", "b": "أعطِ تلميحًا مشوّقًا عمّا هو قادم: «في المرة القادمة، سنجعل شخصيتنا تتحرك تمامًا كما في الواقع!». هذا هو أسلوب إثارة الترقب نفسه الذي تناولته وحدة الحصص التي لا تُنسى — والختام دون هذا التلميح يعني إهدار فرصة مجانية لتحسين الحضور في كل حصة." },
+            { "type": "text", "h": "9 · الختام — الانتهاء بطاقة إيجابية", "b": "أنهِ الدرس بشعور إيجابي عالٍ: احتفِ بما أنجزه الطالب اليوم، وقدّر جهده، وودّعه وهو يشعر شعورًا جيدًا. فالثواني الثلاثون الأخيرة تشكّل الطريقة التي سيتذكر بها الدرس بأكمله، وهذه الذكرى هي ما يزنه الطالب، بوعي أو بغير وعي، عند اتخاذ قراره بالحضور في المرة القادمة." },
+            { "type": "mirror", "beginTitle": "البداية", "endTitle": "النهاية", "mirrorLabel": "مرآة", "beginItems": [{"n":1,"label":"التحمية"},{"n":2,"label":"مراجعة الدرس السابق"},{"n":3,"label":"مراجعة الواجب المنزلي"},{"n":4,"label":"هدف الدرس"}], "endItems": [{"n":9,"label":"الختام"},{"n":8,"label":"لمحة عن الدرس القادم"},{"n":7,"label":"تكليف الواجب المنزلي"},{"n":6,"label":"ملخص الدرس"}], "caption": "ينتهي الدرس تمامًا كما بدأ — مما يمنح الطلاب إحساسًا بالختام والاستمرارية والإيقاع." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
       "emoji": "🤝",
       "title": "بناء علاقة وثيقة مع طلابك",
       "desc": "الحديث الودي، والتغذية الراجعة الفعّالة، وكيفية جعل كل طالب يشعر بأنه جزء من المجموعة.",
@@ -3209,7 +3557,7 @@ const I18N={
       ]
     },
     {
-      "id": 3,
+      "id": 4,
       "emoji": "✨",
       "title": "صنع حصص لا تُنسى",
       "desc": "المواد البصرية، والنمذجة قبل التطبيق، والتحقق من الفهم، والختام بإثارة الترقّب.",
@@ -3260,7 +3608,7 @@ const I18N={
       ]
     },
     {
-      "id": 4,
+      "id": 5,
       "emoji": "📝",
       "title": "الواجبات المنزلية والحضور",
       "desc": "الشرح، والتذكير، وإبراز الإنجاز، والمراجعة — العادات الأربع للواجبات المنزلية التي تعزز الحضور.",
@@ -3304,7 +3652,7 @@ const I18N={
       ]
     },
     {
-      "id": 5,
+      "id": 6,
       "emoji": "📞",
       "title": "ما ينبغي فعله عندما يغيب الطالب عن الحصة",
       "desc": "كيفية متابعة الطالب وكيفية التحدث مع أولياء الأمور بتعاطف.",
@@ -3364,21 +3712,23 @@ const I18N={
       { "q": "ماذا يقيس مؤشر LPR من منظور المعلم؟", "opts": ["نسبة حالات طلابك الذين تقل نسبة حضورهم عن 50%", "متوسط درجات طلابك", "عدد الحصص التي درّستها هذا الشهر"], "c": 0, "fb": "LPR (معدل الحضور المنخفض) هو نسبة حالات طلابك الذين تقل نسبة حضورهم عن 50%." }
     ],
     "2": [
+    { "q": "تبدأ الحصة مباشرة بقول «افتح ملفك من الأسبوع الماضي» - دون تحية أو تحمية. طالب كان مشتت الانتباه قبل انضمامه للحصة بالكاد يتفاعل خلال أول عشر دقائق. ما الذي كان يمكن أن يساعد؟", "opts": ["لا شيء — فالتحمية غير ضرورية بعد تجاوز الطلاب عمرًا معينًا.", "تحمية قصيرة — سؤال خفيف أو تحدٍّ صغير يحوّل ذهن الطالب إلى «وضع الدرس» قبل الخوض في المحتوى.", "الانتقال مباشرة إلى هدف الدرس ليعرف الطالب المطلوب منه فورًا."], "c": 1, "fb": "غالبًا ما تكون البداية الضعيفة أول لحظة ينفصل فيها الطالب ذهنيًا — والتحمية تجذب الطفل المشتت إلى الحصة قبل بدء المحتوى." },
+    { "q": "بدلًا من أن يطلب من الطلاب استذكار ما تعلموه في الحصة السابقة، يكتفي أحد المعلمين بإعادة شرح كل شيء من الصفر في كل مرة. ما هي المخاطرة في ذلك؟", "opts": ["لا شيء — فالتكرار لا يضر أبدًا.", "لا يتدرب الطلاب أبدًا على الاستذكار — وهو من أقوى أدوات تثبيت الذاكرة — فتستغرق المادة وقتًا أطول لترسخ، ويشعرون بكفاءة أقل.", "يوفر ذلك الوقت على المدى الطويل، لذا يستحق القيام به."], "c": 1, "fb": "الاستذكار — أي جعل الطالب يستعيد المعلومة بدلًا من سماعها مجددًا — يحقق للذاكرة أثرًا أكبر مما تحققه إعادة الشرح مهما طالت، ويبني الشعور بالكفاءة الذي يدفع الطالب للعودة." },
+    { "q": "قدّم أحد الطلاب تصميمًا كواجب منزلي، فقال له المعلم «ملصق جميل!» ثم انتقل لما يليه. ما الذي ينقص هنا؟", "opts": ["لا شيء — فالتغذية الراجعة الإيجابية السريعة تحافظ على استمرارية الزخم.", "تغذية راجعة محددة توضح ما نجح وما يمكن تطويره أكثر — فالثناء الغامض لا يُظهر للطالب أن الواجب المنزلي مهم فعلًا.", "كان ينبغي للمعلم أن يمنح درجة رقمية بدلًا من تعليق."], "c": 1, "fb": "التغذية الراجعة المحددة هي إحدى لحظتَي التغذية الراجعة الأساسيتين في الدرس — وإغفالها يُرسّخ لدى الأطفال فكرة أن الواجب المنزلي أمر اختياري." },
+    { "q": "تنتهي الحصة بمجرد انتهاء الوقت — دون ملخص، ولا تلميح عمّا هو قادم، ولا تقدير لجهد الطالب. ما الذي يُفقد على الأرجح؟", "opts": ["لا شيء — طالما تمت تغطية المحتوى، فالنهاية لا تهم.", "فرصة إثارة الترقب والانتهاء بشعور إيجابي — فالانطباع الأخير هو ما يزنه الطالب عند اتخاذ قراره بالحضور في المرة القادمة.", "فقط تكليف الواجب المنزلي، الذي يمكن إرساله لاحقًا برسالة."], "c": 1, "fb": "النهاية تعكس البداية — والختام دون إثارة الترقب وختام قوي يعني إهدار فرصة مجانية لتحسين الحضور في كل حصة." }
+    ],
+    "3": [
       { "q": "تنضم إلى المكالمة وتجد أن كاميرا أحد الطلاب مفتوحة، لكنه يحدّق في مكتبه فقط دون أن يكتب أي شيء في المحادثة النصية. كيف تبدأ الحصة؟", "opts": ["مرحبًا! أراك هنا — قبل أن نبدأ، كيف كان أسبوعك؟ هل حدث شيء ممتع؟", "لنبدأ مباشرة — افتح ملف مشروعك من الأسبوع الماضي.", "أوه مرحبًا!! تبدو متحمسًا جدًا اليوم، أنا متأكد أنك ستصنع شيئًا رائعًا للغاية!!"], "c": 0, "fb": "تفقّد بسيط وصادق يساعد الطالب الهادئ على الشعور بالأمان قبل الدخول في المحتوى — دون حماس مبالغ فيه أو تجاهل تلك اللحظة تمامًا." },
       { "q": "رسم أحد الطلاب شخصيته الأولى، لكنك لاحظت أنه لم يتبع تعليماتك. كيف تقدّم له التغذية الراجعة؟", "opts": ["لم تتبع التعليمات — كان من المفترض أن تضيف خلفية ولم تفعل. لنصلح ذلك أولًا.", "يعجبني كيف منحت شخصيتك تعبيرات وجه قوية — هذا يتطلب تفكيرًا حقيقيًا. لاحظت أن الخلفية لم تُضف بعد؛ هل كان ذلك خيارًا منك، أم كنت تنوي إضافتها لاحقًا؟", "واو، هذا رائع! أنت فنان موهوب حقًا!"], "c": 1, "fb": "إبراز شيء محدد والسؤال بفضول يحافظ على استقلالية الطالب — وهذا أفضل من المديح الفارغ أو التصحيح دون أي تقدير." },
       { "q": "خلال نشاط جماعي، لم يتحدث أحد الطلاب أو يتفاعل إطلاقًا، بينما يتبادل طالبان آخران الحديث بنشاط. ماذا تفعل؟", "opts": ["لا شيء — لو أراد المشاركة لكان قد فتح الميكروفون أو كتب شيئًا.", "ناديه علنًا: \"لماذا لا تشارك مثل البقية؟\"", "ادعُه بهدوء وبأسلوب لا يشعره بالضغط: \"أحب أن أسمع فكرتك أيضًا، متى ما كنت مستعدًا — يمكنك الكتابة إن كان ذلك أسهل عليك.\""], "c": 2, "fb": "الدعوة الهادئة وغير الضاغطة تحترم اختلاف مستويات الراحة دون تجاهل الطالب أو إحراجه." },
       { "q": "ينهي طالبان التحدي الفردي في نصف الوقت، بينما لا يزال ثلاثة آخرون عالقين في الخطوة الأولى. ماذا تفعل؟", "opts": ["الانتقال إلى النشاط التالي لأن معظم الطلاب قريبون من الانتهاء.", "قدّم للطلاب الأسرع مهمة إضافية، ثم وزّع انتباهك للمتابعة مع كل طالب يواجه صعوبة على حدة.", "امنح الطلاب الأسرع تحديًا إضافيًا أصعب بكثير، واقضِ بقية الحصة معهم فقط لأنهم \"أكثر تقدمًا\"."], "c": 1, "fb": "توزيع انتباهك يُبقي المجموعتين متفاعلتين — فلا أحد يُهمَل، ولا أحد يصبح \"المساعد الدائم\"." }
     ],
-    "3": [
-      { "q": "ما الذي يجب أن يحدث مباشرة قبل أن يمارس الطلاب شيئًا جديدًا؟", "opts": ["لا شيء — يكتشفون الأمر بأنفسهم", "يقوم المعلم بنمذجة العملية خطوة بخطوة", "اختبار كتابي"], "c": 1, "fb": "النمذجة أولًا تمنح الطلاب خريطة واضحة قبل أن يجربوا الأمر بأنفسهم." },
-      { "q": "لماذا نبني الترقّب للحصة القادمة؟", "opts": ["لأنه يمنح الطلاب سببًا للعودة", "لأنه يملأ الوقت في نهاية الحصة", "لأن المنصة تتطلب ذلك"], "c": 0, "fb": "الجملة الختامية القوية غالبًا ما تكون السبب الحقيقي وراء عودة الطالب في المرة القادمة." }
-    ],
-    "4": [
+    "5": [
       { "q": "تبقّت دقيقتان فقط على انتهاء الحصة وتتذكر أنه يجب عليك تحديد الواجب المنزلي. ماذا تفعل؟", "opts": ["تكتب رابط الواجب بسرعة في المحادثة النصية وتقول \"حسنًا افعلوا هذا للحصة القادمة، إلى اللقاء!\"", "تأخذ 30 ثانية لتشرح ما يجب فعله ولماذا يرتبط بما تعلمناه اليوم للتو.", "تشرح بالتفصيل كل قاعدة تقنية للمهمة، وتقرأ كل متطلب بصوت عالٍ."], "c": 1, "fb": "الهدف الواضح هو ما يجعل الواجب المنزلي يستحق التذكر — لا ذكره على عجل ولا سرد جدار من القواعد." },
       { "q": "لديك مجموعة كبيرة، ولا يوجد وقت سوى لإلقاء نظرة سريعة على الواجبات قبل بدء الدرس الجديد. معظم الطلاب سلّموا واجباتهم، وقلة لم يفعلوا. ماذا تفعل؟", "opts": ["تُبرز إنجازًا جماعيًا لكل من سلّم: \"90% منكم أحضروا واجباتهم — وهذا يعكس التزامًا حقيقيًا.\"", "تذكر أسماء الطلاب الذين لم يسلّموا حتى يشعروا بالتحفيز لفعل ذلك في المرة القادمة.", "تعرض فقط أفضل مشروع كنموذج يجب على الجميع السعي لتحقيقه."], "c": 0, "fb": "الهدف هو التحفيز، لا المقارنة أو الإحراج — والإشادة الجماعية تشمل كل من التزم بالحضور." },
       { "q": "تراجع الواجبات المسلَّمة وتجد أن مشروع أحد الطلاب صحيح من الناحية التقنية لكنه ليس مميزًا. ماذا تكتب؟", "opts": ["تضع علامة \"تم\" فقط دون أي تعليق — فقد استوفى المتطلبات، وهذا يكفي.", "تترك قائمة طويلة بكل ما يمكن تحسينه، دون ذكر أي إيجابيات.", "تترك تعليقًا قصيرًا ومحددًا يذكر شيئًا واحدًا أجاده وملاحظة لطيفة واحدة — شيء يمكن لولي الأمر قراءته أيضًا."], "c": 2, "fb": "مراجعة الواجب المنزلي فرصة لتقديم تغذية راجعة، لا مجرد خانة يتم تحديدها — إنها أيضًا فرصة لتعزيز العلاقة مع الطلاب وأولياء الأمور." }
     ],
-    "5": [
+    "6": [
       { "q": "اتصلت وأرسلت رسائل نصية لولي أمر مرتين هذا الأسبوع بخصوص غياب ابنه عن حصتين متتاليتين، ولم تتلقَّ ردًا حتى الآن. ما هي أفضل خطوة تالية؟", "opts": ["التوقف عن التواصل — فقد حاولت مرتين بالفعل، والأمر الآن متروك لولي الأمر.", "التصعيد فورًا بطلب من قائد فريقك إخراج الطالب من مجموعتك لأنه من الواضح غير مهتم.", "إرسال رسالة ودية أخرى وغير ضاغطة، ومشاركة تسجيل الحصة وملخص الواجب حتى لا يتأخر الطالب أكثر ريثما تنتظر الرد."], "c": 2, "fb": "التواصل المهتم هو دائمًا الخطوة الأولى — مثابر لكنه دافئ، يُبقي الباب مفتوحًا بدلًا من الاستسلام أو التصعيد المبكر." },
       { "q": "ينضم اليوم أخيرًا طالب كان غائبًا عن الحصة الماضية. كيف تبدأ الحصة معه؟", "opts": ["تعترف بلطف أو على انفراد بأنك لاحظت غيابه، وتسأله كيف حاله، وتذكّره بمكان التسجيل والواجب المنزلي.", "لا تذكر الغياب إطلاقًا، وتكمل درس اليوم وكأن شيئًا لم يحدث.", "تشير أمام المجموعة إلى أنه غاب عن الحصة وتسأله عن السبب."], "c": 0, "fb": "إظهار أنك لاحظت غياب الطالب — دون إحراجه — يساعده على الشعور بأنه مرئي بدلًا من متأخر." },
       { "q": "يراسلك أحد أولياء الأمور مباشرة يسأل إن كان بإمكان ابنه الحصول على حصة إضافية مجانية لتعويض ما فاته بعد غيابه عن عدة حصص. ماذا تفعل؟", "opts": ["توافق فورًا وتحدد الموعد بنفسك لأنها لفتة لطيفة تجاه الأسرة.", "تتواصل أولًا مع قائد فريقك بخصوص الوضع وتحصل على موافقة لحصة إضافية. ثم تشكر ولي الأمر على تواصله وتخبره بأنك سعيد بمعرفة اهتمام الطالب بتعويض ما فاته. وإذا تمت الموافقة على الحصة الإضافية، تعرض تحديد موعدها مع الطالب.", "تخبر ولي الأمر أن هذا غير ممكن وأنه لا يمكن فعل شيء."], "c": 1, "fb": "موافقة قائد الفريق تأتي دائمًا أولًا — لكن هذا لا يعني أن يحصل ولي الأمر على رد بارد أو متأخر؛ يمكنك أن تكون دافئًا مع اتباع الإجراء الصحيح في الوقت نفسه." }
@@ -3421,7 +3771,7 @@ const I18N={
     "moduleN": "Modul {n}",
     "finalStage": "Tahap Akhir",
     "finalExam": "Ujian Akhir",
-    "finalExamDesc": "Selesaikan ujian resmi 12 soal (Google Form) yang mencakup Modul 2–5 untuk mendapatkan sertifikat.",
+    "finalExamDesc": "Selesaikan ujian resmi 12 soal (Google Form) yang mencakup Modul 2–6 untuk mendapatkan sertifikat.",
     "openForm": "Buka Formulir",
     "certifiedCheck": "Tersertifikasi ✓",
     "opensInForms": "Terbuka di Google Forms",
@@ -3505,7 +3855,8 @@ const I18N={
           "cards": [
             {"type": "text", "b": "Kita mengelompokkan siswa (SS) ke dalam tiga level berdasarkan persentase kehadiran mereka."},
             {"type": "table", "h": "Level kehadiran", "head": ["Level", "Rentang"], "rows": [["🟢 Kehadiran Tinggi", "≥ 75%"], ["🟠 Kehadiran Sedang (Risiko)", "50% – 74.99%"], ["❗ Kehadiran Rendah (Waspada)", "&lt; 50%"]]},
-            {"type": "text", "h": "Dari sudut pandang tutor", "b": "Dua indikator ini merangkum performamu pada metrik ini:<br><br><strong>LPR (Low Presence Rate):</strong> % siswamu dengan kehadiran di bawah 50%.<br><strong>HPR (High Presence Rate):</strong> % siswamu dengan kehadiran 75% ke atas."}
+            {"type": "text", "h": "Dari sudut pandang tutor", "b": "Dua indikator ini merangkum performamu pada metrik ini:<br><br><strong>LPR (Low Presence Rate):</strong> % siswamu dengan kehadiran di bawah 50%.<br><strong>HPR (High Presence Rate):</strong> % siswamu dengan kehadiran 75% ke atas."},
+            {"type": "text", "b": "Data kehadiran dihitung berdasarkan catatan kehadiran yang otomatis tercatat oleh classroom saat siswa bergabung ke kelas. Kehadiran dikonfirmasi setelah siswa mengikuti lebih dari 50% pelajaran. Ini tidak berdasarkan catatan kehadiran yang diinput di BO."}
           ]
         },
         {
@@ -3525,6 +3876,49 @@ const I18N={
     },
     {
       "id": 2,
+      "emoji": "🧭",
+      "title": "Struktur Pelajaran & Kehadiran",
+      "desc": "Kenapa rutinitas pelajaran yang konsisten jadi salah satu pengungkit kehadiran terkuat, dan sembilan fase yang membentuk setiap pelajaran Kodland.",
+      "obj": "Memahami kenapa struktur pelajaran yang konsisten mendorong kehadiran, dan mempelajari sembilan fase yang membentuk satu pelajaran Kodland.",
+      "color": "#D3FF5F",
+      "sections": [
+        {
+          "t": "💡 Kenapa Ini Penting",
+          "cards": [
+            {"type":"text","b":"Ada satu hal yang berkorelasi kuat dengan kehadiran: menjaga rutinitas dan struktur yang konsisten di pelajaranmu. Konsistensi itulah intinya. Begitu siswa hafal ritmemu, mereka berhenti menghabiskan energi untuk memikirkan “sekarang ngapain ya?” dan mulai fokus belajar. Jalankan struktur yang sama setiap kali sampai jadi kebiasaan — buatmu dan buat mereka. Pelajaran yang bisa ditebak terasa seperti pelajaran yang aman, dan pelajaran yang aman itulah yang membuat siswa ingin kembali."},
+            {"type":"text","b":"Berikut cara satu pelajaran Kodland disusun, fase demi fase, dan bagaimana menjaga urutan itu tetap utuh melindungi angka kehadiranmu."}
+          ]
+        },
+        {
+          "t": "🌅 Awal: Empat Fase",
+          "cards": [
+            {"type":"text","h":"1 · Warm-Up — mengaktifkan energi & fokus","b":"Bukalah dengan sesuatu yang ringan untuk mengalihkan pikiran siswa ke “mode belajar”: pertanyaan singkat, tantangan kecil, atau desain keren yang kamu lihat selama seminggu ini. Tujuannya adalah energi dan perhatian, bukan penilaian. Ini menandakan “kita mulai sekarang” dan menarik anak yang tadinya tidak fokus ke dalam sesi. Pembukaan yang lemah sering jadi momen pertama siswa mulai “cabut” secara mental — dan siswa yang sudah cabut hari ini lebih mungkin bolos di pertemuan berikutnya."},
+            {"type":"text","h":"2 · Revisi Pelajaran Sebelumnya — mengingat & memantapkan","b":"Bahas ulang sebentar apa yang dipelajari di pertemuan lalu. Retrieval — membuat siswa mengingat sendiri, bukan mendengar ulang penjelasan — adalah salah satu alat memori paling kuat yang ada. Pertanyaan dua menit seperti “apa yang membuat focal point kuat?” jauh lebih efektif daripada menjelaskan ulang. Ketika siswa merasa mereka mengikuti pelajaran dan benar-benar ingat, mereka merasa kompeten — dan rasa kompeten itulah salah satu alasan terbesar siswa ingin kembali."},
+            {"type":"text","h":"3 · Cek PR — bahas pekerjaan rumah bersama","b":"Bahas pekerjaan rumah bersama siswa — dalam kursus ini, artinya melihat desain yang sudah mereka buat. Di sinilah kamu menangkap kesalahpahaman, memuji usaha mereka, dan menunjukkan bahwa PR itu benar-benar penting. Ini juga salah satu dari dua momen umpan balik utama dalam pelajaran: jangan puas dengan “poster bagus!” — sampaikan secara spesifik apa yang sudah bagus dan apa yang perlu didorong lebih jauh. Melewatkan cek ini mengajarkan anak bahwa PR itu opsional, dan itu melemahkan semua hal yang sudah dibahas di modul Pekerjaan Rumah tentang kenapa cek ini penting untuk kehadiran."},
+            {"type":"text","h":"4 · Tujuan Pelajaran — menetapkan sasaran yang jelas","b":"Sampaikan dengan jelas apa fokus hari ini: “hari ini kita akan mendesain poster dengan satu focal point yang jelas.” Tujuan yang jelas memberi arah pada pelajaran dan memberi siswa sasaran yang konkret. Siswa yang tidak tahu hari ini “untuk apa” akan cepat kehilangan minat — dan hilangnya minat ini adalah salah satu penyebab internal di balik ketidakhadiran."}
+          ]
+        },
+        {
+          "t": "🎨 Tengah: Teori & Praktik",
+          "cards": [
+            {"type":"text","h":"5 · Teori & Praktik — inti dari pelajaran","b":"Di antara tujuan pelajaran dan fase penutup ada tahap terpanjang, di mana materi baru diajarkan dan langsung dipraktikkan. Sampaikan teori dalam bagian-bagian kecil — satu konsep, lalu langsung praktik — dan berikan contoh terlebih dahulu: peragakan tekniknya di layarmu sebelum siswa mencobanya sendiri. Dalam kursus desain, tahap praktik adalah saat siswa benar-benar berkarya, jadi lindungi waktu ini sekuat mungkin; pelajaran di mana anak hanya menonton kamu mendesain/coding adalah pelajaran di mana tidak ada yang mendesain/coding. Ini juga bagian pelajaran yang paling ditunggu-tunggu siswa — lindungi ini, dan kamu melindungi alasan mereka datang."}
+          ]
+        },
+        {
+          "t": "🏁 Akhir: Sang Cermin",
+          "cards": [
+            {"type":"text","b":"Empat fase penutup mencerminkan fase pembuka secara terbalik — pelajaran berakhir sama seperti caranya dimulai, memberi siswa rasa penutupan dan ritme yang memuaskan. Bentuk “melingkar” inilah yang membuat pelajaran terasa lengkap, bukan sekadar berhenti karena waktu habis, dan pelajaran yang terasa lengkap adalah pelajaran yang ditinggalkan siswa tanpa ada urusan menggantung yang menariknya pergi."},
+            {"type":"text","h":"6 · Rangkuman Pelajaran — berbasis tutor + siswa","b":"Rangkum apa yang sudah dibahas — tapi jangan cuma kamu yang menyampaikan. Minta siswa juga merangkum dengan kata-katanya sendiri. Rangkuman mereka menunjukkan apa yang benar-benar melekat dan sekaligus jadi momen retrieval kedua."},
+            {"type":"text","h":"7 · Penugasan PR — instruksi yang jelas","b":"Berikan PR dengan instruksi yang sangat jelas tentang apa yang harus dilakukan dan caranya. PR yang tidak jelas adalah PR yang tidak akan dikerjakan. Ini berpasangan dengan Cek PR yang membuka pelajaran — bersama-sama keduanya membentuk siklus penuh yang menjadi dasar modul Pekerjaan Rumah."},
+            {"type":"text","h":"8 · Pratinjau Pelajaran Berikutnya — membangun rasa penasaran","b":"Beri bocoran tentang apa yang akan datang: “Pertemuan berikutnya, kita akan membuat karakter kita bergerak persis seperti di kehidupan nyata!” Ini adalah hook antisipasi yang sama seperti yang sudah dibahas di modul Kelas yang Tak Terlupakan — menutup pelajaran tanpa ini membuang kesempatan gratis untuk kehadiran di setiap pertemuan."},
+            {"type":"text","h":"9 · Penutup — akhiri dengan energi","b":"Akhiri dengan semangat tinggi: rayakan apa yang berhasil dibuat siswa hari ini, akui usaha mereka, dan lepas mereka dengan perasaan senang. 30 detik terakhir membentuk bagaimana mereka mengingat seluruh pelajaran — dan ingatan itulah yang mereka pertimbangkan, sadar atau tidak, saat memutuskan apakah akan datang di pertemuan berikutnya."},
+            {"type":"mirror","beginTitle":"Awal","endTitle":"Akhir","mirrorLabel":"CERMIN","beginItems":[{"n":1,"label":"Warm-Up"},{"n":2,"label":"Revisi Pelajaran Sebelumnya"},{"n":3,"label":"Cek Pekerjaan Rumah"},{"n":4,"label":"Tujuan Pelajaran"}],"endItems":[{"n":9,"label":"Penutup"},{"n":8,"label":"Pratinjau Pelajaran Berikutnya"},{"n":7,"label":"Penugasan Pekerjaan Rumah"},{"n":6,"label":"Rangkuman Pelajaran"}],"caption":"Pelajaran berakhir persis seperti caranya dimulai — memberi siswa rasa penutupan, kesinambungan, dan ritme."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
       "emoji": "🤝",
       "title": "Membangun Kedekatan dengan Siswamu",
       "desc": "Obrolan ringan, feedback yang benar-benar berdampak, dan cara membuat setiap siswa merasa jadi bagian dari kelompok.",
@@ -3597,7 +3991,7 @@ const I18N={
       ]
     },
     {
-      "id": 3,
+      "id": 4,
       "emoji": "✨",
       "title": "Menciptakan Kelas yang Tak Terlupakan",
       "desc": "Materi visual, memberi contoh sebelum praktik, mengecek pemahaman, dan menutup kelas dengan rasa penasaran.",
@@ -3648,7 +4042,7 @@ const I18N={
       ]
     },
     {
-      "id": 4,
+      "id": 5,
       "emoji": "📝",
       "title": "Tugas Rumah dan Kehadiran",
       "desc": "Jelaskan, ingatkan, soroti, dan tinjau — empat kebiasaan tugas rumah yang memperkuat kehadiran.",
@@ -3692,7 +4086,7 @@ const I18N={
       ]
     },
     {
-      "id": 5,
+      "id": 6,
       "emoji": "📞",
       "title": "Apa yang Harus Dilakukan Saat Siswa Melewatkan Kelas",
       "desc": "Cara menindaklanjuti siswa dan cara berbicara dengan orang tua dengan penuh empati.",
@@ -3752,21 +4146,23 @@ const I18N={
       {"q": "Apa yang diukur oleh LPR, dari sudut pandang tutor?", "opts": ["% siswamu dengan kehadiran di bawah 50%", "Nilai rata-rata siswamu", "Berapa banyak kelas yang kamu ajar bulan ini"], "c": 0, "fb": "LPR (Low Presence Rate) adalah persentase siswamu yang kehadirannya di bawah 50%."}
     ],
     "2": [
+    {"q":"Kamu langsung memulai kelas dengan \"buka file kamu dari minggu lalu\" — tanpa sapaan, tanpa warm-up. Seorang siswa yang tadinya kurang fokus sebelum bergabung nyaris tidak terlibat selama sepuluh menit pertama. Apa yang seharusnya membantu?","opts":["Tidak ada — warm-up tidak perlu lagi setelah siswa mencapai usia tertentu.","Warm-Up singkat — pertanyaan ringan atau tantangan kecil yang mengalihkan pikiran mereka ke \"mode belajar\" sebelum masuk ke materi.","Langsung lompat ke Tujuan Pelajaran supaya mereka tahu apa yang diharapkan sejak awal."],"c":1,"fb":"Pembukaan yang lemah sering jadi momen pertama siswa mulai cabut secara mental — warm-up menarik anak yang tidak fokus ke dalam sesi sebelum materi dimulai."},
+    {"q":"Alih-alih meminta siswa mengingat apa yang mereka pelajari di pertemuan lalu, seorang tutor selalu menjelaskan ulang semuanya dari awal setiap kali. Apa risikonya?","opts":["Tidak ada — pengulangan tidak pernah merugikan.","Siswa tidak pernah melatih retrieval — salah satu alat memori paling kuat — sehingga materi butuh waktu lebih lama untuk melekat dan mereka merasa kurang kompeten.","Ini menghemat waktu dalam jangka panjang, jadi layak dilakukan."],"c":1,"fb":"Retrieval — membuat siswa mengingat sendiri, bukan mendengar ulang penjelasan — jauh lebih efektif untuk memori daripada menjelaskan ulang, dan ini membangun rasa kompeten yang membuat siswa ingin kembali."},
+    {"q":"Seorang siswa mengumpulkan desain sebagai PR. Tutor bilang \"poster bagus!\" lalu lanjut ke topik berikutnya. Apa yang kurang?","opts":["Tidak ada — umpan balik positif yang cepat menjaga momentum tetap berjalan.","Umpan balik spesifik yang menyebutkan apa yang berhasil dan apa yang perlu didorong lebih jauh — pujian yang samar tidak menunjukkan bahwa PR itu benar-benar penting.","Tutor seharusnya memberikan nilai angka, bukan komentar."],"c":1,"fb":"Umpan balik spesifik adalah salah satu dari dua momen umpan balik utama dalam pelajaran — melewatkannya mengajarkan anak bahwa PR itu opsional."},
+    {"q":"Kelas berakhir tepat saat waktu habis — tanpa rangkuman, tanpa bocoran apa yang akan datang, tanpa mengakui usaha siswa. Apa yang paling mungkin hilang?","opts":["Tidak ada — selama materinya sudah dibahas, cara mengakhirinya tidak penting.","Kesempatan untuk membangun antisipasi dan mengakhiri dengan kesan positif — kesan terakhir inilah yang dipertimbangkan siswa saat memutuskan apakah akan datang di pertemuan berikutnya.","Hanya penugasan PR, yang bisa dikirim belakangan lewat pesan."],"c":1,"fb":"Akhir pelajaran mencerminkan awalnya — menutup tanpa antisipasi dan penutup yang kuat membuang kesempatan gratis untuk kehadiran di setiap pertemuan."}
+    ],
+    "3": [
       {"q": "Kamu bergabung ke panggilan dan kamera seorang siswa menyala, tapi dia cuma menatap mejanya, tidak mengetik apa pun di chat. Bagaimana kamu memulai kelasnya?", "opts": ["Hai! Aku lihat kamu udah di sini — sebelum kita mulai, gimana kabar minggu ini? Ada hal seru yang terjadi?", "Ayo mulai — buka file projekmu dari minggu lalu.", "OMG hai!! Kamu keliatan semangat banget hari ini, aku udah bisa nebak kamu bakal bikin sesuatu yang LUAR BIASA!!"], "c": 0, "fb": "Sapaan singkat dan tulus membantu siswa yang pendiam merasa aman sebelum masuk ke materi — tanpa energi yang berlebihan atau melewatkan momen itu sama sekali."},
       {"q": "Seorang siswa menggambar karakter pertamanya tapi kamu perhatikan dia tidak mengikuti instruksimu. Bagaimana kamu memberi feedback?", "opts": ["Kamu nggak ikutin instruksinya — kamu seharusnya nambahin latar belakang tapi nggak kamu lakuin. Ayo betulin dulu.", "Aku suka banget gimana kamu bikin ekspresi wajah karakternya jadi hidup — itu butuh pemikiran yang matang. Aku perhatikan latar belakangnya belum ditambahkan; itu memang pilihanmu, atau mau ditambahin nanti?", "Wow, ini keren banget! Kamu emang berbakat jadi seniman!"], "c": 1, "fb": "Menyoroti sesuatu yang spesifik dan bertanya dengan rasa penasaran menjaga kemandirian siswa — lebih baik daripada pujian kosong atau koreksi tanpa pengakuan apa pun."},
       {"q": "Saat aktivitas kelompok, satu siswa sama sekali belum bicara atau bereaksi, sementara dua lainnya aktif mengobrol bolak-balik. Apa yang kamu lakukan?", "opts": ["Tidak ada — kalau memang mau berpartisipasi, dia pasti sudah menyalakan mic atau mengetik.", "Menegur di depan semua orang: \"Kenapa kamu nggak berpartisipasi kayak yang lain?\"", "Ajak dia dengan tenang dan tanpa tekanan: \"Aku juga pengen dengar idemu, kapan pun kamu siap — lewat chat juga boleh kalau itu lebih nyaman.\""], "c": 2, "fb": "Ajakan pribadi yang tanpa tekanan menghormati tingkat kenyamanan yang berbeda-beda tanpa mengabaikan siswa atau membuatnya merasa terpojok."},
       {"q": "Dua siswa menyelesaikan tantangan mandiri dalam waktu setengah dari yang seharusnya, sementara tiga lainnya masih terjebak di langkah pertama. Apa langkahmu?", "opts": ["Lanjut ke aktivitas berikutnya karena sebagian besar siswa hampir selesai.", "Berikan tugas tambahan untuk siswa yang cepat, lalu bagi perhatianmu untuk mengecek setiap siswa yang kesulitan satu per satu.", "Berikan tantangan bonus yang jauh lebih sulit untuk siswa yang cepat dan habiskan sisa waktu kelas cuma sama mereka karena mereka \"lebih maju\"."], "c": 1, "fb": "Membagi perhatianmu secara merata menjaga kedua kelompok tetap terlibat — tidak ada yang diabaikan, dan tidak ada yang jadi \"asisten permanen\"."}
     ],
-    "3": [
-      {"q": "Apa yang seharusnya terjadi tepat sebelum siswa mempraktikkan sesuatu yang baru?", "opts": ["Tidak ada — mereka cari tahu sendiri", "Tutor memberi contoh prosesnya langkah demi langkah", "Tes tertulis"], "c": 1, "fb": "Memberi contoh terlebih dahulu memberi siswa gambaran jelas sebelum mereka mencobanya sendiri."},
-      {"q": "Kenapa perlu membangun rasa penasaran untuk kelas berikutnya?", "opts": ["Itu memberi siswa alasan untuk kembali", "Itu mengisi waktu di akhir kelas", "Itu diwajibkan oleh platform"], "c": 0, "fb": "Kalimat penutup yang kuat sering kali menjadi alasan sesungguhnya seorang siswa datang lagi lain kali."}
-    ],
-    "4": [
+    "5": [
       {"q": "Ini dua menit terakhir kelas dan kamu baru ingat harus memberikan tugas rumah. Apa yang kamu lakukan?", "opts": ["Cepat-cepat ketik link tugasnya di chat dan bilang \"oke kerjain ini buat pertemuan berikutnya, dadah!\"", "Luangkan 30 detik untuk menjelaskan apa yang harus dilakukan dan kenapa itu berhubungan dengan apa yang baru saja kita pelajari hari ini.", "Jelaskan secara detail setiap aturan teknis tugasnya, membacakan tiap ketentuan satu per satu."], "c": 1, "fb": "Tujuan yang jelas adalah yang membuat tugas rumah layak diingat — bukan sebutan terburu-buru atau daftar aturan yang panjang."},
       {"q": "Kelompokmu besar dan cuma ada waktu untuk melihat tugas rumah sebentar sebelum memulai pelajaran baru. Sebagian besar sudah mengumpulkan, sebagian belum. Apa yang kamu lakukan?", "opts": ["Soroti sesuatu secara kolektif untuk semua yang sudah mengumpulkan: \"90% dari kalian membawa tugas rumahnya — itu menunjukkan komitmen yang sungguhan.\"", "Sebutkan nama-nama siswa yang belum mengumpulkan supaya mereka termotivasi untuk melakukannya lain kali.", "Cuma tampilkan satu proyek terbaik sebagai contoh yang harus dicapai semua orang."], "c": 0, "fb": "Tujuannya adalah motivasi, bukan perbandingan atau rasa malu — pujian kolektif mencakup semua yang sudah hadir dan mengumpulkan."},
       {"q": "Kamu sedang meninjau tugas rumah yang dikumpulkan dan proyek seorang siswa secara teknis benar tapi tidak ada yang istimewa. Apa yang kamu tulis?", "opts": ["Cuma tandai \"selesai\" tanpa komentar apa pun — sudah memenuhi ketentuan, itu cukup.", "Tinggalkan daftar panjang tentang semua yang bisa diperbaiki, tanpa menyebutkan hal positif sama sekali.", "Tinggalkan komentar singkat dan spesifik yang menyebutkan satu hal yang dia lakukan dengan baik dan satu saran lembut — sesuatu yang orang tuanya juga bisa baca."], "c": 2, "fb": "Meninjau tugas rumah adalah kesempatan untuk memberi feedback, bukan cuma centang selesai — ini juga kesempatan untuk memperkuat kedekatan dengan siswa dan orang tuanya."}
     ],
-    "5": [
+    "6": [
       {"q": "Kamu sudah menelepon dan mengirim pesan ke orang tua dua kali minggu ini soal anaknya yang melewatkan dua kelas berturut-turut, dan belum ada balasan. Apa langkah terbaik berikutnya?", "opts": ["Berhenti menghubungi — kamu sudah mencoba dua kali, sekarang terserah orang tuanya.", "Segera eskalasi dengan meminta TL-mu mengeluarkan siswa dari kelompokmu karena jelas tidak berminat.", "Kirim satu pesan lagi yang hangat dan tanpa tekanan, serta bagikan rekaman/rangkuman tugas rumah supaya siswa tidak makin tertinggal sambil menunggu balasan."], "c": 2, "fb": "Pengecekan yang penuh perhatian selalu jadi langkah pertama — gigih tapi tetap hangat, membuka pintu daripada menyerah atau eskalasi terlalu cepat."},
       {"q": "Seorang siswa yang melewatkan kelas terakhir akhirnya bergabung hari ini. Bagaimana kamu memulai kelas dengannya?", "opts": ["Secara pribadi atau dengan lembut sampaikan bahwa kamu perhatikan dia tidak hadir, tanyakan kabarnya, dan ingatkan di mana bisa menemukan rekaman dan tugas rumah.", "Jangan sebut ketidakhadirannya sama sekali, lanjut saja pelajaran hari ini seolah tidak terjadi apa-apa.", "Tunjukkan di depan kelompok bahwa dia melewatkan kelas dan tanyakan kenapa."], "c": 0, "fb": "Menunjukkan ke siswa bahwa kamu memperhatikan ketidakhadirannya — tanpa membuatnya merasa terpojok — membantu mereka merasa diperhatikan, bukan tertinggal."},
       {"q": "Seorang orang tua mengirim pesan langsung padamu menanyakan apakah anaknya bisa mendapat kelas tambahan gratis untuk mengejar ketertinggalan setelah melewatkan beberapa pertemuan. Apa yang kamu lakukan?", "opts": ["Langsung setujui dan jadwalkan sendiri karena itu tindakan baik untuk keluarga tersebut.", "Pertama, hubungi TL-mu tentang situasi ini dan dapatkan persetujuan untuk kelas tambahan. Lalu, berterima kasih ke orang tua karena sudah menghubungi dan sampaikan kamu senang mendengar siswanya berminat untuk mengejar ketertinggalan. Kalau kelas tambahannya disetujui, tawarkan untuk menjadwalkannya dengan siswa.", "Beri tahu orang tuanya bahwa itu tidak mungkin dan tidak ada yang bisa dilakukan."], "c": 1, "fb": "Persetujuan TL selalu diutamakan — tapi itu bukan berarti orang tua mendapat respons yang dingin atau tertunda; kamu tetap bisa hangat sambil mengikuti proses yang benar."}
@@ -3838,12 +4234,8 @@ function renderHome(){
     const prev = i===0 || prevNoQuiz ? true : isPassed(MODULES[i-1].id);
     const isDone = isPassed(m.id);
     const locked = !prev;
-    const step=document.createElement('div'); step.className='rstep';
-    const node=document.createElement('div');
-    node.className='rnode'+(locked?' locked':'');
-    node.textContent=m.id;
     const el=document.createElement('div');
-    el.className='mc rcard'+(locked?' locked':'');
+    el.className='mc'+(locked?' locked':'');
     let badge, stag;
     if(m.noQuiz){
       badge=`<span class="badge br">${T('badgeReading')}</span>`;
@@ -3861,17 +4253,14 @@ function renderHome(){
       <div class="mc-foot">${badge}${stag}</div>
     </div>`;
     if(!locked) el.onclick=()=>openModule(m);
-    step.appendChild(node); step.appendChild(el);
-    g.appendChild(step);
+    g.appendChild(el);
   });
 
-  // Final exam step
+  // Final exam card
   const allDone=MODULES.every(m=>isPassed(m.id));
   const examPassed=isPassed('final');
-  const examStep=document.createElement('div'); examStep.className='rstep';
-  const examNode=document.createElement('div'); examNode.className='rnode'+(allDone?'':' locked'); examNode.textContent='🎓';
   const examEl=document.createElement('div');
-  examEl.className='mc rcard'+(allDone?'':' locked');
+  examEl.className='mc'+(allDone?'':' locked');
   const examBadge=examPassed?`<span class="badge bd">${T('badgeCompleted')}</span>`:allDone?`<span class="badge bs">${T('openForm')}</span>`:`<span class="badge bl">${T('badgeLocked')}</span>`;
   const examStag=examPassed?`<span class="stag">${T('certifiedCheck')}</span>`:allDone?`<span class="stag">${T('opensInForms')}</span>`:`<span class="stag">${T('completeAllModules')}</span>`;
   examEl.innerHTML=`<div class="mc-stripe" style="background:var(--blue)"></div>
@@ -3882,14 +4271,11 @@ function renderHome(){
     <div class="mc-foot">${examBadge}${examStag}</div>
   </div>`;
   if(allDone) examEl.onclick=()=>startExam();
-  examStep.appendChild(examNode); examStep.appendChild(examEl);
-  g.appendChild(examStep);
+  g.appendChild(examEl);
 
-  // Checklist step
-  const chkStep=document.createElement('div'); chkStep.className='rstep';
-  const chkNode=document.createElement('div'); chkNode.className='rnode'+(examPassed?'':' locked'); chkNode.textContent='✅';
+  // Checklist card
   const chkEl=document.createElement('div');
-  chkEl.className='mc rcard'+(examPassed?'':' locked');
+  chkEl.className='mc'+(examPassed?'':' locked');
   chkEl.innerHTML=`<div class="mc-stripe" style="background:var(--blue)"></div>
   <div class="mc-body">
     <div class="mc-top"><div class="mc-num">${T('bonus')}</div><div class="mc-em">✅</div></div>
@@ -3898,8 +4284,7 @@ function renderHome(){
     <div class="mc-foot">${examPassed?`<span class="badge bd">${T('unlocked')}</span>`:`<span class="badge bl">${T('badgeLocked')}</span>`}<span class="stag">${T('referenceCard')}</span></div>
   </div>`;
   if(examPassed) chkEl.onclick=()=>showChecklist();
-  chkStep.appendChild(chkNode); chkStep.appendChild(chkEl);
-  g.appendChild(chkStep);
+  g.appendChild(chkEl);
 }
 
 // ─── MODULE CONTENT ───────────────────────────────────────────────────────
@@ -3967,6 +4352,27 @@ function rc(c){
       return `<div class="flow-step f-${s.color}"><div class="fs-ic">${s.ic}</div><h4>${s.h}</h4><p>${s.b}</p></div>${arrow}`;
     }).join('');
     return`<div class="flow">${steps}</div>`;
+  }
+  if(c.type==='mirror'){
+    const arrDown='<div class="lmv2-arrow"><svg viewBox="0 0 20 26"><path d="M10 2 V22 M3 15 L10 23 L17 15" fill="none" stroke="#0a0a1a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+    const arrUp='<div class="lmv2-arrow"><svg viewBox="0 0 20 26"><path d="M10 24 V4 M3 11 L10 3 L17 11" fill="none" stroke="#0a0a1a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+    const beginItems=c.beginItems.map((it,i)=>`<div class="lmv2-item"><span class="lmv2-num">${it.n}</span><span class="lmv2-text">${it.label}</span></div>`+(i<c.beginItems.length-1?arrDown:'')).join('');
+    const endItems=c.endItems.map((it,i)=>`<div class="lmv2-item"><span class="lmv2-num">${it.n}</span><span class="lmv2-text">${it.label}</span></div>`+(i<c.endItems.length-1?arrUp:'')).join('');
+    return`<div class="lmv2-wrap">
+      <svg class="lmv2-bg" viewBox="0 0 1200 700" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="0,0 170,0 60,700 0,700" fill="rgba(255,255,255,0.30)"/>
+        <polygon points="210,0 330,0 220,700 150,700" fill="rgba(255,255,255,0.22)"/>
+        <polygon points="1200,40 1200,240 960,170 1030,10" fill="rgba(255,255,255,0.28)"/>
+        <polygon points="1200,280 1200,460 1020,410 1080,260" fill="rgba(255,255,255,0.18)"/>
+        <polygon points="1060,470 1200,510 1200,700 980,700" fill="rgba(255,255,255,0.24)"/>
+      </svg>
+      <div class="lmv2-row">
+        <div class="lmv2-card"><div class="lmv2-title">${c.beginTitle}</div>${beginItems}</div>
+        <div class="lmv2-center"><svg viewBox="0 0 100 100"><path d="M78 32 A34 34 0 1 0 84 58" fill="none" stroke="#90c2ff" stroke-width="9" stroke-linecap="round"/><polygon points="78,16 92,32 74,38" fill="#90c2ff"/><path d="M22 68 A34 34 0 1 0 16 42" fill="none" stroke="#90c2ff" stroke-width="9" stroke-linecap="round"/><polygon points="22,84 8,68 26,62" fill="#90c2ff"/></svg><div class="lmv2-label">${c.mirrorLabel}</div></div>
+        <div class="lmv2-card"><div class="lmv2-title">${c.endTitle}</div>${endItems}</div>
+      </div>
+      <div class="lmv2-caption">${c.caption}</div>
+    </div>`;
   }
   return'';
 }
