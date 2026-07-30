@@ -11,7 +11,7 @@
   --coral:#FF6B54;--coral-d:#E8503C;--pink-hover:#FB89C3;--pink-hover-d:#E871AE;
   --green:#D3FF5F;--green-d:#6B9A1E;--green-l:#E9FFB0;
   --ink:#262626;--ink2:#4A4A4A;--muted:#8A8A8A;
-  --bg:#FFFFFF;--bg-gradient:linear-gradient(180deg,#d3e4ff 0%,#e2edff 45%,#eaf2ff 72%,#ffffff 100%);--surface:#FFFFFF;--surface2:#FDF3F7;--border:#F7D9E6;
+  --bg:#FFFFFF;--bg-gradient:linear-gradient(180deg,#dcf5ae 0%,#e6f8c4 45%,#f2fbdf 72%,#ffffff 100%);--surface:#FFFFFF;--surface2:#FDF3F7;--border:#F7D9E6;
   --text:var(--ink);--text2:var(--ink2);--text-muted:var(--muted);
   --nav-bg:rgba(255,255,255,0.94);--nav-b:#F7D9E6;
   --shadow:0 2px 14px rgba(11,31,69,.08);--shadow-h:0 10px 30px rgba(18,59,132,.16);
@@ -22,20 +22,34 @@
   --cute-bg:#FFF9E1;--cute-b:#F6DE94;--cute-t:#8A6412;
   --r:16px;--rsm:10px;--rpill:999px;
 }
+[data-theme="dark"]{
+  --ink:#ECECEC;--ink2:#B7B7C2;--muted:#8D8D99;
+  --bg:#12141A;--bg-gradient:linear-gradient(180deg,#10131a 0%,#161a24 45%,#1b2030 72%,#12141a 100%);
+  --surface:#1C1F27;--surface2:#242830;--border:#333A4A;
+  --nav-bg:rgba(18,20,26,0.92);--nav-b:#2A2E3A;
+  --shadow:0 2px 14px rgba(0,0,0,.45);--shadow-h:0 10px 30px rgba(0,0,0,.55);
+  --hi-bg:rgba(73,139,255,.12);--hi-b:rgba(73,139,255,.4);--hi-t:#8FB8FF;
+  --opt-h:#232838;
+  --ok-bg:rgba(15,122,69,.15);--ok-b:rgba(15,122,69,.45);--ok-t:#6FE3A4;
+  --no-bg:rgba(178,58,38,.15);--no-b:rgba(178,58,38,.45);--no-t:#FF8B76;
+  --cute-bg:rgba(138,100,18,.18);--cute-b:rgba(138,100,18,.45);--cute-t:#F6DE94;
+}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg-gradient);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+body{background:var(--bg-gradient);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .25s,color .25s}
 .screen{display:none;min-height:100vh;flex-direction:column}
 .screen.active{display:flex}
 /* NAV */
 .nav{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:66px;background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:2px solid var(--nav-b);position:sticky;top:0;z-index:100}
 .logo{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0}
 .logo-mark{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.5px;color:var(--blue);line-height:1;white-space:nowrap}
-.logo-sub{font-family:'Inter',sans-serif;font-weight:700;font-size:12.5px;color:var(--coral);white-space:nowrap;line-height:1.3;max-width:150px}
+.logo-sub{font-family:'Inter',sans-serif;font-weight:700;font-size:12.5px;color:var(--pink-hover);white-space:nowrap;line-height:1.3;max-width:150px}
 .logo-div{width:1px;height:26px;background:var(--border);margin:0 5px}
 .nav-r{display:flex;align-items:center;gap:8px;position:relative}
 .pbtn{display:flex;align-items:center;gap:5px;padding:9px 16px;border-radius:var(--rpill);background:var(--surface);border:2px solid var(--border);color:var(--text2);font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;text-decoration:none}
 .pbtn:hover{background:var(--blue);border-color:var(--blue-d);color:#fff}
+.tbtn{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:var(--surface);border:2px solid var(--border);color:var(--text2);font-size:15px;cursor:pointer;transition:all .15s;flex-shrink:0}
+.tbtn:hover{border-color:var(--blue-l);background:var(--surface2)}
 /* LANG DROPDOWN */
 .lang-wrap{position:relative}
 .lang-btn{display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:var(--rpill);background:var(--surface);border:2px solid var(--border);color:var(--text2);font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
@@ -50,7 +64,7 @@ body{background:var(--bg-gradient);color:var(--text);font-family:'Inter',sans-se
 .lang-soon{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);padding:2px 7px;border-radius:var(--rpill)}
 /* HERO */
 .hero{padding:56px 40px 40px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;bottom:28%;background:radial-gradient(ellipse 70% 55% at 50% 0%,var(--blue-l) 0%,transparent 70%);opacity:.30;pointer-events:none}
+.hero::before{content:'';position:absolute;inset:0;bottom:28%;background:radial-gradient(ellipse 70% 55% at 50% 0%,var(--green-l) 0%,transparent 70%);opacity:.45;pointer-events:none}
 .hero-inner{position:relative;max-width:640px;margin:0 auto}
 .eyebrow{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:2px solid var(--border);border-radius:var(--rpill);padding:6px 16px;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:800;color:var(--blue);margin-bottom:22px;text-transform:uppercase;letter-spacing:.5px}
 .hero h1{font-family:'Baloo 2',sans-serif;font-size:clamp(32px,5.2vw,52px);font-weight:800;line-height:1.08;letter-spacing:-1px;color:var(--text);margin-bottom:16px}
@@ -99,6 +113,8 @@ body{background:var(--bg-gradient);color:var(--text);font-family:'Inter',sans-se
 .bs{background:var(--coral);color:#fff;border:1.5px solid var(--coral-d)}
 .bl{background:var(--surface2);color:var(--text-muted);border:1.5px solid var(--border)}
 .br{background:#DCEBFF;color:var(--blue-d);border:1.5px solid var(--blue-l)}
+[data-theme="dark"] .bd{background:rgba(211,255,95,.15);color:var(--green);border-color:rgba(211,255,95,.4)}
+[data-theme="dark"] .br{background:rgba(73,139,255,.15);color:var(--blue-l);border-color:rgba(73,139,255,.4)}
 .stag{font-size:12.5px;color:var(--text-muted);font-weight:600}
 .stag b{color:var(--text)}
 /* CONTENT */
@@ -157,6 +173,8 @@ body{background:var(--bg-gradient);color:var(--text);font-family:'Inter',sans-se
 .sort-zone{border:2.5px dashed;border-radius:var(--r);padding:24px 14px;text-align:center;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:16px;line-height:1.5;transition:all .15s}
 .sort-zone.trash{border-color:var(--no-b);color:var(--no-t);background:#FFF6F4}
 .sort-zone.treasure{border-color:var(--ok-b);color:var(--ok-t);background:#F2FBF6}
+[data-theme="dark"] .sort-zone.trash{background:rgba(178,58,38,.12)}
+[data-theme="dark"] .sort-zone.treasure{background:rgba(15,122,69,.12)}
 .sort-zone.dragover{transform:scale(1.03)}
 .sort-zone.trash.dragover{background:var(--no-bg);box-shadow:0 0 0 3px rgba(178,58,38,.15)}
 .sort-zone.treasure.dragover{background:var(--ok-bg);box-shadow:0 0 0 3px rgba(15,122,69,.15)}
@@ -199,21 +217,23 @@ body{background:var(--bg-gradient);color:var(--text);font-family:'Inter',sans-se
 .phcard{flex:1 1 200px;background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:18px 16px;box-shadow:var(--shadow);text-align:center;display:flex;flex-direction:column;align-items:center}
 .ph-num{width:32px;height:32px;border-radius:50%;background:#FB89C3;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:14px;margin-bottom:8px;flex-shrink:0}
 .ph-ic{font-size:24px;margin-bottom:6px}
-.ph-title{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14.5px;color:var(--text);margin-bottom:6px;line-height:1.2}
-.ph-body{font-size:12.5px;color:var(--text2);line-height:1.5;margin-bottom:12px;flex:1}
+.ph-title{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14.5px;color:#262626;margin-bottom:6px;line-height:1.2}
+.ph-body{font-size:12.5px;color:#4A4A4A;line-height:1.5;margin-bottom:12px;flex:1}
 .ph-btn{display:inline-flex;align-items:center;gap:5px;border:none;background:var(--blue);color:#fff;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;padding:8px 14px;border-radius:var(--rpill);cursor:pointer;text-decoration:none;transition:background .15s}
 .ph-btn:hover{background:var(--pink-hover-d)}
 @media(max-width:760px){.phrow{flex-direction:column}}
 /* AGE-FRIENDLY CALLOUT */
-.agef{background:#F0F1F3;border:2px solid #FB89C3;border-radius:var(--r);padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.agef{background:var(--surface);border:2px solid var(--green-d);border-radius:var(--r);padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow)}
 .agef-title{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14.5px;color:var(--text);margin-bottom:14px}
+.agef-title-emoji{font-size:21px;line-height:1;margin-right:4px;vertical-align:-3px}
 .agef-row{display:flex;gap:0;flex-wrap:wrap}
 .agef-col{flex:1 1 240px;padding:0 18px}
 .agef-col:first-child{padding-left:0}
-.agef-col+.agef-col{border-left:2px solid var(--border)}
+.agef-col+.agef-col{border-left:2px solid var(--green-d)}
 .agef-lbl{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:13px;color:var(--pink-hover-d);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.agef-emoji{font-size:24px;line-height:1}
 .agef-col p{font-size:13.5px;color:var(--text2);line-height:1.6;font-style:italic}
-@media(max-width:560px){.agef-col{flex:1 1 100%;padding:0 0 14px}.agef-col+.agef-col{border-left:none;border-top:2px solid var(--border);padding-top:14px}}
+@media(max-width:560px){.agef-col{flex:1 1 100%;padding:0 0 14px}.agef-col+.agef-col{border-left:none;border-top:2px solid var(--green-d);padding-top:14px}}
 /* MIRROR SUMMARY */
 .msum{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:11px}
 .msum-img{flex:1 1 260px;max-width:320px;width:100%;height:auto;border-radius:var(--r);object-fit:contain}
@@ -233,6 +253,8 @@ body{background:var(--bg-gradient);color:var(--text);font-family:'Inter',sans-se
 .cw{background:#FFF6EE;border-color:#FBD9B0;color:#9A5B12}
 .ct{background:#EFFAFF;border-color:#B9E6FA;color:#0B5E85}
 .cg{background:var(--ok-bg);border-color:var(--ok-b);color:var(--ok-t)}
+[data-theme="dark"] .cw{background:rgba(154,91,18,.18);border-color:rgba(154,91,18,.45);color:#F5B971}
+[data-theme="dark"] .ct{background:rgba(11,94,133,.18);border-color:rgba(11,94,133,.45);color:#7FD4F5}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 @media(max-width:560px){.two-col{grid-template-columns:1fr}}
 .divider{border:none;border-top:2px solid var(--border);margin:30px 0}
@@ -279,9 +301,11 @@ body{background:var(--bg-gradient);color:var(--text);font-family:'Inter',sans-se
 .cert p{color:var(--text2);margin-top:7px;font-size:14.5px}
 .cmods{display:flex;justify-content:center;gap:9px;margin-top:22px;flex-wrap:wrap}
 .cmod{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;background:#EAF2FF}
+[data-theme="dark"] .cmod{background:rgba(73,139,255,.18)}
 /* CHECKLIST */
 .chk-body{padding:44px 40px 64px;max-width:720px;margin:0 auto;flex:1}
 .chk-badge{display:inline-flex;align-items:center;gap:6px;background:#DCEBFF;color:var(--blue-d);border:2px solid var(--blue-l);border-radius:var(--rpill);padding:6px 15px;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px}
+[data-theme="dark"] .chk-badge,[data-theme="dark"] .chk-ic{background:rgba(73,139,255,.18);color:var(--blue-l)}
 .chk-h1{font-family:'Baloo 2',sans-serif;font-size:clamp(24px,4vw,34px);font-weight:800;letter-spacing:-.6px;line-height:1.15;color:var(--text);margin-bottom:12px}
 .chk-sub{font-size:15.5px;color:var(--text2);line-height:1.7;margin-bottom:30px}
 .chk-list{display:flex;flex-direction:column;gap:12px}
@@ -335,6 +359,7 @@ html[dir="rtl"] .mc-foot,html[dir="rtl"] .nav-r{flex-direction:row-reverse}
           <div class="lang-item" data-lang="tr" onclick="setLang('tr')">🇹🇷 Türkçe</div>
         </div>
       </div>
+      <button class="tbtn" onclick="toggleTheme()"></button>
     </div>
   </nav>
   <div class="hero">
@@ -362,6 +387,7 @@ html[dir="rtl"] .mc-foot,html[dir="rtl"] .nav-r{flex-direction:row-reverse}
     </a>
     <div class="nav-r">
       <span id="ntag" style="font-size:13px;color:var(--text-muted);font-weight:700;display:none"></span>
+      <button class="tbtn" onclick="toggleTheme()"></button>
     </div>
   </nav>
   <div class="msec">
@@ -378,7 +404,7 @@ html[dir="rtl"] .mc-foot,html[dir="rtl"] .nav-r{flex-direction:row-reverse}
       <span class="logo-div"></span>
       <span class="logo-sub" data-i18n="logoSub">Tutor Development Department</span>
     </a>
-    <div class="nav-r"><button class="pbtn" data-i18n="navModules" onclick="goDashboard()">← Modules</button></div>
+    <div class="nav-r"><button class="pbtn" data-i18n="navModules" onclick="goDashboard()">← Modules</button><button class="tbtn" onclick="toggleTheme()"></button></div>
   </nav>
   <div class="cbody" id="cbody"></div>
 </div>
@@ -391,7 +417,7 @@ html[dir="rtl"] .mc-foot,html[dir="rtl"] .nav-r{flex-direction:row-reverse}
       <span class="logo-div"></span>
       <span class="logo-sub" data-i18n="logoSub">Tutor Development Department</span>
     </a>
-    <div class="nav-r"><button class="pbtn" data-i18n="navExitCheck" onclick="exitQuiz()">← Exit Check</button></div>
+    <div class="nav-r"><button class="pbtn" data-i18n="navExitCheck" onclick="exitQuiz()">← Exit Check</button><button class="tbtn" onclick="toggleTheme()"></button></div>
   </nav>
   <div class="qbody">
     <div class="qpt"><div class="qpf" id="qfill"></div></div>
@@ -411,7 +437,7 @@ html[dir="rtl"] .mc-foot,html[dir="rtl"] .nav-r{flex-direction:row-reverse}
       <span class="logo-div"></span>
       <span class="logo-sub" data-i18n="logoSub">Tutor Development Department</span>
     </a>
-    <div class="nav-r"><button class="pbtn" data-i18n="navExit" onclick="exitSort()">← Exit</button></div>
+    <div class="nav-r"><button class="pbtn" data-i18n="navExit" onclick="exitSort()">← Exit</button><button class="tbtn" onclick="toggleTheme()"></button></div>
   </nav>
   <div class="qbody">
     <div id="sort-instructions">
@@ -451,7 +477,7 @@ html[dir="rtl"] .mc-foot,html[dir="rtl"] .nav-r{flex-direction:row-reverse}
       <span class="logo-div"></span>
       <span class="logo-sub" data-i18n="logoSub">Tutor Development Department</span>
     </a>
-    <div class="nav-r"><button class="pbtn" data-i18n="navModules" onclick="goDashboard()">← Modules</button></div>
+    <div class="nav-r"><button class="pbtn" data-i18n="navModules" onclick="goDashboard()">← Modules</button><button class="tbtn" onclick="toggleTheme()"></button></div>
   </nav>
   <div class="rbody" id="rbody"></div>
 </div>
@@ -464,7 +490,7 @@ html[dir="rtl"] .mc-foot,html[dir="rtl"] .nav-r{flex-direction:row-reverse}
       <span class="logo-div"></span>
       <span class="logo-sub" data-i18n="logoSub">Tutor Development Department</span>
     </a>
-    <div class="nav-r"><button class="pbtn" data-i18n="navDashboard" onclick="goDashboard()">← Dashboard</button></div>
+    <div class="nav-r"><button class="pbtn" data-i18n="navDashboard" onclick="goDashboard()">← Dashboard</button><button class="tbtn" onclick="toggleTheme()"></button></div>
   </nav>
   <div class="compbody" id="compbody"></div>
 </div>
@@ -477,7 +503,7 @@ html[dir="rtl"] .mc-foot,html[dir="rtl"] .nav-r{flex-direction:row-reverse}
       <span class="logo-div"></span>
       <span class="logo-sub" data-i18n="logoSub">Tutor Development Department</span>
     </a>
-    <div class="nav-r"><button class="pbtn" data-i18n="navDashboard" onclick="goDashboard()">← Dashboard</button></div>
+    <div class="nav-r"><button class="pbtn" data-i18n="navDashboard" onclick="goDashboard()">← Dashboard</button><button class="tbtn" onclick="toggleTheme()"></button></div>
   </nav>
   <div class="chk-body">
     <div class="chk-badge" data-i18n="chkBadge">✅ Certified</div>
@@ -497,6 +523,24 @@ html[dir="rtl"] .mc-foot,html[dir="rtl"] .nav-r{flex-direction:row-reverse}
 </div>
 
 <script>
+// ─── THEME (light/dark) ─────────────────────────────────────────────────────
+const THEME_KEY='kl-att-theme';
+(function(){
+  const saved=localStorage.getItem(THEME_KEY);
+  const sys=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+  const t=saved||sys;
+  if(t==='dark') document.documentElement.setAttribute('data-theme','dark');
+  setThemeIcons(t);
+})();
+function setThemeIcons(t){ document.querySelectorAll('.tbtn').forEach(b=>b.textContent=t==='dark'?'☀️':'🌙'); }
+function toggleTheme(){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const next=isDark?'light':'dark';
+  if(next==='dark') document.documentElement.setAttribute('data-theme','dark'); else document.documentElement.removeAttribute('data-theme');
+  localStorage.setItem(THEME_KEY,next);
+  setThemeIcons(next);
+}
+
 // ─── DATA ──────────────────────────────────────────────────────────────────
 const TOTAL=6;
 let currentModule=null, quizData=[], qi=0, score=0;
@@ -530,10 +574,10 @@ let MODULES=[
   ]},
   {t:'🌅 The Beginning: Four Phases',cards:[
     {type:'phases',items:[
-      {num:1,ic:'👋',h:'Warm-Up',bg:'#bed2ff',b:'Open with something light that switches the student\'s brain into “lesson mode”: a quick question, a tiny challenge. The goal is energy and attention, not assessment. A weak opening is often the first moment a student mentally checks out, and a student who checks out today is more likely to skip next time.',src:'https://drive.google.com/file/d/16J-7_VnMMCYof03cay5EaLZwYfMTzs6t/view?usp=sharing'},
-      {num:2,ic:'📖',h:'Previous Lesson Revision',bg:'#f5d6fe',b:'Briefly revisit what was learned last time. Retrieval, making the student recall rather than re-hearing, is one of the strongest memory tools there is. When students feel they\'re keeping up and actually remembering, they feel competent, and competence is one of the biggest reasons a student wants to return.',src:'https://drive.google.com/file/d/1Ff__ExLnV7kxUcwCUcqbKvM9fgpSU1Ju/view?usp=sharing'},
-      {num:3,ic:'📋',h:'HW Check',bg:'#dcf5b8',b:'Go through the homework with the students. This is where you catch misunderstandings, praise effort, and show that homework actually matters.',src:'https://drive.google.com/file/d/1mtTunkuL3wWZuQGZ6js-jyRllQm7CpAz/view?usp=sharing'},
-      {num:4,ic:'🎯',h:'Lesson Goal',bg:'#e9e0d4',b:'State plainly what today is about. A clear goal gives the lesson direction and gives the student something concrete to aim for. A student who doesn\'t know what today is “for” disengages quickly, and disengagement is one of the internal causes behind a missed class.',src:'https://drive.google.com/file/d/1ZsIJvaqXXf44miJ0IloeJg7EIwwRiz0s/view?usp=sharing'},
+      {num:1,ic:'👋',h:'Warm-Up',bg:'#bed2ff',bd:'#5477d9',b:'Open with something light that switches the student\'s brain into “lesson mode”: a quick question, a tiny challenge. The goal is energy and attention, not assessment. A weak opening is often the first moment a student mentally checks out, and a student who checks out today is more likely to skip next time.',src:'https://drive.google.com/file/d/16J-7_VnMMCYof03cay5EaLZwYfMTzs6t/view?usp=sharing'},
+      {num:2,ic:'📖',h:'Previous Lesson Revision',bg:'#f5d6fe',bd:'#b15fd1',b:'Briefly revisit what was learned last time. Retrieval, making the student recall rather than re-hearing, is one of the strongest memory tools there is. When students feel they\'re keeping up and actually remembering, they feel competent, and competence is one of the biggest reasons a student wants to return.',src:'https://drive.google.com/file/d/1Ff__ExLnV7kxUcwCUcqbKvM9fgpSU1Ju/view?usp=sharing'},
+      {num:3,ic:'📋',h:'HW Check',bg:'#dcf5b8',bd:'#7cb342',b:'Go through the homework with the students. This is where you catch misunderstandings, praise effort, and show that homework actually matters.',src:'https://drive.google.com/file/d/1mtTunkuL3wWZuQGZ6js-jyRllQm7CpAz/view?usp=sharing'},
+      {num:4,ic:'🎯',h:'Lesson Goal',bg:'#ffdfb3',bd:'#e08a2e',b:'State plainly what today is about. A clear goal gives the lesson direction and gives the student something concrete to aim for. A student who doesn\'t know what today is “for” disengages quickly, and disengagement is one of the internal causes behind a missed class.',src:'https://drive.google.com/file/d/1ZsIJvaqXXf44miJ0IloeJg7EIwwRiz0s/view?usp=sharing'},
     ]},
     {type:'agefriendly',intro:'Take a look at examples of how you can phrase things at the start of a lesson based on age:',younger:'"I\'m so glad you\'re back! Ooh, what\'s that in the background — is that a new Minecraft plush? I love that you\'re adding new friends to your collection! You know what would be awesome? Building a copy of your new buddy in Minecraft today."',older:'"Hey, good to see you again — how was your weekend? ... Yeah, school can get really intense with so many projects going on. Actually, we\'re heading into an AI and presentations module soon, and I think you\'ll like it — it\'ll help you speed through the repetitive parts of a project so you can spend more time on the part you\'re actually good at: bringing your ideas to life."'},
   ]},
@@ -543,10 +587,10 @@ let MODULES=[
   {t:'🏁 The End: The Mirror',cards:[
     {type:'text',b:'The closing four phases echo the opening ones in reverse — the lesson ends the way it began, giving students a satisfying sense of closure and rhythm. This “circular” shape is what makes a lesson feel complete rather than just stopping when time runs out, and a lesson that feels complete is one a student leaves without loose ends pulling them away.'},
     {type:'phases',items:[
-      {num:1,ic:'📋',h:'Lesson Summary',bg:'#bed2ff',b:'Recap what was covered, but don\'t just tell them. Have the student summarize in their own words too. Their summary reveals what actually landed and doubles as a second retrieval moment.',src:'https://drive.google.com/file/d/1GqLWNLGWWVyiXFECnpp6_4I7_zgThTtl/view?usp=sharing'},
-      {num:2,ic:'📖',h:'HW Assignment',bg:'#f5d6fe',b:'Assign homework with crystal-clear instructions on what to do and how. Vague homework is homework that won\'t get done. This pairs with the HW Check that opened the lesson, together they form the full loop the Homework module is built on.',src:'https://drive.google.com/file/d/1XTQ7zG4JxFqga4vts06R4-MiIIDRcGLB/view?usp=sharing'},
-      {num:3,ic:'▶️',h:'Next Lesson Preview',bg:'#dcf5b8',b:'Tease what\'s coming next: “Next time, we\'ll make our character move just like in real life!” This is the same anticipation hook already covered in the Unforgettable Classes module, closing without one throws away a free attendance win every single class.',src:'https://drive.google.com/file/d/1E6m9Fwf099uSa1gJr1kEbywMbLeugI2r/view?usp=sharing'},
-      {num:4,ic:'✨',h:'Wrap-Up',bg:'#e9e0d4',b:'End on a high: celebrate what the student created today, acknowledge their effort, and send them off feeling good. The last 30 seconds shape how they remember the whole lesson, and that memory is what they\'re weighing, consciously or not, when deciding whether to show up next time.',src:'https://drive.google.com/file/d/1ZIpTRqNxYsr7LUbh3pJNich9TQWRBvTo/view?usp=sharing'},
+      {num:1,ic:'📋',h:'Lesson Summary',bg:'#bed2ff',bd:'#5477d9',b:'Recap what was covered, but don\'t just tell them. Have the student summarize in their own words too. Their summary reveals what actually landed and doubles as a second retrieval moment.',src:'https://drive.google.com/file/d/1GqLWNLGWWVyiXFECnpp6_4I7_zgThTtl/view?usp=sharing'},
+      {num:2,ic:'📖',h:'HW Assignment',bg:'#f5d6fe',bd:'#b15fd1',b:'Assign homework with crystal-clear instructions on what to do and how. Vague homework is homework that won\'t get done. This pairs with the HW Check that opened the lesson, together they form the full loop the Homework module is built on.',src:'https://drive.google.com/file/d/1XTQ7zG4JxFqga4vts06R4-MiIIDRcGLB/view?usp=sharing'},
+      {num:3,ic:'▶️',h:'Next Lesson Preview',bg:'#dcf5b8',bd:'#7cb342',b:'Tease what\'s coming next: “Next time, we\'ll make our character move just like in real life!” This is the same anticipation hook already covered in the Unforgettable Classes module, closing without one throws away a free attendance win every single class.',src:'https://drive.google.com/file/d/1E6m9Fwf099uSa1gJr1kEbywMbLeugI2r/view?usp=sharing'},
+      {num:4,ic:'✨',h:'Wrap-Up',bg:'#ffdfb3',bd:'#e08a2e',b:'End on a high: celebrate what the student created today, acknowledge their effort, and send them off feeling good. The last 30 seconds shape how they remember the whole lesson, and that memory is what they\'re weighing, consciously or not, when deciding whether to show up next time.',src:'https://drive.google.com/file/d/1ZIpTRqNxYsr7LUbh3pJNich9TQWRBvTo/view?usp=sharing'},
     ]},
     {type:'agefriendly',intro:'Take a look at examples of how you can phrase things at the end of a lesson based on age:',younger:'"Look at that — your dragon can finally fly across the whole screen! You worked SO hard on that jump code, I could tell you weren\'t going to give up. Next class we\'re going to make it breathe fire, so get ready!"',older:'"That\'s a clean solution — you debugged that collision issue faster than I expected. Next class we\'ll start layering in the physics for it, so hang on to that logic, it\'s going to come in handy."'},
   ]},
@@ -4410,11 +4454,11 @@ function rc(c){
     return`<div class="flow">${steps}</div>`;
   }
   if(c.type==='phases'){
-    const cards=c.items.map(it=>`<div class="phcard" style="background:${it.bg||'var(--surface)'}"><div class="ph-num">${it.num}</div><div class="ph-ic">${it.ic}</div><div class="ph-title">${it.h}</div><div class="ph-body">${it.b}</div><a class="ph-btn" href="${it.src}" target="_blank" rel="noopener">▶ ${T('phaseExampleBtn')}</a></div>`).join('');
+    const cards=c.items.map(it=>`<div class="phcard" style="background:${it.bg||'var(--surface)'};border-color:${it.bd||'var(--border)'}"><div class="ph-num">${it.num}</div><div class="ph-ic">${it.ic}</div><div class="ph-title">${it.h}</div><div class="ph-body">${it.b}</div><a class="ph-btn" href="${it.src}" target="_blank" rel="noopener">▶ ${T('phaseExampleBtn')}</a></div>`).join('');
     return`<div class="phrow">${cards}</div>`;
   }
   if(c.type==='agefriendly'){
-    return`<div class="agef">${c.intro?`<div class="agef-title">🎚️ ${c.intro}</div>`:''}<div class="agef-row"><div class="agef-col"><div class="agef-lbl">👶 ${T('youngerLabel')}</div><p>${c.younger}</p></div><div class="agef-col"><div class="agef-lbl">🧑 ${T('olderLabel')}</div><p>${c.older}</p></div></div></div>`;
+    return`<div class="agef">${c.intro?`<div class="agef-title"><span class="agef-title-emoji">🎚️</span>${c.intro}</div>`:''}<div class="agef-row"><div class="agef-col"><div class="agef-lbl"><span class="agef-emoji">👶</span>${T('youngerLabel')}</div><p>${c.younger}</p></div><div class="agef-col"><div class="agef-lbl"><span class="agef-emoji">🧑</span>${T('olderLabel')}</div><p>${c.older}</p></div></div></div>`;
   }
   if(c.type==='mirrorSummary'){
     return`<div class="msum"><img class="msum-img" src="${c.img}" alt=""><div class="msum-right"><div class="card quote">${c.caption}</div><div class="card cute"><h4>⭐ ${c.tipH||T('cuteTipDefault')}</h4><p>${c.tipB}</p></div></div></div>`;
@@ -4470,14 +4514,14 @@ function startQuiz(id){
 }
 const FINAL_EXAM_FORM_URLS={
   en:'https://forms.gle/8Zha9jj2y7oqbdFT6',
-  es:'https://forms.gle/s3no1qQvzgyVwyU57',
-  id:'https://forms.gle/wFNBfwVhod3FjUV9A',
-  pt:'https://forms.gle/G2wCCZkbdomYKNR79',
-  ru:'https://forms.gle/sLwH7Y8SVjn93EUs8',
-  ar:'https://forms.gle/QPaoRtxgqz4px9sb7',
-  it:'https://forms.gle/Y9TGUzUoQKYVwrbZ6',
-  tr:'https://forms.gle/5eK9udPZaCtZujkX7',
-  pl:'https://forms.gle/TuhkJCfZg89ATtBP7',
+  es:'https://docs.google.com/forms/d/e/1FAIpQLSdnX3OuClVUaj7UIE-uqVkIco8GLicZwjRnsCDf1APi51hipA/viewform?usp=sharing&ouid=106291634165948186361',
+  id:'https://docs.google.com/forms/d/e/1FAIpQLSdI0dI3LhJ4n2JeIH0G19aEh926m5D68DQ447X5kOK0Bdz7uA/viewform?usp=sharing&ouid=106291634165948186361',
+  pt:'https://docs.google.com/forms/d/e/1FAIpQLSdrRJUghy1u8Tu3yVxJJwvCMGXZBekQ6NvTYe66MSf_-QmLJA/viewform?usp=sharing&ouid=106291634165948186361',
+  ru:'https://docs.google.com/forms/d/e/1FAIpQLSdSGjZRf7Hun7D-AZe1PkNQbtarhD8fzmToQgcv_l-VkKFGaw/viewform?usp=publish-editor',
+  ar:'https://docs.google.com/forms/d/e/1FAIpQLSfJwDgjlf3eqQPzIX8HjioRGyIZ2zf4WcX1eB7GGg8xmjAJTg/viewform?usp=publish-editor',
+  it:'https://docs.google.com/forms/d/e/1FAIpQLScxdrKBtppoXN4jMnULNv4LdelHrcrESOfyisR3EdZ1ui_keg/viewform?usp=sharing&ouid=106291634165948186361',
+  tr:'https://docs.google.com/forms/d/e/1FAIpQLSd54-9XsUzbIDJLtj5FaHvzmq94kNKMntFg6zSGjfHjJ4P1hA/viewform?usp=sharing&ouid=106291634165948186361',
+  pl:'https://docs.google.com/forms/d/e/1FAIpQLSf3dQ07Jq3kYkZQNq0KtAIZkdF8HzfCioCLlgQ8QbehXCeymQ/viewform?usp=sharing&ouid=106291634165948186361',
 };
 function startExam(){
   window.open(FINAL_EXAM_FORM_URLS[LANG]||FINAL_EXAM_FORM_URLS.en,'_blank');
