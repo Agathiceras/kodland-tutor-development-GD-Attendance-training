@@ -194,6 +194,40 @@ body{background:var(--bg-gradient);color:var(--text);font-family:'Inter',sans-se
 .flow-step.f-green h4{color:var(--ok-t)}
 .flow-arrow{display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--text-muted);flex:0 0 auto;padding:0 2px}
 @media(max-width:700px){.flow{flex-direction:column}.flow-arrow{transform:rotate(90deg);margin:-4px auto}}
+/* PHASE CARDS (horizontal 4-up with video link) */
+.phrow{display:flex;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.phcard{flex:1 1 200px;background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:18px 16px;box-shadow:var(--shadow);text-align:center;display:flex;flex-direction:column;align-items:center}
+.ph-num{width:32px;height:32px;border-radius:50%;background:#FB89C3;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:14px;margin-bottom:8px;flex-shrink:0}
+.ph-ic{font-size:24px;margin-bottom:6px}
+.ph-title{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14.5px;color:var(--text);margin-bottom:6px;line-height:1.2}
+.ph-body{font-size:12.5px;color:var(--text2);line-height:1.5;margin-bottom:12px;flex:1}
+.ph-btn{display:inline-flex;align-items:center;gap:5px;border:none;background:var(--blue);color:#fff;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;padding:8px 14px;border-radius:var(--rpill);cursor:pointer;text-decoration:none;transition:background .15s}
+.ph-btn:hover{background:var(--pink-hover-d)}
+@media(max-width:760px){.phrow{flex-direction:column}}
+/* AGE-FRIENDLY CALLOUT */
+.agef{background:var(--surface);border:2px solid #FB89C3;border-radius:var(--r);padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.agef-title{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14.5px;color:var(--text);margin-bottom:14px}
+.agef-row{display:flex;gap:0;flex-wrap:wrap}
+.agef-col{flex:1 1 240px;padding:0 18px}
+.agef-col:first-child{padding-left:0}
+.agef-col+.agef-col{border-left:2px solid var(--border)}
+.agef-lbl{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:13px;color:var(--pink-hover-d);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.agef-col p{font-size:13.5px;color:var(--text2);line-height:1.6;font-style:italic}
+@media(max-width:560px){.agef-col{flex:1 1 100%;padding:0 0 14px}.agef-col+.agef-col{border-left:none;border-top:2px solid var(--border);padding-top:14px}}
+/* MIRROR SUMMARY */
+.msum{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:11px}
+.msum-img{flex:1 1 260px;max-width:320px;width:100%;height:auto;border-radius:var(--r);object-fit:contain}
+.msum-right{flex:1 1 300px;display:flex;flex-direction:column;gap:11px}
+.card.quote{border-color:#FB89C3;text-align:center;font-style:italic;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text)}
+/* TWO-IMAGE ROW */
+.twoimg{display:flex;gap:14px;margin-bottom:11px;flex-wrap:wrap}
+.twoimg img{flex:1 1 220px;width:100%;max-width:100%;border-radius:var(--r);object-fit:cover;display:block}
+/* IMAGE + TEXT EXAMPLE ROW */
+.imgtext{display:flex;gap:16px;margin-bottom:11px;align-items:stretch;flex-wrap:wrap}
+.imgtext img{flex:1.3 1 240px;width:100%;max-width:100%;border-radius:var(--r);object-fit:contain;background:var(--surface2);display:block}
+.imgtext-txt{flex:1 1 220px;background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;justify-content:center;gap:12px;box-shadow:var(--shadow)}
+.imgtext-txt p{font-size:13.5px;color:var(--text2);line-height:1.65;margin:0}
+@media(max-width:600px){.imgtext{flex-direction:column}}
 .callout{display:flex;gap:11px;border-radius:var(--rsm);padding:13px 16px;margin-bottom:11px;font-size:14px;line-height:1.65;border:1.5px solid}
 .ci{font-size:16px;flex-shrink:0;margin-top:1px}
 .cw{background:#FFF6EE;border-color:#FBD9B0;color:#9A5B12}
@@ -471,7 +505,7 @@ const LANG_KEY='kl-att-lang';
 let LANG=localStorage.getItem(LANG_KEY)||'en';
 
 let MODULES=[
-{id:1,emoji:'📊',title:'Understanding the Metric: Attendance',desc:'How attendance is measured, what LPR/HPR mean for you, and the two types of causes behind a missed class.',obj:'Understand how attendance is measured and separate the causes you can influence from the ones you can\'t.',color:'#D3FF5F',noQuiz:true,
+{id:1,emoji:'📊',title:'Understanding the Metric: Attendance',desc:'How attendance is measured, what LPR/HPR mean for you, and the two types of causes behind a missed class.',obj:'Understand how attendance is measured and separate the causes you can influence from the ones you can\'t.',color:'#D3FF5F',
  sections:[
   {t:'📐 How Is It Measured?',cards:[
     {type:'text',b:'We classify students (SS) into three levels based on their attendance percentage.'},
@@ -495,21 +529,29 @@ let MODULES=[
     {type:'text',b:'Here\'s how a Kodland lesson is structured, phase by phase, and how keeping that order intact protects your attendance numbers.'},
   ]},
   {t:'🌅 The Beginning: Four Phases',cards:[
-    {type:'text',h:'1 · Warm-Up — activate energy & focus',b:'Open with something light that switches the student\'s brain into “lesson mode”: a quick question, a tiny challenge, a cool design spotted during the week. The goal is energy and attention, not assessment. It signals “we\'re starting now” and pulls a distracted kid into the session. A weak opening is often the first moment a student mentally checks out — and a student who checks out today is more likely to skip next time.'},
-    {type:'text',h:'2 · Previous Lesson Revision — recall & consolidate',b:'Briefly revisit what was learned last time. Retrieval — making the student recall rather than re-hearing — is one of the strongest memory tools there is. A two-minute “what makes a strong focal point?” does more than re-explaining ever could. When students feel they\'re keeping up and actually remembering, they feel competent — and competence is one of the biggest reasons a student wants to return.'},
-    {type:'text',h:'3 · HW Check — review homework together',b:'Go through the homework with the student — in this course, that means looking at a design they made. This is where you catch misunderstandings, praise effort, and show that homework actually matters. It\'s also one of the two key feedback moments of the lesson: don\'t settle for “nice poster!” — say specifically what works and what to push further. Skipping the check teaches kids that homework is optional, and it undercuts everything the Homework module already covers about why that check matters for attendance.'},
-    {type:'text',h:'4 · Lesson Goal — set clear objectives',b:'State plainly what today is about: “today we\'ll design a poster with one clear focal point.” A clear goal gives the lesson direction and gives the student something concrete to aim for. A student who doesn\'t know what today is “for” disengages quickly — and disengagement is one of the internal causes behind a missed class.'},
+    {type:'phases',items:[
+      {num:1,ic:'👋',h:'Warm-Up',b:'Open with something light that switches the student\'s brain into “lesson mode”: a quick question, a tiny challenge. The goal is energy and attention, not assessment. A weak opening is often the first moment a student mentally checks out, and a student who checks out today is more likely to skip next time.',src:'https://drive.google.com/file/d/16J-7_VnMMCYof03cay5EaLZwYfMTzs6t/view?usp=sharing'},
+      {num:2,ic:'📖',h:'Previous Lesson Revision',b:'Briefly revisit what was learned last time. Retrieval, making the student recall rather than re-hearing, is one of the strongest memory tools there is. When students feel they\'re keeping up and actually remembering, they feel competent, and competence is one of the biggest reasons a student wants to return.',src:'https://drive.google.com/file/d/1Ff__ExLnV7kxUcwCUcqbKvM9fgpSU1Ju/view?usp=sharing'},
+      {num:3,ic:'📋',h:'HW Check',b:'Go through the homework with the students. This is where you catch misunderstandings, praise effort, and show that homework actually matters.',src:'https://drive.google.com/file/d/1mtTunkuL3wWZuQGZ6js-jyRllQm7CpAz/view?usp=sharing'},
+      {num:4,ic:'🎯',h:'Lesson Goal',b:'State plainly what today is about. A clear goal gives the lesson direction and gives the student something concrete to aim for. A student who doesn\'t know what today is “for” disengages quickly, and disengagement is one of the internal causes behind a missed class.',src:'https://drive.google.com/file/d/1ZsIJvaqXXf44miJ0IloeJg7EIwwRiz0s/view?usp=sharing'},
+    ]},
+    {type:'agefriendly',intro:'Take a look at examples of how you can phrase things at the start of a lesson based on age:',younger:'"I\'m so glad you\'re back! Ooh, what\'s that in the background — is that a new Minecraft plush? I love that you\'re adding new friends to your collection! You know what would be awesome? Building a copy of your new buddy in Minecraft today."',older:'"Hey, good to see you again — how was your weekend? ... Yeah, school can get really intense with so many projects going on. Actually, we\'re heading into an AI and presentations module soon, and I think you\'ll like it — it\'ll help you speed through the repetitive parts of a project so you can spend more time on the part you\'re actually good at: bringing your ideas to life."'},
   ]},
   {t:'🎨 The Middle: Theory & Practice',cards:[
     {type:'text',h:'5 · Theory & Practice — the heart of the lesson',b:'Between the lesson goal and the closing phases sits the longest stage, where new material is taught and immediately used. Keep theory in small chunks — one concept, then hands-on work with it — and model first: demonstrate the technique on your screen before students try it on theirs. In a design course, the practice stage is where students actually create, so protect that time fiercely; a lesson where kids only watched you design/coding is a lesson where nobody designed/coding. This is also the part of the lesson students look forward to most — protect it, and you protect the reason they show up.'},
   ]},
   {t:'🏁 The End: The Mirror',cards:[
     {type:'text',b:'The closing four phases echo the opening ones in reverse — the lesson ends the way it began, giving students a satisfying sense of closure and rhythm. This “circular” shape is what makes a lesson feel complete rather than just stopping when time runs out, and a lesson that feels complete is one a student leaves without loose ends pulling them away.'},
-    {type:'text',h:'6 · Lesson Summary — tutor + student based',b:'Recap what was covered — but don\'t just tell them. Have the student summarize in their own words too. Their summary reveals what actually landed and doubles as a second retrieval moment.'},
-    {type:'text',h:'7 · HW Assignment — clear instructions',b:'Assign homework with crystal-clear instructions on what to do and how. Vague homework is homework that won\'t get done. This pairs with the HW Check that opened the lesson — together they form the full loop the Homework module is built on.'},
-    {type:'text',h:'8 · Next Lesson Preview — build curiosity',b:'Tease what\'s coming next: “Next time, we\'ll make our character move just like in real life!” This is the same anticipation hook already covered in the Unforgettable Classes module — closing without one throws away a free attendance win every single class.'},
-    {type:'text',h:'9 · Wrap-Up — close with energy',b:'End on a high: celebrate what the student created today, acknowledge their effort, and send them off feeling good. The last 30 seconds shape how they remember the whole lesson — and that memory is what they\'re weighing, consciously or not, when deciding whether to show up next time.'},
-    {type:'mirror',beginTitle:'The Beginning',endTitle:'The End',mirrorLabel:'MIRROR',beginItems:[{n:1,label:'Warm-Up'},{n:2,label:'Previous Lesson Revision'},{n:3,label:'Homework Check'},{n:4,label:'Lesson Goal'}],endItems:[{n:9,label:'Wrap-Up'},{n:8,label:'Next Lesson Preview'},{n:7,label:'Homework Assignment'},{n:6,label:'Lesson Summary'}],caption:'The lesson ends exactly as it began — giving students a sense of closure, continuity, and rhythm.'},
+    {type:'phases',items:[
+      {num:1,ic:'📋',h:'Lesson Summary',b:'Recap what was covered, but don\'t just tell them. Have the student summarize in their own words too. Their summary reveals what actually landed and doubles as a second retrieval moment.',src:'https://drive.google.com/file/d/1GqLWNLGWWVyiXFECnpp6_4I7_zgThTtl/view?usp=sharing'},
+      {num:2,ic:'📖',h:'HW Assignment',b:'Assign homework with crystal-clear instructions on what to do and how. Vague homework is homework that won\'t get done. This pairs with the HW Check that opened the lesson, together they form the full loop the Homework module is built on.',src:'https://drive.google.com/file/d/1XTQ7zG4JxFqga4vts06R4-MiIIDRcGLB/view?usp=sharing'},
+      {num:3,ic:'▶️',h:'Next Lesson Preview',b:'Tease what\'s coming next: “Next time, we\'ll make our character move just like in real life!” This is the same anticipation hook already covered in the Unforgettable Classes module, closing without one throws away a free attendance win every single class.',src:'https://drive.google.com/file/d/1E6m9Fwf099uSa1gJr1kEbywMbLeugI2r/view?usp=sharing'},
+      {num:4,ic:'✨',h:'Wrap-Up',b:'End on a high: celebrate what the student created today, acknowledge their effort, and send them off feeling good. The last 30 seconds shape how they remember the whole lesson, and that memory is what they\'re weighing, consciously or not, when deciding whether to show up next time.',src:'https://drive.google.com/file/d/1ZIpTRqNxYsr7LUbh3pJNich9TQWRBvTo/view?usp=sharing'},
+    ]},
+    {type:'agefriendly',intro:'Take a look at examples of how you can phrase things at the end of a lesson based on age:',younger:'"Look at that — your dragon can finally fly across the whole screen! You worked SO hard on that jump code, I could tell you weren\'t going to give up. Next class we\'re going to make it breathe fire, so get ready!"',older:'"That\'s a clean solution — you debugged that collision issue faster than I expected. Next class we\'ll start layering in the physics for it, so hang on to that logic, it\'s going to come in handy."'},
+  ]},
+  {t:'🪞 Summary: Mirror Structure',cards:[
+    {type:'mirrorSummary',img:'Images/Mirror_Structure.png',caption:'The lesson ends exactly as it began, giving students a sense of closure, continuity, and rhythm.',tipH:'⭐ Tip',tipB:'Sticking to this routine and maintaining predictability is a very useful tip if your course is for children ages 8–9 or if you have students who are anxious and get frustrated by change.'},
   ]},
  ]},
 
@@ -578,9 +620,11 @@ let MODULES=[
   {t:'🎬 Model Before Practice',cards:[
     {type:'text',b:'Never ask a student to do something they haven\'t seen done first. Modeling the process step by step — thinking out loud as you go — gives them a clear map of what\'s expected, and cuts down the frustration of “I don\'t know where to start.” Before practice starts, give students a clear signal of what\'s coming: “Everyone, eyes on my screen in the classroom — I\'m going to show you how this works, and once I\'m done, you\'ll do it yourselves.” Clear expectations about the order of the class — and what happens right after the tutor models — keep the group focused and reduce anxiety about what comes next.'},
     {type:'video',vkey:'m3-model',h:'Take a look at an example of a real class',src:'https://drive.google.com/file/d/1H4DOo4YkqXg3udOFVYP2hfb3E-mmz6pI/preview'},
+    {type:'agefriendly',intro:'Take a look at examples of how you can model this phase based on age:',younger:'"Okay everyone, on the count of 3 we\'re all racing to the Classroom tab — whoever\'s there gives me a reaction so I know you\'re ready to listen. Perfect — Maria\'s here, Pedro\'s here, I saw your reaction Alejandra, you made it too! Awesome, now that we\'re all here, first we\'re going to watch how I do it, and once we\'ve seen it, you\'ll get to try it yourselves. Let\'s see those thumbs up on camera!"',older:'"Alright everyone, now we\'re moving into the theory and practice part. First I\'m going to show you how it\'s done before you try it on your own — for that I need everyone in the Classroom tab watching my screen, so please react once you\'re there. Perfect, now that I can see we\'re all set, let\'s get started!"'},
   ]},
   {t:'✅ Check for Understanding',cards:[
     {type:'text',b:'Don\'t wait until the end of class to discover something wasn\'t clear. Use different methods depending on the group: quick chat questions, emoji reactions, or asking students to share their screen. Checking in often also shows students that you care whether they actually learn — not just whether they moved on.'},
+    {type:'agefriendly',intro:'Take a look at examples of how you can check for understanding based on age:',younger:'"This is what each of you is going to do now on your own computer. Remember, we only have 10 minutes to finish the character\'s face. To make sure we\'re all clear on what to do, Andres, can you tell the class what we need to do in the next 10 minutes? Okay class, if you feel as sure as Andres about what we\'re doing, react with the heart emoji. And remember, if you have questions you can ask in the chat or on the mic — questions are important and I\'m always happy to answer them."',older:'"Alright everyone, that\'s everything we need to do to finish our Python bot. I\'d like to know if it all made sense — please react, or feel free to answer out loud. If you have any questions, go ahead and ask so we can clarify a concept or confirm anything that might still feel a little unclear. Remember, there\'s no such thing as a silly question."'},
   ]},
   {t:'🚀 Build Anticipation for Next Class',cards:[
     {type:'text',b:'Close class by connecting what\'s coming next to something your students actually care about. A great closing line does more work than a great opening one — it\'s the reason a student wants to come back.'},
@@ -591,6 +635,7 @@ let MODULES=[
     ]},
     {type:'cute',h:'Tip',b:'A good closing isn\'t just “see you next time” — it\'s planting the seed of something they want to see finished themselves.'},
     {type:'video',vkey:'m3-anticipation',h:'Take a look at an example of a real class',src:'https://drive.google.com/file/d/119ytsWF3qk_Tp6qi1md4xbouEhWLGGz9/preview'},
+    {type:'agefriendly',intro:'Take a look at how you can tailor anticipation for next class based on age:',younger:'Tie it to their personal interests — favorite video games, movies, dreams they want to achieve at Kodland, short-term projects they\'ve mentioned wanting to build, or shows they\'re into.',older:'Tie it to their professional future — short- or long-term project goals, and questions they\'ve asked earlier in the course that it\'s now time to explore in depth.'},
   ]},
  ]},
 
@@ -603,6 +648,7 @@ let MODULES=[
   {t:'📣 Explain the Homework',cards:[
     {type:'text',b:'Don\'t mention it in passing at the end of class. Explain what to do and, above all, <strong>why</strong> — how it connects to what they just learned. Homework without a clear purpose is the first thing forgotten.'},
     {type:'video',vkey:'m4-explain',h:'Take a look at an example of a real class',src:'https://drive.google.com/file/d/1S07EkqEKsSDLTsrH2VvbpQS6uVyTnRKd/preview'},
+    {type:'agefriendly',intro:'Take a look at examples of how you can explain the homework based on age:',younger:'"Okay, for homework you get to design your OWN power-up — like a mushroom or a star, but totally your own idea. I can\'t wait to see what you come up with!"',older:'"For homework, you\'ll be adding a scoring system to what we built today — it\'s the same logic as today\'s lesson, just applied to a new feature. Should take you 20–30 minutes."'},
   ]},
   {t:'⏰ Remind About the Homework',cards:[
     {type:'text',b:'A short reminder close to the deadline dramatically improves submission rates. It can be as simple as a message, or a quick mention at the start of the next class: “Has anyone already started the project?”'},
@@ -625,10 +671,10 @@ let MODULES=[
       'Share the class recording along with a short recap of the homework, so the student doesn\'t fall behind or lose motivation.',
       'The next time the student attends, show them you noticed their absence — ask how they\'re doing and remind them where to find the recording and the homework.',
     ]},
-    {type:'img',src:'Images/image7.png'},
+    {type:'agefriendly',intro:'Take a look at examples of how you can welcome back a student who missed class, based on age:',younger:'"There you are! I missed having you in class — I saved you a recording of everything we built, and I bet you\'re going to love the part where the slime starts bouncing."',older:'"Good to have you back. I sent over the recording and a quick recap of what we covered — nothing urgent, just whenever you get a chance to catch up."'},
   ]},
   {t:'👨‍👩‍👧 Talking With Parents',cards:[
-    {type:'list',items:[
+    {type:'imgtext',img:'Images/WhatsApp_module_6.gif',items:[
       'Be kind and understanding, especially if the absence was due to illness or a family issue.',
       'If there\'s extra material available in the course, let them know.',
       'When the student does attend, use the moment to share their achievements in class with the parents.',
@@ -666,19 +712,24 @@ let SELF_QUESTIONS=[
 let QUIZ={
 1:[
  {q:'Which attendance range counts as Low Presence (Alert)?',opts:['Below 50%','50%–74.99%','75% and above'],c:0,fb:'Low Presence (Alert) means attendance under 50% — the range that needs your attention first.'},
- {q:'What does LPR measure, from a tutor\'s perspective?',opts:['The % of your student cases with attendance below 50%','Your students\' average grade','How many classes you taught this month'],c:0,fb:'LPR (Low Presence Rate) is the share of your student cases falling below 50% attendance.'},
+ {q:'What does HPR measure?',opts:['The % of your student cases with attendance below 50%','The % of your student cases with attendance at or above 75%','The % of your students who completed their homework'],c:1,fb:'HPR (High Presence Rate) is the share of your student cases at or above 75% attendance.'},
+ {q:'A student tells you they feel like they\'re "not good" at coding. Which category does this fall into?',opts:['An external cause, since it\'s about the subject, not the tutor','An internal cause — one you can influence through feedback and encouragement','Neither — it\'s a personality trait, not a real driver of attendance'],c:1,fb:'Feeling "not good" at the subject is one of the internal causes — the ones you can shift through how you teach and give feedback.'},
+ {q:'The classroom platform logs a student as present for 40% of the lesson, but the tutor manually marked them "attended" in BO afterward. How is this attendance officially counted?',opts:['As attended, since the tutor\'s BO entry is the final record','As not attended — official attendance is based on the automatic classroom log, and requires over 50% of the lesson','It depends on whether the TL approves the manual override'],c:1,fb:'Attendance is calculated from the classroom\'s automatic record, not from manual BO entries — and it requires more than 50% of the lesson.'},
+ {q:'Which of these is not one of the internal causes of missed attendance covered in this module?',opts:['The student feels bored in class','The student feels they\'re "not good" at this','A national holiday'],c:2,fb:'A national holiday is an external cause, outside the tutor\'s control — the internal causes are the ones this training focuses on changing.'},
 ],
 2:[
- {q:'You start class immediately with "open your file from last week" — no greeting, no warm-up. A student who was distracted before joining barely engages for the first ten minutes. What would have helped?',opts:['Nothing — warm-ups aren\'t necessary once students are past a certain age.','A short Warm-Up — a light question or tiny challenge that switches their brain into "lesson mode" before diving into content.','Skipping straight to the Lesson Goal so they know what\'s expected right away.'],c:1,fb:'A weak opening is often the first moment a student mentally checks out — a warm-up pulls a distracted kid into the session before content starts.'},
- {q:'Instead of asking students to recall what they learned last class, a tutor just re-explains everything from scratch every time. What\'s the risk?',opts:['Nothing — repetition never hurts.','Students never practice retrieval — one of the strongest memory tools — so material takes longer to stick and they feel less competent.','It saves time in the long run, so it\'s worth doing.'],c:1,fb:'Retrieval — making the student recall rather than re-hearing — does more for memory than re-explaining ever could, and it builds the competence that makes a student want to return.'},
- {q:'A student submitted a design for homework. The tutor says "nice poster!" and moves on. What\'s missing?',opts:['Nothing — quick positive feedback keeps momentum going.','Specific feedback naming what worked and what to push further — vague praise doesn\'t show the student homework actually matters.','The tutor should have given a numeric grade instead of a comment.'],c:1,fb:'Specific feedback is one of the two key feedback moments of the lesson — skipping it teaches kids that homework is optional.'},
- {q:'Class ends right when time runs out — no recap, no hint of what\'s coming, no acknowledgment of the student\'s effort. What\'s most likely lost?',opts:['Nothing — as long as the content was covered, the ending doesn\'t matter.','The chance to build anticipation and end on a high note — the last impression is what a student weighs when deciding whether to show up next time.','Only the homework assignment, which can be sent later by message.'],c:1,fb:'The end mirrors the beginning — closing without anticipation and a strong wrap-up throws away a free attendance win every single class.'},
+ {q:'A student joins with camera on but stays visibly withdrawn — quiet, staring at the desk. How do you start?',opts:['You greet them warmly, ask a brief personal question about their week, and once they respond, ease into today\'s plan.','You open with an energetic greeting and move straight into recapping last class\'s project, trusting that the momentum of getting started will pull their attention back in.','You greet them and ask if everything\'s okay, then wait quietly for them to respond before deciding whether to start the lesson.'],c:0,fb:'A genuine personal check-in before diving in is what re-engages a withdrawn student — energy alone or a passive wait-and-see approach skips that step.'},
+ {q:'Instead of asking students to recall last class, a tutor handles the opening differently. Which approach is strongest?',opts:['The tutor restates every detail from last class in full before moving into new material, reasoning that a complete recap guarantees nobody\'s left behind.','The tutor asks a two-minute question about what made last class\'s technique work, letting the student answer in their own words before building on it.','The tutor mentions in one sentence what was covered last class, then moves straight into today\'s objective without checking if it was retained.'],c:1,fb:'Retrieval — letting the student recall in their own words — builds memory and competence far more than re-explaining or rushing past it.'},
+ {q:'How does the tutor close class today?',opts:['The tutor summarizes everything covered that day in detail, then ends the call once the summary is finished.','The tutor celebrates something specific the student created that day, then teases one detail about what\'s coming next before saying goodbye.','The tutor asks the student to summarize what they learned, thanks them for their effort, and ends the call once the recap is done.'],c:1,fb:'Celebrating something specific plus a hook for next class covers both the wrap-up and the anticipation phase — a summary alone, from either tutor or student, misses the anticipation piece.'},
+ {q:'Which of these is not one of the four opening phases of a Kodland lesson?',opts:['A short warm-up that shifts the student\'s focus into lesson mode before content begins','A quick revisit of what was covered in the previous class before moving forward','A closing recap that celebrates what the student accomplished before ending the call'],c:2,fb:'That\'s a closing phase (Wrap-Up), not one of the four phases that open the lesson.'},
+ {q:'A student submitted a poster for homework. How does the tutor review it?',opts:['The tutor notes the layout works well overall and encourages the student to "keep that same energy" on future projects.','The tutor highlights the specific choice that made the poster\'s focal point work, and asks what led the student to arrange it that way.','The tutor lists three things that could be stronger before moving to today\'s topic, without mentioning what worked.'],c:1,fb:'Highlighting a specific choice and asking about it shows the student their homework was actually looked at — vague praise or corrections-only feedback don\'t.'},
 ],
 3:[
- {q:'You join the call and a student\'s camera is on, but they\'re just staring at their desk, not typing anything in chat. How do you start the class?',opts:['Hey! I see you\'re here — before we dive in, how was your week? Anything fun happen?','Let\'s get started — open your project file from last week.','OMG hi!! You look sooo excited today, I can just tell you\'re going to make something AMAZING!!'],c:0,fb:'A brief, genuine check-in helps a quiet student feel safe before diving into content — without over-the-top energy or skipping the moment entirely.'},
- {q:'A student drew their first character but you noticed they didn\'t follow your instructions. How do you give feedback?',opts:['You didn\'t follow the instructions — you were supposed to add a background and you didn\'t. Let\'s fix that first.','I love how you gave your character such an expressive face — that took real thought. I noticed the background wasn\'t added yet; was that a choice, or did you want to add it later?','Wow, this is amazing! You\'re such a talented artist!'],c:1,fb:'Highlighting something specific and asking with curiosity keeps the student\'s agency intact — better than empty praise or a correction with no acknowledgment.'},
- {q:'During a group activity, one student hasn\'t spoken or reacted at all, while two others are actively chatting back and forth. What do you do?',opts:['Nothing — if they wanted to participate, they would unmute or type.','Call them out publicly: “Why aren\'t you participating like everyone else?”','Quietly invite them in a low-pressure way: “I\'d love to hear your idea too, whenever you\'re ready — chat works if that\'s easier.”'],c:2,fb:'A low-pressure, private invitation respects different comfort levels without ignoring the student or putting them on the spot.'},
- {q:'Two students finish the independent challenge in half the time, while three others are still stuck on step one. What\'s your move?',opts:['Move on to the next activity since most students are close to done.','Offer the fast students an extension task, then rotate your attention to check in with each struggling student individually.','Give the fast students a much harder bonus challenge and spend the rest of class solely with them since they\'re “more advanced”.'],c:1,fb:'Rotating your attention keeps both groups engaged — nobody gets ignored, and nobody becomes the "permanent helper."'},
+ {q:'A student joins with arms crossed and one-word answers when greeted. What\'s the best start?',opts:['You keep the greeting brief and move straight into today\'s activity, trusting that getting absorbed in the work will naturally lift their mood.','You acknowledge they seem a little off today, ask gently if everything\'s alright, and let them set the pace for how much they want to share.','You match their energy by staying quiet and businesslike, assuming they\'ll open up on their own once they feel less pressure to perform socially.'],c:1,fb:'Naming what you noticed and letting the student set the pace helps them feel safe — staying task-focused or staying passive both skip that step.'},
+ {q:'During group work, one student hasn\'t spoken at all while two others chat actively. What\'s the best move?',opts:['You wait to see if they unmute on their own, reasoning that stepping in might feel like putting them on the spot.','You quietly invite them in through a low-pressure channel like the chat, letting them choose how much to engage without being singled out.','You ask the whole group if everyone\'s had a chance to share, hoping the quiet student takes the opening on their own.'],c:1,fb:'A direct but low-pressure, private invitation reaches the specific student — waiting it out or asking the group generically usually doesn\'t.'},
+ {q:'Which of these is not one of the "what to do" practices for balancing skill levels?',opts:['Offering faster students a real extension challenge tied to today\'s objective','Giving students who need more time simpler steps and more frequent check-ins','Ranking students by how quickly they finish each activity so progress is visible to the group'],c:2,fb:'Ranking by speed invites comparison between students — the module is clear that progress should never be framed that way.'},
+ {q:'Two students finish fast, three are stuck on step one. What\'s the tutor\'s move?',opts:['The two fast students move to a much harder, unrelated challenge, while the tutor spends the rest of class mainly with the other three.','The two fast students get an extension task tied to today\'s skill, while the tutor rotates between the other three to check in individually.','The tutor pauses the whole group to walk through the tricky step again for everyone, so the three who are stuck can catch up.'],c:1,fb:'An extension tied to the actual skill plus individual check-ins serves both groups at once — an unrelated challenge or a full-group pause leaves one side underserved.'},
+ {q:'A student drew their first character. How does the tutor give feedback?',opts:['The tutor says the character\'s face turned out really well, calls them a talented artist, and encourages them to keep up the same quality.','The tutor gets genuinely excited about the specific choice made with the character\'s expression, tells them exactly why it works, and asks what gave them the idea — leaving the next step open.','The tutor notes the background hasn\'t been added yet, walks through what a finished background should include, and asks them to complete it next class.'],c:1,fb:'Genuine excitement over a specific choice, plus an open question, keeps the student\'s agency intact — better than praise about identity or a correction with nothing highlighted first.'},
 ],
 5:[
  {q:'It\'s the last two minutes of class and you remember you need to assign homework. What do you do?',opts:['Quickly type the homework link in chat and say “okay do this for next class, bye!”','Take 30 seconds to explain what to do and why it connects to what we just learned today.','Explain in detail every single technical rule of the assignment, reading each requirement aloud.'],c:1,fb:'A clear purpose is what makes homework worth remembering — not a rushed mention or a wall of rules.'},
@@ -686,9 +737,11 @@ let QUIZ={
  {q:'You\'re reviewing submitted homework and one student\'s project is technically correct but nothing special. What do you write?',opts:['Just mark it “done” with no comment — it met the requirements, that\'s enough.','Leave a long list of everything that could be improved, no positives mentioned.','Leave a short, specific comment noting one thing they did well and one gentle suggestion — something the parent could also read.'],c:2,fb:'Reviewing homework is a feedback opportunity, not just a checkbox — it\'s also a chance to reinforce the bond with students and parents.'},
 ],
 6:[
- {q:'You\'ve called and texted a parent twice this week about their child missing two classes in a row, and haven\'t heard back yet. What\'s the best next step?',opts:['Stop reaching out — you\'ve already tried twice, it\'s now up to the parent.','Escalate immediately by asking your TL to remove the student from your group since they\'re clearly not interested.','Send one more warm, low-pressure message and share the recording/homework recap so the student doesn\'t fall further behind while you wait to hear back.'],c:2,fb:'A caring check-in is always the first step — persistent but warm, keeping the door open instead of giving up or escalating too soon.'},
- {q:'A student who missed last class finally joins today. How do you start the class with them?',opts:['Privately or gently acknowledge you noticed they were away, ask how they\'re doing, and remind them where to find the recording and homework.','Don\'t mention the absence at all, just move on with today\'s lesson as if nothing happened.','Point out in front of the group that they missed class and ask why.'],c:0,fb:'Showing a student you noticed their absence — without putting them on the spot — helps them feel seen instead of behind.'},
- {q:'A parent messages you directly asking if their child can get a free extra class to catch up after missing several sessions. What do you do?',opts:['Agree right away and schedule it yourself since it\'s a nice gesture for the family.','First, contact your TL about the situation and get approval for an extra class. Then, thank the parent for reaching out and let them know that you’re happy to hear that the student is interested in catching up. If the extra class is approved, offer to schedule it with the student.','Tell the parent it\'s not possible and there\'s nothing that can be done.'],c:1,fb:'TL approval always comes first — but that doesn\'t mean the parent gets a cold or delayed response; you can be warm while still following the right process.'},
+ {q:'Two calls and messages this week, no response from the parent. What\'s the best next step?',opts:['Escalate to your TL right away and ask that the student be moved out of your group, since two unanswered attempts suggests disinterest.','Send one more warm, low-pressure message and share the recording and homework recap, so the student doesn\'t fall further behind while waiting.','Stop reaching out for now, reasoning that two attempts is a reasonable limit and further messages might come across as excessive.'],c:1,fb:'A caring check-in is always the next step — persistent but warm, rather than escalating or giving up too soon.'},
+ {q:'Before proposing an extra class:',opts:['Contact your TL first, then reply warmly that you\'re happy to hear the student wants to catch up and mention you\'re checking on scheduling.','Reply warmly right away that you\'ll set it up, and mention it to your TL afterward so there\'s a record of the conversation.','Contact your TL first, and hold off replying to the parent at all until approval comes through, so nothing gets promised too soon.'],c:0,fb:'TL approval comes first, but the parent still deserves a warm, timely reply — not silence and not a commitment made before it\'s approved.'},
+ {q:'A student missed class due to illness. How does the tutor talk to the parent?',opts:['Keep the conversation brief and neutral, avoiding personal questions about the illness so as not to intrude on the family\'s situation.','Express genuine concern for how the student is doing, mention any extra material available, and use their return to share something positive.','Focus mainly on catching the student up academically, since reassurance about the illness isn\'t really part of the tutor\'s role.'],c:1,fb:'Genuine warmth, practical help, and a positive note on their return covers the empathy this module asks for — staying neutral or purely academic misses it.'},
+ {q:'A student who missed two classes returns and does great work today. How does the tutor use this with the parents?',opts:['Wait until the next scheduled check-in to mention it, to avoid contacting the family too many times in a short period.','Reach out around this class to share the specific achievement, reinforcing the positive turnaround for both student and parent.','Mention it briefly to the student only, since parents are usually more interested in attendance patterns than daily achievements.'],c:1,fb:'Sharing the achievement while it\'s fresh reinforces the turnaround for both student and parent — waiting or keeping it from the parent wastes the moment.'},
+ {q:'Which of the following is not recommended when a student misses class?',opts:['Sharing the recording and a short homework recap so they don\'t fall behind','Following up with the parent to check in and mention the student was missed','Proposing an extra class directly to the parent without looping in your TL first'],c:2,fb:'An extra class always goes through your TL first — proposing it directly to the parent skips that required step.'},
 ],
 };
 
@@ -769,6 +822,9 @@ const UI_EN={
   startCheck:'📝 Take the Knowledge Check →',
   videoDefaultTitle:'Take a look at an example of a real class',
   captionNote:'Remember to turn on this lesson\'s subtitles in your language.',
+  phaseExampleBtn:'Check out a real-life example!',
+  youngerLabel:'Younger (6–11)',
+  olderLabel:'Older (12–17)',
   cuteTipDefault:'Tip',
   questionOfTotal:'Question {n} of {total}',
   nextArrow:'Next →',
@@ -4213,7 +4269,7 @@ function setLang(lang){
 // ─── PROGRESS ────────────────────────────────────────────────────────────
 function getProgress(){ try{ return JSON.parse(localStorage.getItem(PROG_KEY)||'{}'); }catch(e){ return {}; } }
 function saveProgress(p){ localStorage.setItem(PROG_KEY, JSON.stringify(p)); }
-function isPassed(id){ if(id===1) return true; const p=getProgress(); return p[id]?.passed===true; }
+function isPassed(id){ const p=getProgress(); return p[id]?.passed===true; }
 function isDoneColor(id){ const p=getProgress(); return p[id]?.passed===true; }
 function getScore(id){ const p=getProgress(); return p[id]?.score||0; }
 function setResult(id, pct, passed){
@@ -4352,6 +4408,23 @@ function rc(c){
       return `<div class="flow-step f-${s.color}"><div class="fs-ic">${s.ic}</div><h4>${s.h}</h4><p>${s.b}</p></div>${arrow}`;
     }).join('');
     return`<div class="flow">${steps}</div>`;
+  }
+  if(c.type==='phases'){
+    const cards=c.items.map(it=>`<div class="phcard"><div class="ph-num">${it.num}</div><div class="ph-ic">${it.ic}</div><div class="ph-title">${it.h}</div><div class="ph-body">${it.b}</div><a class="ph-btn" href="${it.src}" target="_blank" rel="noopener">▶ ${T('phaseExampleBtn')}</a></div>`).join('');
+    return`<div class="phrow">${cards}</div>`;
+  }
+  if(c.type==='agefriendly'){
+    return`<div class="agef">${c.intro?`<div class="agef-title">🎚️ ${c.intro}</div>`:''}<div class="agef-row"><div class="agef-col"><div class="agef-lbl">👶 ${T('youngerLabel')}</div><p>${c.younger}</p></div><div class="agef-col"><div class="agef-lbl">🧑 ${T('olderLabel')}</div><p>${c.older}</p></div></div></div>`;
+  }
+  if(c.type==='mirrorSummary'){
+    return`<div class="msum"><img class="msum-img" src="${c.img}" alt=""><div class="msum-right"><div class="card quote">${c.caption}</div><div class="card cute"><h4>⭐ ${c.tipH||T('cuteTipDefault')}</h4><p>${c.tipB}</p></div></div></div>`;
+  }
+  if(c.type==='twoimg'){
+    return`<div class="twoimg"><img src="${c.left}" alt=""><img src="${c.right}" alt=""></div>`;
+  }
+  if(c.type==='imgtext'){
+    const p=c.items.map(i=>`<p>${i}</p>`).join('');
+    return`<div class="imgtext"><img src="${c.img}" alt=""><div class="imgtext-txt">${p}</div></div>`;
   }
   if(c.type==='mirror'){
     const arrDown='<div class="lmv2-arrow"><svg viewBox="0 0 20 26"><path d="M10 2 V22 M3 15 L10 23 L17 15" fill="none" stroke="#0a0a1a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
